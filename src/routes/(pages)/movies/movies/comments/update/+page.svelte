@@ -4,13 +4,8 @@
 	import { treeviewSidebarVisible } from '$store/store';
 	import Headline from '$lib/components/Headline.svelte';
 	import { goto } from '$app/navigation';
-	import { onMount } from 'svelte';
-	import { propertyBarCategories } from '$store/categories';
 	import HeadlineSecondary from '$lib/components/HeadlineSecondary.svelte';
 
-	onMount(() => {
-		propertyBarCategories.set;
-	});
 </script>
 
 <div class="grid {$treeviewSidebarVisible ? 'grid-cols-[280px_1fr]' : ''}">

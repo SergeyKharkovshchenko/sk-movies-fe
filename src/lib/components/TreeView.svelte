@@ -1,4 +1,4 @@
-<script lang="ts">
+<!-- <script lang="ts">
 	import { onMount, afterUpdate, createEventDispatcher } from 'svelte';
 	import type { ProductHierarchyNode } from '$lib/interfaces/ProductHierarchyNode';
 	import { baseFilterLevel } from '$store/store';
@@ -163,4 +163,4 @@
 			{/each}
 		</div>
 	{/if}
-</ul>
+</ul> -->
