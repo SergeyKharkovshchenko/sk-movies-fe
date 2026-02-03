@@ -1,0 +1,19 @@
+html[data-theme='movies']:root {
+--color-primary-50: 255 255 255;        /* pure white */
+--color-primary-100: 254 254 255;       /* almost white */
+--color-primary-200: 250 250 252;       /* ultra-light grey */
+--color-primary-300: 245 246 249;       /* barely grey */
+--color-primary-400: 245 246 249;       /* ultra light grey */
+--color-primary-500: 226 228 232;       /* extra soft light grey */
+--color-primary-900: 39 41 51;          /* lighter carbon */
+--color-primary-950: 17 19 23;          /* softer carbon */
+
+--color-secondary-400: 235 237 243;      /* very light grey */
+--color-secondary-500: 209 213 219;      /* soft light grey */
+}
+
+.ag-cell-focus {
+	outline: none !important;
+	box-shadow: none !important;
+	border: none !important;
+}

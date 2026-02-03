@@ -1,0 +1,35 @@
+@import './assets/css/maintenance.css' layer(base);
+@import './assets/css/movies.css' layer(base);
+@import './assets/css/publications.css' layer(base);
+@import './assets/css/import.css' layer(base);
+
+@import 'tailwindcss';
+
+@config '../tailwind.config.js';
+
+body {
+	font-family: 'Inter', sans-serif;
+}
+
+.publications-container {
+	@apply flex flex-col items-start overflow-y-scroll overflow-x-hidden;
+	height: calc(100vh - 3rem);
+}
+
+:root {
+	/* Svooltip */
+	/* --svooltip-arrow-size: 0px;
+	--svooltip-text-size: 12px;
+	--svooltip-weight: 400;
+	--svooltip-bg: #fff;
+	--svooltip-text: #000;
+	--svooltip-shadow: 0; */
+
+	/* AG-Grid */
+	--ag-checkbox-checked-background-color: theme(colors.primary.500);
+	--ag-icon-size: 20px;
+}
+
+.card {
+	@apply bg-zinc-50 border border-zinc-200 rounded-sm shadow-md p-2 mt-2 mb-2;
+}

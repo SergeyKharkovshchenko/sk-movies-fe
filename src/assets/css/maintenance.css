@@ -1,0 +1,12 @@
+html[data-theme='content']:root {
+	--color-primary-50: 240 249 255;
+	--color-primary-100: 224 242 254;
+	--color-primary-200: 186 230 253;
+	--color-primary-300: 147 197 253;
+	--color-primary-400: 96 165 250;
+	--color-primary-500: 59 130 246;
+	--color-primary-900: 12 74 110;
+	--color-primary-950: 8 47 73;
+	--color-secondary-400: 189 189 189;
+	--color-secondary-500: 107 114 128;
+}
