@@ -3,6 +3,7 @@
 	import { treeviewSidebarVisible } from '$store/store';
 	import Headline from '$lib/components/Headline.svelte';
 	import { goto } from '$app/navigation';
+	import Example from './components/Example.svelte';
 </script>
 
 <div class="grid {$treeviewSidebarVisible ? 'grid-cols-[280px_1fr]' : ''}">
@@ -21,6 +22,6 @@
 	{/if}
 
 	<div class="">
-		Example
+		<Example />
 	</div>
 </div>

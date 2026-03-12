@@ -380,8 +380,16 @@ async function getAllCommentsByUser(userId: any) {
 	return await handleFetch(`${apiUrl}/comments/user/${userId}`, FetchMethods.GET);
 }
 
+async function handleCreateEmbeddings(userId: any) {
+	return await handleFetch(`${apiUrl}/createRatingsEmbedding3?userId=${userId}`, FetchMethods.POST);
+}
+
+async function findMostSimilarUsers(userId: any) {
+	return await handleFetch(`${apiUrl}/similar?userId=${userId}`, FetchMethods.GET);
+}
+
 async function getmoviesByActor(actor: any) {
-	return await handleFetch(`${apiUrl}/getmoviesByActor?actor=${actor}`, FetchMethods.GET);
+	return await handleFetch(`${apiUrl}/getmoviesByActor?actor=${actor}`, FetchMethods.POST);
 }
 
 async function getCommentsByMovieId(id: any) {
@@ -435,7 +443,9 @@ export const UsersAPIService = {
 };
 
 export const CommentsAPIService = {
-	getAllCommentsByUser
+	getAllCommentsByUser,
+	handleCreateEmbeddings,
+	findMostSimilarUsers
 };
 
 export const moviesAPIService = {

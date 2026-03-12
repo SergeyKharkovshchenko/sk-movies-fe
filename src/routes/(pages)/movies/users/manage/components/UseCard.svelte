@@ -36,6 +36,7 @@
 
 {#if $comments[user.userId] && $comments[user.userId].length && isCommentsOpen}
 	{#each $comments[user.userId] as comment}
+		<div class="">({comment.movieId})</div>
 		<div class="">({comment.movieTitle})</div>
 		<div class="">({comment.rating})</div>
 		<div class="">({comment.reviewText})</div>
