@@ -41,14 +41,17 @@
 </script>
 
 <header
-	class="flex justify-between h-12 w-full px-4 border-b-zinc-200 border-b border-solid items-center"
+	class="grid grid-cols-3 h-12 w-full px-4 border-b-zinc-200 border-b border-solid items-center"
 >
-	<a href="/" class="flex items-center gap-2 no-underline">
-		<img src="/favicon.png" alt="SK Movies logo" class="h-8 w-8" />
+	<a
+		href="/"
+		class="flex items-center gap-2 no-underline transition-opacity hover:opacity-75 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-600 rounded"
+	>
+		<img src="/favicon.png" alt="SK Movies logo" width="32" height="32" class="h-8 w-8" />
 		<span class="font-semibold text-zinc-950 text-sm">SK Movies</span>
 	</a>
 
-	<div class="flex justify-center gap-6 text-sky-900 font-normal underline-offset-8">
+	<div class="flex justify-center gap-6 font-normal underline-offset-8">
 		<!-- <button
 			class:active={$page.url.pathname.includes('import')}
 			class=" [&.active]:font-semibold [&.active]:underline"
@@ -88,7 +91,7 @@
 		</button>
 	</div>
 
-	<div class="flex h-10 items-center">
+	<div class="flex h-10 items-center justify-end">
 		<div class=" relative border-2 rounded-lg h-10">
 			<!-- svelte-ignore a11y-click-events-have-key-events -->
 			<!-- svelte-ignore a11y-no-static-element-interactions -->
