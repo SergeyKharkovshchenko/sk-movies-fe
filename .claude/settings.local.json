@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(claude mcp:*)",
+      "Bash(node -e \"require\\(''''@playwright/test''''\\)\")",
+      "Bash(node -e \"require\\(''''playwright''''\\)\")",
+      "Bash(where npx:*)",
+      "Bash(npx playwright:*)",
+      "WebFetch(domain:localhost)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5173)",
+      "Bash(ls \"c:/Users/SergeyKharkovshchenk/dev/sk-movies-fe/src/routes/\\(pages\\)/\")",
+      "Bash(node modal-screenshot.js)",
+      "Bash(node modal-screenshot.cjs)",
+      "Bash(npm install:*)",
+      "Bash(node modal-audit.cjs)",
+      "Bash(grep '\"\"svelte\"\"' package.json)"
+    ]
+  },
+  "disabledMcpjsonServers": [
+    "context7"
+  ],
+  "enabledPlugins": {
+    "github@claude-plugins-official": true
+  }
+}

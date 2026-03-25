@@ -75,6 +75,13 @@
 		>
 			Movies
 		</button>
+		<button
+			class:active={$page.url.pathname.includes('about')}
+			class="text-zinc-950 [&.active]:font-semibold [&.active]:underline"
+			on:click={() => handleRoute('about')}
+		>
+			About
+		</button>
 	</div>
 
 	<div class="w-60"></div>
