@@ -3,7 +3,7 @@
 	import { commentsStore, comments } from '$store/comments';
 	import { usersStore, users } from '$store/users';
 	import { onMount } from 'svelte';
-	import UserCard from './UseCard.svelte';
+	import UserCard from '$components/UserCard.svelte';
 
 	async function handleShowAllUsers() {
 		const result = await usersStore.fetchUsers();

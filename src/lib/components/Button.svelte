@@ -8,7 +8,7 @@
  type Align = (typeof ALIGN_OPTIONS)[number];
 
 
-	type Variant = 'primary' | 'secondary' | 'tertiary';
+	type Variant = 'primary' | 'secondary' | 'tertiary' | 'red';
 	type ButtonType = 'button' | 'submit' | 'reset';
 
 	let loaded = false;
@@ -40,6 +40,7 @@
 						? 'text-primary-500 border border-primary-500 hover:bg-primary-400 hover:text-white'
 						: ''}
           {variant === 'tertiary' ? 'text-primary-500 underline hover:text-primary-400' : ''}
+          {variant === 'red' ? 'bg-red-600 text-white hover:bg-red-500' : ''}
           {$$restProps.class ?? ''}
           {disabled
 						? 'bg-transparent hover:bg-transparent text-gray-400! hover:text-gray-400 border-gray-400! opacity-50'
