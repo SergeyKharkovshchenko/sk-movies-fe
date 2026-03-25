@@ -43,8 +43,12 @@
 <header
 	class="flex justify-between h-12 w-full px-4 border-b-zinc-200 border-b border-solid items-center"
 >
+	<a href="/" class="flex items-center gap-2 no-underline">
+		<img src="/favicon.png" alt="SK Movies logo" class="h-8 w-8" />
+		<span class="font-semibold text-zinc-950 text-sm">SK Movies</span>
+	</a>
 
-	<div class="flex justify-between gap-6 text-sky-900 font-normal underline-offset-8">
+	<div class="flex justify-center gap-6 text-sky-900 font-normal underline-offset-8">
 		<!-- <button
 			class:active={$page.url.pathname.includes('import')}
 			class=" [&.active]:font-semibold [&.active]:underline"
@@ -83,8 +87,6 @@
 			About
 		</button>
 	</div>
-
-	<div class="w-60"></div>
 
 	<div class="flex h-10 items-center">
 		<div class=" relative border-2 rounded-lg h-10">
