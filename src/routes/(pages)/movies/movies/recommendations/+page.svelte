@@ -15,6 +15,9 @@
 			<Headline isSelected={true} on:handleClick={() => goto('/movies/movies/recommendations')}
 				>RECOMMENDATIONS</Headline
 			>
+			<Headline isSelected={false} on:handleClick={() => goto('/movies/movies/posters')}
+				>POSTERS</Headline
+			>
 		</SecondaryNavigation>
 	{/if}
 
