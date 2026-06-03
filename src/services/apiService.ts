@@ -386,6 +386,7 @@ async function handleCreateEmbeddings(userId: any) {
 }
 
 async function findMostSimilarUsers(userId: any) {
+	console.log('find most similar users', userId);
 	return await handleFetch(`${apiUrl}/similar?userId=${userId}`, FetchMethods.GET);
 }
 
