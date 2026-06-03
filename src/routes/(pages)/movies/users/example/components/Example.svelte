@@ -3,6 +3,8 @@
 	import Headline from '$components/Headline.svelte';
 	import { comments, commentsStore, similarityTable } from '$store/comments';
 
+	const userId = 'ur1293485';
+
 	async function handleCreateEmbeddings(userId: string) {
 		console.log(userId);
 		commentsStore.handleCreateEmbeddings(userId);
@@ -20,13 +22,13 @@
 	<!-- Enhanced layout with user info and buttons -->
 	<div class="flex flex-col">
 		<div class="flex flex-row items-center mb-4">
-			<h3 class="mr-2 text-xl font-semibold">User: {$comments[userId].name}</h3>
+			<h3 class="mr-2 text-xl font-semibold">User: {$comments[userId]?.name ?? 'not selected'}</h3>
 			<div class="text-gray-600">({userId})</div>
 		</div>
 		<!-- Buttons with more descriptive labels -->
 		<div class="flex flex-row justify-between mb-4">
-			<Button on:click={() => handleCreateEmbeddings(userId)}>Create User Embeddings</Button>
-			<Button on:click={() => findMostSimilarUsers(userId)}>Find Most Similar Users</Button>
+			<Button on:customclick={() => handleCreateEmbeddings(userId)}>Create User Embeddings</Button>
+			<Button on:customclick={() => findMostSimilarUsers(userId)}>Find Most Similar Users</Button>
 		</div>
 		<!-- Display user comments with more details -->
 		{#if $comments[userId] && $comments[userId].length}

@@ -1,6 +1,7 @@
 const apiUrl = import.meta.env.VITE_API_URL;
 
 import { FetchMethods, handleFetch } from '$lib/utils/fetch';
+import { mockTemplates, mockTemplate, mockStructures } from '$lib/assets/mockData';
 // import { mockCategories } from 'store/mocked/mockCategories';
 import type { UploadDTO } from '$lib/interfaces/google-client/ListFilesDTO';
 
@@ -280,15 +281,15 @@ async function getHistoryUploads(query: any) {
 }
 
 async function getAllTemplates() {
-	return await handleFetch(`/api/mock/getAllTemplates`, FetchMethods.GET);
+	return mockTemplates;
 }
 
-async function getTemplate(id: string) {
-	return await handleFetch(`/api/mock/templates/${id}`, FetchMethods.GET);
+async function getTemplate() {
+	return mockTemplate;
 }
 
 async function getAllStructures() {
-	return await handleFetch(`/api/mock/getAllStructures`, FetchMethods.GET);
+	return mockStructures;
 }
 
 async function getLatestImportHistory() {
@@ -385,6 +386,7 @@ async function handleCreateEmbeddings(userId: any) {
 }
 
 async function findMostSimilarUsers(userId: any) {
+	console.log('find most similar users', userId);
 	return await handleFetch(`${apiUrl}/similar?userId=${userId}`, FetchMethods.GET);
 }
 
@@ -406,6 +408,18 @@ async function addCommentsByMovieId(id: any, comment: any, userId: any) {
 			userId: userId
 		}
 	);
+}
+
+async function getPoster(id: any) {
+	return await handleFetch(`${apiUrl}/poster/${id}`, FetchMethods.GET);
+}
+
+async function embedPoster(id: any) {
+	return await handleFetch(`${apiUrl}/poster-embedding/${id}`, FetchMethods.GET);
+}
+
+async function getPosterSimilarity(id: any) {
+	return await handleFetch(`${apiUrl}/poster-similarity/${id}`, FetchMethods.GET);
 }
 
 /**
@@ -452,7 +466,10 @@ export const moviesAPIService = {
 	getAllMovies,
 	getmoviesByActor,
 	getCommentsByMovieId,
-	addCommentsByMovieId
+	addCommentsByMovieId,
+	getPoster,
+	embedPoster,
+	getPosterSimilarity
 };
 
 export const UsedNamesAPIService = {
