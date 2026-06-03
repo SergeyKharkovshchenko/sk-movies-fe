@@ -2,7 +2,7 @@
 	import SecondaryNavigation from '$lib/components/SecondaryNavigation.svelte';
 	import { treeviewSidebarVisible } from '$store/store';
 	import Headline from '$lib/components/Headline.svelte';
-	import { goto } from '$app/navigation';
+	import { goto } from '$lib/utils/navigate';
 	import Example from './components/Example.svelte';
 </script>
 

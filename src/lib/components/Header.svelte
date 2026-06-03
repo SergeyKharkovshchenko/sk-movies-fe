@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { currentRoute } from '$store/store';
-	import { goto } from '$app/navigation';
+	import { goto } from '$lib/utils/navigate';
 	import { page } from '$app/stores';
 	import {
 		currentLanguage,

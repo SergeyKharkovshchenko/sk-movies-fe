@@ -3,7 +3,7 @@
 	import HeadlineSecondary from '$components/HeadlineSecondary.svelte';
 	import SecondaryNavigation from '$lib/components/SecondaryNavigation.svelte';
 	import { treeviewSidebarVisible } from '$store/store';
-	import { goto } from '$app/navigation';
+	import { goto } from '$lib/utils/navigate';
 </script>
 
 <div class="grid {$treeviewSidebarVisible ? 'grid-cols-[280px_1fr]' : ''}">

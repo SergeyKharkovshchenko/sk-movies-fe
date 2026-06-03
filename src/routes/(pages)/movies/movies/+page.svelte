@@ -3,7 +3,7 @@
 	import MoviesStartPage from './components/MoviesStartPage.svelte';
 	import { treeviewSidebarVisible } from '$store/store';
 	import Headline from '$lib/components/Headline.svelte';
-	import { goto } from '$app/navigation';
+	import { goto } from '$lib/utils/navigate';
 	import HeadlineSecondary from '$components/HeadlineSecondary.svelte';
 </script>
 

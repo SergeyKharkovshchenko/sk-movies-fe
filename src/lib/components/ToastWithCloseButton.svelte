@@ -1,6 +1,6 @@
 <script lang="ts">
 	import toast_ from 'svelte-hot-french-toast';
-	import { goto } from '$app/navigation';
+	import { goto } from '$lib/utils/navigate';
 	export let toast: { customMessage: string; locationLink: string; id: string };
 </script>
 

@@ -5,6 +5,7 @@
 	import { page } from '$app/stores';
 	import { currentThemeStore } from '$store/store';
 	import { afterNavigate } from '$app/navigation';
+	import { base } from '$app/paths';
 	import { AgGridModule } from '$lib/utils/agGridModule';
 
 	const moviesThemeBasePaths = ['movies'];
@@ -16,7 +17,7 @@
 	 * Sets the style theme based on the route pathname
 	 */
 	function setTheme() {
-		const urlPathArray = $page.url.pathname.split('/');
+		const urlPathArray = $page.url.pathname.replace(base, '').split('/');
 		// only checking the base pathname i.e. 'products', 'movies' or 'comments'
 		const extractedBasePath = urlPathArray[1];
 

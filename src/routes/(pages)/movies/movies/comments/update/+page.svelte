@@ -3,7 +3,7 @@
 	import Update from './components/Update.svelte';
 	import { treeviewSidebarVisible } from '$store/store';
 	import Headline from '$lib/components/Headline.svelte';
-	import { goto } from '$app/navigation';
+	import { goto } from '$lib/utils/navigate';
 	import HeadlineSecondary from '$lib/components/HeadlineSecondary.svelte';
 
 </script>
