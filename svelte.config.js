@@ -7,7 +7,8 @@ const config = {
 		adapter: adapter({ fallback: 'index.html' }),
 		paths: {
 			// base: '/sk-movies-fe-ghpages-deploy'
-			base: process.env.BASE_PATH ?? ''
+			base: '/sk-movies-fe'
+			// base: process.env.BASE_PATH ?? ''
 		},
 		alias: {
 			$components: 'src/lib/components',
