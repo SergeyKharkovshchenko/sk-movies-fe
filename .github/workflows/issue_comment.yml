@@ -35,13 +35,13 @@ jobs:
         run: echo "${{ toJson(github.event) }}"
         shell: bash
 
-      - name: Create comment
+      - name: 'Create comment'
         run: |
           gh api -X POST \
-            https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/comments \
+            /repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/comments \
             -f body="Comment from API"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 # curl -sSL \
 #   -H "Authorization: Bearer ${ secrets.GITHUB_TOKEN }" \
