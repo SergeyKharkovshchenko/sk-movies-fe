@@ -37,11 +37,12 @@ jobs:
 
       - name: Create comment
         run: |
-          # curl -sSL \
-          #   -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-          #   -H "Accept: application/vnd.github.v3+json" \
           gh api -x POST \
             http://api.github.com/repo/${{github.event.organization.login}}/${{ github.event.repository.name }}/issues/${{ github.event.issue.number }}/comments \
             -f '{"body":"Comment from API"}'
             env:
               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+# curl -sSL \
+#   -H "Authorization: Bearer ${ secrets.GITHUB_TOKEN }" \
+#   -H "Accept: application/vnd.github.v3+json" \
