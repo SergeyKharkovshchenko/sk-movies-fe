@@ -5,13 +5,13 @@ on:
   pull_request:
     branches:
       - main
-    paths:
-      - 'web/**'
+    # paths:
+    #   - 'web/**'
   push:
     branches:
       - main
-    paths:
-      - 'web/**'
+    # paths:
+    #   - 'web/**'
 
 jobs:
   # Run unit tests to make sure everything is 👍
