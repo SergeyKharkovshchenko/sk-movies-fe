@@ -1,0 +1,117 @@
+name: Create Dev Staging Environment
+
+on:
+  workflow_dispatch:
+    inputs:
+      PR_number:
+        description: 'Pull request number'
+        required: true
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  create:
+    name: 'Create staging and deploy'
+    runs-on: ubuntu-latest
+
+    steps:
+
+    # ======================================================
+    # Verify the PR number is valid and get its branch name
+    # ======================================================
+    - name: Verify Pull Request Number
+      uses: actions/github-script@v7
+      id: verify_pr_number
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        result-encoding: string
+        script: |
+          const response = await github.rest.pulls.get({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            pull_number: ${{ github.event.inputs.PR_number }}
+          });
+
+          if (response.data.number !== ${{ github.event.inputs.PR_number }}) {
+            throw new Error('Pull request is not open or number is not valid!');
+          } else {
+            console.log("PR ref: " + response.data.head.ref);
+            return response.data.head.ref;
+          }
+
+    # ======================================================
+    # Checkout the PR branch
+    # ======================================================
+    - uses: actions/checkout@v4
+      name: 'Checkout PR branch'
+      with:
+        ref: ${{ steps.verify_pr_number.outputs.result }}
+
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 20
+
+    - name: Install dependencies
+      run: npm ci
+
+    # ======================================================
+    # Build with a base path so assets resolve correctly
+    # under the /pr-{number}/ subdirectory on GitHub Pages
+    # ======================================================
+    - name: Build
+      run: npm run build
+      env:
+        VITE_API_URL: ${{ vars.VITE_API_URL }}
+        BASE_PATH: /sk-movies-fe/staging-pr-${{ github.event.inputs.PR_number }}
+
+    # ======================================================
+    # Push the build output into a pr-{number}/ subfolder
+    # on the gh-pages branch, leaving other deployments
+    # (e.g. main) untouched.
+    # ======================================================
+    - name: Deploy to GitHub Pages subdirectory
+      run: |
+        git config --global user.name '${{ github.actor }}'
+        git config --global user.email '${{ github.actor }}@users.noreply.github.com'
+
+        # Clone just the gh-pages branch
+        git clone --branch gh-pages --single-branch \
+          https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} \
+          gh-pages-branch
+
+        # Replace the pr subfolder with the new build
+        rm -rf gh-pages-branch/staging-pr-${{ github.event.inputs.PR_number }}
+        cp -r build gh-pages-branch/staging-pr-${{ github.event.inputs.PR_number }}
+
+        cd gh-pages-branch
+        git add .
+        git commit -m "Deploy PR ${{ github.event.inputs.PR_number }} to staging" && \
+          git push || echo "Nothing to commit"
+
+    # ======================================================
+    # Comment on the PR with the staging URL
+    # ======================================================
+    - name: Update status
+      uses: actions/github-script@v7
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          github.rest.issues.createComment({
+            issue_number: ${{ github.event.inputs.PR_number }},
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: `#### Staging environment created
+            > PR #${{ github.event.inputs.PR_number }} has been deployed successfully
+
+            URL: https://${{ github.repository_owner }}.github.io/sk-movies-fe/staging-pr-${{ github.event.inputs.PR_number }}/`
+          })
+
+    # ======================================================
+    # On failure, open a tmate SSH session for debugging
+    # ======================================================
+    - name: Setup tmate session
+      if: ${{ failure() }}
+      uses: mxschmitt/action-tmate@v3
