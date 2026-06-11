@@ -8,6 +8,6 @@ vi.mock('$app/navigation', () => ({ goto: vi.fn() }));
 describe('/+page.svelte', () => {
 	test('should render page', () => {
 		render(Page);
-		expect(screen.getByText('Movies Home')).toBeInTheDocument();
+		expect(screen.getByText('Movies Home 2')).toBeInTheDocument();
 	});
 });
