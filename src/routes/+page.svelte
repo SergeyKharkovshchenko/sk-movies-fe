@@ -39,7 +39,6 @@
 
 <script lang="ts">
 	import Headline from '$components/Headline.svelte';
-	import HeadlineSecondary from '$components/HeadlineSecondary.svelte';
 	import SecondaryNavigation from '$lib/components/SecondaryNavigation.svelte';
 	import { treeviewSidebarVisible } from '$store/store';
 	import { goto } from '$lib/utils/navigate';
