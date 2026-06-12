@@ -5,9 +5,7 @@ on:
     branches: [main]
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 jobs:
   deploy:
@@ -19,11 +17,31 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm install
+      - run: npm ci
       - run: npm run build
         env:
           VITE_API_URL: ${{ vars.VITE_API_URL }}
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: build
-      - uses: actions/deploy-pages@v4
+
+      - name: Deploy main build to gh-pages root
+        run: |
+          git config --global user.name '${{ github.actor }}'
+          git config --global user.email '${{ github.actor }}@users.noreply.github.com'
+
+          git clone --branch gh-pages --single-branch \
+            https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} \
+            gh-pages-branch
+
+          # Copy build to root, preserving staging-pr-* subfolders
+          find gh-pages-branch -maxdepth 1 -not -name 'staging-pr-*' \
+            -not -name '.git' -not -name '.' \
+            -exec rm -rf {} +
+
+          cp -r build/. gh-pages-branch/
+
+          cd gh-pages-branch
+          git add .
+          git commit -m "Deploy main to gh-pages" && \
+            git push || echo "Nothing to commit"
+
+      # Commit and push deploy.yml to main to trigger the deployment:
+      # Then watch the Actions tab — the sk-movies deploy workflow should run and populate the gh-pages root with the main site files.
