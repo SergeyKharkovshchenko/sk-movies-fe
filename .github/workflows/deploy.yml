@@ -31,10 +31,13 @@ jobs:
             https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} \
             gh-pages-branch
 
-          # Copy build to root, preserving staging-pr-* subfolders
-          find gh-pages-branch -maxdepth 1 -not -name 'staging-pr-*' \
-            -not -name '.git' -not -name '.' \
-            -exec rm -rf {} +
+          # Remove everything except staging-pr-* folders and .git
+          for item in gh-pages-branch/*; do
+            basename=$(basename "$item")
+            if [[ "$basename" != staging-pr-* ]]; then
+              rm -rf "$item"
+            fi
+          done
 
           cp -r build/. gh-pages-branch/
 
@@ -42,6 +45,3 @@ jobs:
           git add .
           git commit -m "Deploy main to gh-pages" && \
             git push || echo "Nothing to commit"
-
-      # Commit and push deploy.yml to main to trigger the deployment:
-      # Then watch the Actions tab — the sk-movies deploy workflow should run and populate the gh-pages root with the main site files.
