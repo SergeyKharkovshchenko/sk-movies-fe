@@ -6,9 +6,7 @@ const config = {
 	kit: {
 		adapter: adapter({ fallback: 'index.html' }),
 		paths: {
-			// base: '/sk-movies-fe-ghpages-deploy'
-			base: '/sk-movies-fe'
-			// base: process.env.BASE_PATH ?? ''
+			base: process.env.BASE_PATH ?? '/sk-movies-fe'
 		},
 		alias: {
 			$components: 'src/lib/components',
