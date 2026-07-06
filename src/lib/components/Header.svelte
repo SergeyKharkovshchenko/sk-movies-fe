@@ -83,6 +83,20 @@
 			Movies
 		</button>
 		<button
+			class:active={$page.url.pathname.includes('bikes')}
+			class="text-zinc-950 [&.active]:font-semibold [&.active]:underline"
+			on:click={() => handleRoute('bikes')}
+		>
+			Bikes
+		</button>
+		<button
+			class:active={$page.url.pathname.includes('knowledge')}
+			class="text-zinc-950 [&.active]:font-semibold [&.active]:underline"
+			on:click={() => handleRoute('knowledge')}
+		>
+			Knowledge
+		</button>
+		<button
 			class:active={$page.url.pathname.includes('about')}
 			class="text-zinc-950 [&.active]:font-semibold [&.active]:underline"
 			on:click={() => handleRoute('about')}

@@ -9,6 +9,97 @@ async function getAllMovies() {
 	return await handleFetch(`${apiUrl}/getAllMovies`, FetchMethods.GET);
 }
 
+async function getRelations() {
+	return await handleFetch(`${apiUrl}/relations`, FetchMethods.GET);
+}
+
+async function bikeChat(payload: {
+	messages: { role: string; content: string }[];
+	temperature?: number;
+	maxTokens?: number;
+	stream?: boolean;
+	ragMode?: 'combined' | 'vector' | 'graph';
+	embedder?: string;
+}) {
+	return await handleFetch(`${apiUrl}/bike-chat`, FetchMethods.POST, {}, payload);
+}
+
+async function ragEmbedNodes(embedder = 'jina', batchSize = 50) {
+	return await handleFetch(
+		`${apiUrl}/rag/embed/nodes?embedder=${embedder}&batchSize=${batchSize}`,
+		FetchMethods.POST
+	);
+}
+
+async function ragEmbedRelationships(embedder = 'jina', batchSize = 50) {
+	return await handleFetch(
+		`${apiUrl}/rag/embed/relationships?embedder=${embedder}&batchSize=${batchSize}`,
+		FetchMethods.POST
+	);
+}
+
+async function ragEmbedAll(embedder = 'jina', batchSize = 50) {
+	return await handleFetch(
+		`${apiUrl}/rag/embed/all?embedder=${embedder}&batchSize=${batchSize}`,
+		FetchMethods.POST
+	);
+}
+
+async function ragDeleteEmbeddings(type: 'all' | 'nodes' | 'relationships' = 'all') {
+	return await handleFetch(`${apiUrl}/rag/embeddings?type=${type}`, FetchMethods.DELETE);
+}
+
+async function ragGetStatus() {
+	return await handleFetch(`${apiUrl}/rag/embeddings/status`, FetchMethods.GET);
+}
+
+async function ragGetExampleQuestions() {
+	return await handleFetch(`${apiUrl}/rag/questions/examples`, FetchMethods.GET);
+}
+
+async function ragDeduplicateGraph() {
+	return await handleFetch(`${apiUrl}/rag/graph/deduplicate`, FetchMethods.POST);
+}
+
+async function suggestSections(text: string) {
+	return await handleFetch(`${apiUrl}/knowledge/suggest-sections`, FetchMethods.POST, {}, { text });
+}
+
+async function suggestGraph(text: string) {
+	return await handleFetch(`${apiUrl}/knowledge/suggest-graph`, FetchMethods.POST, {}, { text });
+}
+
+async function napoleonChat(payload: {
+	question: string;
+	label: string;
+	history?: { role: 'user' | 'assistant'; content: string }[];
+	topK?: number;
+	neighborLimit?: number;
+	ragMode?: 'combined' | 'vector' | 'graph';
+	strict?: boolean;
+	temperature?: number;
+	seedPriority?: 'graph' | 'vector';
+}) {
+	return await handleFetch(`${apiUrl}/napoleon-chat`, FetchMethods.POST, {}, payload);
+}
+
+async function knowledgeDelete(label: string) {
+	return await handleFetch(`${apiUrl}/knowledge/${encodeURIComponent(label)}`, FetchMethods.DELETE);
+}
+
+async function knowledgeClearCache(cache?: 'suggestGraph' | 'suggestSections') {
+	const path = cache ? `/knowledge/cache/${cache}` : '/knowledge/cache';
+	return await handleFetch(`${apiUrl}${path}`, FetchMethods.DELETE);
+}
+
+async function knowledgeStatus() {
+	return await handleFetch(`${apiUrl}/knowledge/status`, FetchMethods.GET);
+}
+
+async function knowledgeLabels() {
+	return await handleFetch(`${apiUrl}/knowledge/labels`, FetchMethods.GET);
+}
+
 async function getProductHierarchy() {
 	return {
 		id: 'GPH:3042193b-f710-4187-94ff-3f4a0e65faf6',
@@ -470,6 +561,28 @@ export const moviesAPIService = {
 	getPoster,
 	embedPoster,
 	getPosterSimilarity
+};
+
+export const BikesAPIService = {
+	getRelations,
+	bikeChat,
+	ragEmbedNodes,
+	ragEmbedRelationships,
+	ragEmbedAll,
+	ragDeleteEmbeddings,
+	ragGetStatus,
+	ragGetExampleQuestions,
+	ragDeduplicateGraph,
+};
+
+export const KnowledgeAPIService = {
+	suggestSections,
+	suggestGraph,
+	napoleonChat,
+	knowledgeDelete,
+	knowledgeStatus,
+	knowledgeLabels,
+	knowledgeClearCache,
 };
 
 export const UsedNamesAPIService = {
