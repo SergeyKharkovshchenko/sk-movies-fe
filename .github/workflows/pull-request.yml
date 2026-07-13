@@ -54,7 +54,7 @@ jobs:
       # E2E specs in cypress/e2e against it. `install: false` since dependencies were already
       # restored/installed above.
       - name: Cypress run
-        uses: cypress-io/github-action@v7
+        uses: cypress-io/github-action@v7.4.1
         with:
           install: false
           start: npm run preview
@@ -63,8 +63,13 @@ jobs:
 
       # Scans the repo (incl. coverage/lcov.info) and posts the result as a PR check/comment.
       # Needs SONAR_TOKEN configured — see the trailing comment block for setup.
+      #
+      # Uses SonarSource/sonarqube-scan-action directly rather than sonarsource/sonarcloud-github-
+      # action: the latter is deprecated and just wraps this action, but its own (frozen) composite
+      # definition still pins an old actions/cache release that GitHub has since blocked — that's
+      # what broke this step even after we bumped our own actions/cache usage elsewhere.
       - name: SonarCloud Scan
-        uses: sonarsource/sonarcloud-github-action@v4.0.0
+        uses: SonarSource/sonarqube-scan-action@v8.2.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
