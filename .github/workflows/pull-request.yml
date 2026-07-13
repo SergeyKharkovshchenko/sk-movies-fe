@@ -1,0 +1,95 @@
+# Runs on every PR targeting main: format/lint check, type check, unit tests with coverage, a
+# build, a Cypress E2E smoke test against that build, and a SonarCloud quality gate scoped to the
+# PR diff — as a required status check before merge. Runs on a GitHub-hosted runner, matching
+# deploy.yml.
+name: Pull Request (main branch)
+on:
+  pull_request:
+    branches: ["main"]
+jobs:
+  pull-request:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Full history, needed by the SonarCloud step below for PR-relative analysis.
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # Caches node_modules + the separately-downloaded Cypress binary together, keyed on the
+      # lockfile hash — nothing to configure, GitHub-hosted runners get this for free via
+      # actions/cache. Unlike a self-hosted runner, this image already ships Chrome and Cypress's
+      # Linux dependencies (xvfb, libgtk, etc.), so there's nothing else to install for E2E.
+      - name: Restore node_modules + Cypress binary cache
+        id: node-modules-cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            ~/.cache/Cypress
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      - name: Install dependencies
+        if: steps.node-modules-cache.outputs.cache-hit != 'true'
+        run: npm ci
+
+      - name: Check formatting and lint
+        run: npm run lint_prettier
+
+      - name: Type check
+        run: npm run check
+
+      # Generates coverage/lcov.info, which the SonarCloud step below reads.
+      - name: Run unit tests with coverage
+        run: npm run test:coverage
+
+      - name: Build
+        run: npm run build
+        env:
+          VITE_API_URL: ${{ vars.VITE_API_URL }}
+
+      # Serves the static build (npm run preview -> vite preview, default port 4173) and runs the
+      # E2E specs in cypress/e2e against it. `install: false` since dependencies were already
+      # restored/installed above.
+      - name: Cypress run
+        uses: cypress-io/github-action@v7
+        with:
+          install: false
+          start: npm run preview
+          wait-on: "http://localhost:4173/sk-movies-fe"
+          browser: chrome
+
+      # Scans the repo (incl. coverage/lcov.info) and posts the result as a PR check/comment.
+      # Needs SONAR_TOKEN configured — see the trailing comment block for setup.
+      - name: SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@v4.0.0
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+# To make this work:
+#
+# node/build/lint/test/Cypress steps — nothing to configure:
+# - The only external input is the `VITE_API_URL` repository variable, which should already be set
+#   from configuring deploy.yml (Settings > Secrets and variables > Actions > Variables). If unset,
+#   the build just gets an empty VITE_API_URL.
+# - Everything else runs on GitHub-hosted runners using only public actions and this repo's own
+#   npm scripts (`npm run cy:open` / `npm run cy:run` also work locally against a running preview
+#   server for writing/debugging specs).
+#
+# SonarCloud Scan step — one-time setup required:
+# 1. Go to https://sonarcloud.io and sign in with your GitHub account.
+# 2. Click "+" > "Analyze new project", pick the SergeyKharkovshchenko organization (SonarCloud
+#    creates a free org matching your GitHub account/org the first time), and import this repo.
+# 3. During import, SonarCloud shows you the exact `sonar.organization` and `sonar.projectKey`
+#    values it assigned — copy those into sonar-project.properties at the repo root, replacing the
+#    `your-sonarcloud-org` / `your-sonarcloud-org_sk-movies-fe` placeholders.
+# 4. In SonarCloud: My Account > Security > Generate Token. Copy it.
+# 5. In GitHub: this repo's Settings > Secrets and variables > Actions > Secrets > New repository
+#    secret, name it SONAR_TOKEN, paste the token.
+# 6. In SonarCloud's project settings, set Analysis Method to "GitHub Actions" (not Automatic
+#    Analysis) — Automatic Analysis conflicts with a CI-driven scan like this one.
+# 7. Push a PR — the "SonarCloud Scan" check should appear and, once configured, SonarCloud posts
+#    a summary comment directly on the PR.

@@ -1,0 +1,206 @@
+# # Builds the app and deploys it to a Cloud Foundry "dev" environment on every push to main, or
+# # manually via workflow_dispatch. Runs on a self-hosted Gitea Actions runner.
+# #
+# # This workflow is written generically: anything that used to be a hardcoded company/org value
+# # (internal hostnames, CF org/space, notification emails, webhook URL) now comes from repo/org
+# # `vars` or `secrets` — set these in your Gitea/GitHub repo settings before using it:
+# #   vars:    DEV_RUNNER_LABEL, NODE_CACHE_BASE_URL, NPM_REGISTRY_URL, NPM_REGISTRY_EMAIL,
+# #            CF_ORG, CF_SPACE, CI_TEMPLATES_REPO, FAILURE_NOTIFY_EMAILS
+# #   secrets: PKG_TOKEN, GOOGLE_CLOUD_CREDENTIALS, NEXUS_AUTH_BASE64, NPM_TOKEN, CF_API, CF_USER,
+# #            CF_PASSWORD, NOTIFIER_EMAIL, NOTIFIER_PASSWORD, DEPLOY_TOKEN, TEAMS_WEBHOOK_URL
+# name: Build and Deploy to Dev Environment
+# on:
+#   push:
+#     branches: ["main"]
+#   workflow_dispatch:
+# jobs:
+#   build-and-deploy-to-dev:
+#     runs-on: ${{ vars.DEV_RUNNER_LABEL }}
+#     steps:
+#       - name: Check out repository code
+#         uses: actions/checkout@v3
+#         with:
+#           fetch-depth: 0
+
+#       - name: Setup NodeJS
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: 22
+
+#       - name: Install packages
+#         run: |
+#           apt update
+#           apt install -y jq curl zstd
+
+#       # Hashes the lockfile + this workflow file so the cache is invalidated whenever either
+#       # dependencies or the caching logic itself change.
+#       - name: Compute cache key
+#         run: |
+#           CACHE_KEY=$( { md5sum package-lock.json; md5sum .gitea/workflows/deploy-dev.yml; } | md5sum | cut -d' ' -f1 )
+#           echo "CACHE_KEY=$CACHE_KEY" >> $GITHUB_ENV
+
+#       # Looks for a previously-uploaded node_modules archive in the generic package registry.
+#       # A miss (curl failure) just falls through to a normal `npm ci` later, so this step never
+#       # fails the build outright.
+#       - name: Try restore node_modules cache
+#         run: |
+#           set +e
+#           URL="${{ vars.NODE_CACHE_BASE_URL }}/${CACHE_KEY}/node_modules.tar.zst"
+#           echo "Trying cache: $URL"
+#           curl -fL --user cache_token:${{ secrets.PKG_TOKEN }} -o node_modules.tar.zst "$URL"
+#           if [ $? -eq 0 ]; then
+#             echo "Cache found, extracting..."
+#             tar --zstd -xf node_modules.tar.zst
+#             echo "CACHE_HIT=true" >> $GITHUB_ENV
+#           else
+#             echo "No cache found"
+#             echo "CACHE_HIT=false" >> $GITHUB_ENV
+#           fi
+
+#       - name: Gather common variables
+#         id: gather-var
+#         run: |
+#           echo "GIT_HASH=$(git rev-parse --short=8 HEAD)" >> $GITHUB_ENV
+
+#       # Stamps the release version (from package.json, or an externally-set $releaseVersion) into
+#       # .env.development so it's baked into the build as VITE_APP_VERSION, then derives a short
+#       # tag (e.g. "2026.07-foo" -> "foo") used later to version the published npm package.
+#       - name: Inject release into env file
+#         run: |
+#           if [[ -n $releaseVersion ]]; then RELEASE_VERSION_TAG=$releaseVersion; else RELEASE_VERSION_TAG=$(jq '.releaseVersion' package.json -r); fi
+#           echo "$RELEASE_VERSION_TAG"
+#           sed -i "/^VITE_APP_VERSION/s/.*/VITE_APP_VERSION=\"$RELEASE_VERSION_TAG\"/" .env.development
+#           cat .env.development
+#           echo "RELEASE_VERSION_TAG=$RELEASE_VERSION_TAG" >> $GITHUB_ENV
+#           SHORT_VERSION_TAG=$(echo "$RELEASE_VERSION_TAG" | sed -E 's/^[0-9]{4}\.[0-9]{2}-(.*)$/\1/g')
+#           echo "SHORT_VERSION_TAG=$SHORT_VERSION_TAG" >> $GITHUB_ENV
+
+#       # credentials.json is presumably consumed by the build or a later step that talks to GCP;
+#       # not referenced elsewhere in this job.
+#       - name: Inject Google Cloud credentials
+#         run: echo "${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}" | base64 --decode > credentials.json
+
+#       - name: Install dependencies
+#         run: |
+#           if [ "$CACHE_HIT" = "true" ]; then
+#             echo "node_modules restored from cache; skipping npm ci"
+#           else
+#             npm ci
+#           fi
+
+#       # Only runs on a cache miss, so we don't re-upload an archive that's already there.
+#       - name: Save node_modules cache
+#         if: env.CACHE_HIT != 'true'
+#         run: |
+#           tar --zstd -cf node_modules.tar.zst node_modules
+#           curl --user cache_token:${{ secrets.PKG_TOKEN }} \
+#             --upload-file node_modules.tar.zst \
+#             "${{ vars.NODE_CACHE_BASE_URL }}/${CACHE_KEY}/node_modules.tar.zst"
+
+#       - name: Build dev
+#         run: npm run build:dev
+
+#       - name: Run unit tests
+#         run: |
+#           npm run test:unit -- --coverage
+
+#       # Ensures a local origin/main ref exists, presumably for a diff/comparison step downstream
+#       # (e.g. the commented-out Sonar scan below, which needs it for PR-relative analysis).
+#       - name: Fetch main branch for comparison
+#         run: |
+#           git fetch origin main:refs/remotes/origin/main --force
+#           git branch -a | grep origin/main
+
+#       # Disabled SonarQube code-quality gate (kept for reference / easy re-enabling).
+#       # - name: Check code quality
+#       #   env:
+#       #     SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
+#       #   run: |
+#       #     export SONAR_SCANNER_VERSION=7.0.2.4839
+#       #     export SONAR_SCANNER_HOME=$HOME/.sonar/sonar-scanner-$SONAR_SCANNER_VERSION-linux-x64
+#       #     curl --create-dirs -sSLo $HOME/.sonar/sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-$SONAR_SCANNER_VERSION-linux-x64.zip
+#       #     unzip -o $HOME/.sonar/sonar-scanner.zip -d $HOME/.sonar/
+#       #     export PATH=$SONAR_SCANNER_HOME/bin:$PATH
+#       #     sonar-scanner \
+#       #       -Dsonar.projectKey=${{ secrets.SONARQUBE_PROJECT_KEY }} \
+#       #       -Dsonar.sources=. \
+#       #       -Dsonar.host.url=${{ secrets.SONARQUBE_HOST_URL }} \
+#       #       -Dsonar.token=${{ secrets.SONARQUBE_TOKEN }} \
+#       #       -Dsonar.projectVersion=${{ env.GIT_HASH }} \
+#       #       -Dsonar.scm.provider=git \
+#       #       -Dsonar.javascript.lcov.reportPaths=./coverage/lcov.info \
+#       #       -Dsonar.qualitygate.wait=true
+
+#       # Rewrites package.json's version to the short tag, then publishes the built package to a
+#       # private npm registry (auth via base64 creds + token secrets).
+#       - name: Prepare and publish npm package to Nexus
+#         run: |
+#           jq '.version ="${{ env.SHORT_VERSION_TAG }}"' package.json > package.json.tmp && mv package.json.tmp package.json
+#           cat package.json
+#           npm config set registry ${{ vars.NPM_REGISTRY_URL }}
+#           npm config set email ${{ vars.NPM_REGISTRY_EMAIL }}
+#           npm config set //$(echo ${{ vars.NPM_REGISTRY_URL }} | sed -E 's#^https?://##'):_auth ${{ secrets.NEXUS_AUTH_BASE64 }}
+#           npm config set //$(echo ${{ vars.NPM_REGISTRY_URL }} | sed -E 's#^https?://##'):_authToken ${{ secrets.NPM_TOKEN }}
+#           npm publish
+
+#       # Installs the `cf` CLI so the runner can talk to the Cloud Foundry platform.
+#       - name: Install Cloud Foundry client
+#         run: |
+#           wget -q -O - https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key | apt-key add -
+#           echo "deb https://packages.cloudfoundry.org/debian stable main" | tee /etc/apt/sources.list.d/cloudfoundry-cli.list
+#           apt update
+#           apt install -y cf8-cli
+
+#       # Authenticates against the target CF org/space (set via repo vars).
+#       - name: Login to Cloud Foundry
+#         run: cf login -a ${{ secrets.CF_API }} -u ${{ secrets.CF_USER }} -p ${{ secrets.CF_PASSWORD }} -o ${{ vars.CF_ORG }} -s ${{ vars.CF_SPACE }}
+
+#       # Pushes the app per manifest.yml, using the "dev" var to select environment-specific config.
+#       - name: Deploy to Cloud Foundry dev environment
+#         run: cf push --var CF_ENV=dev
+
+#       # Tags the just-deployed CF app revision with the release version, so it's traceable via the
+#       # CF API/UI later.
+#       - name: Set release version tag
+#         run: |
+#           apt update
+#           apt install -y yq jq
+#           echo "the release version is $RELEASE_VERSION_TAG"
+#           APP_NAME=$(yq '.applications[0].name' manifest.yml -r)
+#           REVISION_GUID=$(cf curl /v3/apps/$(cf app $APP_NAME --guid)/revisions/deployed | jq '.resources[0].guid' -r)
+#           cf curl -X PATCH v3/revisions/$REVISION_GUID -d "{ "metadata": { "labels": { "tag": "$RELEASE_VERSION_TAG" } }}"
+#           cf logout
+
+#       # If any prior step failed, emails the pusher plus a configurable maintainer list via a
+#       # notifier action. Swap `uses:` for your own org's notifier (or a standard action like
+#       # dawidd6/action-send-mail) if you don't have one at this path.
+#       - name: Send email notification on failure
+#         if: ${{ failure() }}
+#         uses: https://github.com/joekrom/px-notifier@v0.0.3-alpha
+#         with:
+#           smtp_address: "smtp.office365.com"
+#           smtp_port: "587"
+#           username: ${{ secrets.NOTIFIER_EMAIL }}
+#           password: ${{ secrets.NOTIFIER_PASSWORD }}
+#           subject: ${{ github.workflow }}
+#           ssl: "true"
+#           from: ${{ secrets.NOTIFIER_EMAIL }}
+#           to: ${{ github.event.pusher.email }}, ${{ vars.FAILURE_NOTIFY_EMAILS }}
+#           body: "build and deployment failed with ref: ${{ github.ref_name }}, link : ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_number }}"
+
+#       # Also on failure: pulls a shared Adaptive Card template from another internal repo, fills in
+#       # run details via sed, and POSTs it to a Microsoft Teams incoming webhook.
+#       - name: Send email notification to teams channel on failure
+#         if: ${{ failure() }}
+#         run: |
+#           git clone --branch main https://${{ secrets.DEPLOY_TOKEN }}@${{ vars.CI_TEMPLATES_REPO }}
+#           sed -i -e "s/activity_title_t/${{ github.workflow }}/g" \
+#             -e "s/activity_subtitle_t/px-notifier/g" \
+#             -e "s/date_t/$(date)/g" \
+#             -e "s/assigned_to_t/${{ github.event.head_commit.committer.name }}/g" \
+#             -e "s/status_t/failed/g" \
+#             -e "s@message_t@pipeline failed with ref: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_number }}@g" \
+#             -e "s@link_to_commit_t@${{ github.event.head_commit.url }}@g" \
+#             -e "s/commit_hash_t/${{ env.GIT_HASH }}/g" \
+#             templates/teams-card/card.json
+#           curl -H "Content-Type: application/json" -d "$(cat templates/teams-card/card.json)" "${{ secrets.TEAMS_WEBHOOK_URL }}" -v --trace-ascii trace.txt

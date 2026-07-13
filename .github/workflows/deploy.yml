@@ -17,7 +17,23 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm ci
+
+      # Caches node_modules keyed on the lockfile hash, so a push that doesn't touch dependencies
+      # skips `npm ci` entirely. Works out of the box on GitHub-hosted runners (actions/cache uses
+      # GitHub's own cache storage) — nothing to configure, unlike a self-hosted-runner setup where
+      # you'd need to stand up your own cache backend (registry, secrets, etc).
+      - name: Restore node_modules cache
+        id: node-modules-cache
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      # Only runs on a cache miss (i.e. package-lock.json changed since the last successful run).
+      - name: Install dependencies
+        if: steps.node-modules-cache.outputs.cache-hit != 'true'
+        run: npm ci
+
       - run: npm run build
         env:
           VITE_API_URL: ${{ vars.VITE_API_URL }}
