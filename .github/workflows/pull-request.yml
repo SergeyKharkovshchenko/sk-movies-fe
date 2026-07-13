@@ -24,7 +24,7 @@ jobs:
       # Linux dependencies (xvfb, libgtk, etc.), so there's nothing else to install for E2E.
       - name: Restore node_modules + Cypress binary cache
         id: node-modules-cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: |
             node_modules
