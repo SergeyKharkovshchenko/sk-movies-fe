@@ -1,0 +1,13 @@
+name: 'docker-greet'
+description: 'Greets someone and logs the greeting'
+inputs:
+  who-to-greet:
+    description: 'Who to greet'
+    required: true
+    default: 'World'
+outputs:
+  greeting:
+    description: 'The greeting message'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'

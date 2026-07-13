@@ -1,0 +1,119 @@
+# # Manually-triggered version bump: reads the current version from ./semver.sh, bumps it (or sets
+# # a custom one), and commits/pushes the result back over SSH. Runs on a self-hosted Gitea Actions
+# # runner. Doesn't build or publish anything itself — presumably a separate deploy workflow reacts
+# # to the version-bump push/tag.
+# #
+# # This workflow is written generically: anything that used to be a hardcoded company/org value
+# # (internal git host, git identity, remote repo path) now comes from repo/org `vars` or `secrets` —
+# # set these in your Gitea/GitHub repo settings before using it:
+# #   vars:    RELEASE_RUNNER_LABEL, GIT_HOST, GIT_HOST_PORT, GIT_REMOTE_PATH, RELEASE_BOT_NAME,
+# #            RELEASE_BOT_EMAIL
+# #   secrets: DEPLOY_KEY_PRIVATE
+# name: Release
+# on:
+#   workflow_dispatch:
+#     inputs:
+#       version_action:
+#         description: "Version action to perform"
+#         required: true
+#         default: "patch"
+#         type: choice
+#         options:
+#           - patch
+#           - minor
+#           - major
+#           - custom
+#       custom_version:
+#         description: "Custom version (if version_action is custom)"
+#         required: false
+#         type: string
+# env:
+#   TERM: xterm-256color
+# jobs:
+#   release:
+#     runs-on: ${{ vars.RELEASE_RUNNER_LABEL }}
+#     steps:
+#       - name: Check out repository code
+#         uses: actions/checkout@v3
+#         with:
+#           fetch-depth: 0
+
+#       - name: Get current version
+#         id: get-version
+#         run: |
+#           chmod +x ./semver.sh
+#           CURRENT_VERSION=$(./semver.sh output)
+#           echo "Current version: $CURRENT_VERSION"
+#           echo "CURRENT_VERSION=$CURRENT_VERSION" >> $GITHUB_ENV
+
+#       # Either takes the manually-selected patch/minor/major bump, or validates that a custom
+#       # version string was supplied when version_action is "custom".
+#       - name: Determine version bump type
+#         id: bump-type
+#         run: |
+#           if [[ "${{ inputs.version_action }}" == "custom" ]]; then
+#             if [[ -z "${{ inputs.custom_version }}" ]]; then
+#               echo "Error: Custom version is required when version_action is 'custom'"
+#               exit 1
+#             fi
+#             echo "Using CUSTOM version: ${{ inputs.custom_version }}"
+#             echo "BUMP_TYPE=custom" >> $GITHUB_ENV
+#             echo "CUSTOM_VERSION=${{ inputs.custom_version }}" >> $GITHUB_ENV
+#           else
+#             echo "Using manually selected bump type: ${{ inputs.version_action }}"
+#             echo "BUMP_TYPE=${{ inputs.version_action }}" >> $GITHUB_ENV
+#           fi
+
+#       # Installs a deploy key + known_hosts entry for the internal git host, so the push at the end
+#       # of this job can authenticate over SSH on a non-standard port.
+#       - name: Set up SSH deploy key
+#         run: |
+#           # Create the SSH directory
+#           mkdir -p ~/.ssh
+#           chmod 700 ~/.ssh
+
+#           # Add the SSH key
+#           echo "${{ secrets.DEPLOY_KEY_PRIVATE }}" | tr -d '\r' > ~/.ssh/id_ed25519
+#           chmod 600 ~/.ssh/id_ed25519
+
+#           # Create SSH config file to specify the custom port
+#           cat > ~/.ssh/config << EOF
+#           Host ${{ vars.GIT_HOST }}
+#             Port ${{ vars.GIT_HOST_PORT }}
+#             IdentityFile ~/.ssh/id_ed25519
+#             User git
+#             IdentitiesOnly yes
+#             PreferredAuthentications publickey
+#           EOF
+#           chmod 600 ~/.ssh/config
+
+#           # Set up SSH directory and known hosts
+#           ssh-keyscan -p ${{ vars.GIT_HOST_PORT }} -t rsa ${{ vars.GIT_HOST }} >> ~/.ssh/known_hosts
+#           chmod 644 ~/.ssh/known_hosts
+
+#       # Sets the commit author for the version-bump commit, and switches origin from the checkout's
+#       # HTTPS URL to SSH so the later push can use the deploy key instead of a token.
+#       - name: Set Git identity for version control
+#         run: |
+#           # Set Git to use SSH
+#           git config --global user.name "${{ vars.RELEASE_BOT_NAME }}"
+#           git config --global user.email "${{ vars.RELEASE_BOT_EMAIL }}"
+
+#           # Change remote URL from HTTPS to SSH
+#           git remote set-url origin git@${{ vars.GIT_HOST }}:${{ vars.GIT_REMOTE_PATH }}.git
+
+#           # Test SSH connection
+#           git ls-remote origin > /dev/null && echo "SSH authentication - OK" || echo "SSH authentication - FAIL"
+
+#       # Applies the bump (or custom version) via the same ./semver.sh script used to read the
+#       # current version above. Note: nothing in this file commits/pushes/tags afterward — that's
+#       # presumably missing or lives in a step not shown here.
+#       - name: Update version
+#         run: |
+#           chmod +x ./semver.sh
+#           echo "Bumping version ($BUMP_TYPE)"
+#           if [[ "$BUMP_TYPE" == "custom" ]]; then
+#             ./semver.sh set-version $CUSTOM_VERSION
+#           else
+#             ./semver.sh bump $BUMP_TYPE
+#           fi

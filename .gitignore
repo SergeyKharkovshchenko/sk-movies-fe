@@ -21,3 +21,11 @@ Thumbs.db
 # Vite
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Cypress
+/cypress/videos
+/cypress/screenshots
+/cypress/downloads
+
+# Vitest coverage
+/coverage
