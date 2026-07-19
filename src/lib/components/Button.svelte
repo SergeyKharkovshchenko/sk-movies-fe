@@ -2,11 +2,12 @@
 	import { Tooltip } from 'bits-ui';
 	import { createEventDispatcher, onMount } from 'svelte';
 
-  const SIDE_OPTIONS = ['top', 'right', 'bottom', 'left'] as const;
-  const ALIGN_OPTIONS = ['start', 'center', 'end'] as const;
- type Side = (typeof SIDE_OPTIONS)[number];
- type Align = (typeof ALIGN_OPTIONS)[number];
-
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars -- used below only as a type source
+	const SIDE_OPTIONS = ['top', 'right', 'bottom', 'left'] as const;
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars -- used below only as a type source
+	const ALIGN_OPTIONS = ['start', 'center', 'end'] as const;
+	type Side = (typeof SIDE_OPTIONS)[number];
+	type Align = (typeof ALIGN_OPTIONS)[number];
 
 	type Variant = 'primary' | 'secondary' | 'tertiary' | 'red';
 	type ButtonType = 'button' | 'submit' | 'reset';
@@ -35,7 +36,9 @@
 					data-variant={variant}
 					{type}
 					class="relative px-4 py-2 rounded-md
-          {variant === 'primary' ? 'bg-primary-500 text-white hover:bg-primary-400 hover:text-white' : ''}
+          {variant === 'primary'
+						? 'bg-primary-500 text-white hover:bg-primary-400 hover:text-white'
+						: ''}
           {variant === 'secondary'
 						? 'text-primary-500 border border-primary-500 hover:bg-primary-400 hover:text-white'
 						: ''}
@@ -66,7 +69,9 @@
 				</button>
 			</Tooltip.Trigger>
 			<Tooltip.Content side={tooltipSide} align={tooltipAlign} sideOffset={10}>
-				<span class="text-sm bg-primary-950 text-white py-1 px-2 rounded-sm">{disabledTooltipMessage}</span>
+				<span class="text-sm bg-primary-950 text-white py-1 px-2 rounded-sm"
+					>{disabledTooltipMessage}</span
+				>
 			</Tooltip.Content>
 		</Tooltip.Root>
 	</Tooltip.Provider>

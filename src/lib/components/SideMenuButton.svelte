@@ -24,12 +24,17 @@
 	{onclick}
 >
 	{#if icon}
-		<i class={'mr-2 text-primary-500 group-hover:text-white! group-disabled:text-secondary-400! ' + icon}></i>
+		<i
+			class={'mr-2 text-primary-500 group-hover:text-white! group-disabled:text-secondary-400! ' +
+				icon}
+		></i>
 	{/if}
 	{@render children()}
 
 	{#if loading}
-		<div class="absolute top-0 left-0 right-0 w-full h-full flex items-center justify-center bg-green-500 rounded-md">
+		<div
+			class="absolute top-0 left-0 right-0 w-full h-full flex items-center justify-center bg-green-500 rounded-md"
+		>
 			<i class="fa-solid fa-circle-notch text-white animate-spin"></i>
 		</div>
 	{/if}

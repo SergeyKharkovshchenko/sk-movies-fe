@@ -22,17 +22,9 @@
 
 	async function handleShowAllCommentsByUser(userId: any) {
 		if (!$comments[userId]) {
-			const result = await commentsStore.getAllCommentsByUser(userId);
+			await commentsStore.getAllCommentsByUser(userId);
 		}
 		isCommentsOpen = !isCommentsOpen;
-	}
-
-	function formatIsoToDDMMYYYY(isoString: any) {
-		const d = new Date(isoString);
-		const day = String(d.getDate()).padStart(2, '0');
-		const month = String(d.getMonth() + 1).padStart(2, '0');
-		const year = d.getFullYear();
-		return `${day}.${month}.${year}`;
 	}
 
 	// $effect(() => {

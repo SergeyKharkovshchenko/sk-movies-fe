@@ -4,13 +4,14 @@
 	export let toast: { customMessage: string; locationLink: string; id: string };
 </script>
 
-<div class={`flex items-center h-8`}>
+<div class="flex items-center h-8">
 	<span class="text-primary-950 mr-4">
 		{toast.customMessage}
 	</span>
 	{#if toast.locationLink}
-		<button class="text-primary-500 underline underline-offset-4 mr-4" on:click={() => goto(`${toast.locationLink}`)}
-			>see location</button
+		<button
+			class="text-primary-500 underline underline-offset-4 mr-4"
+			on:click={() => goto(`${toast.locationLink}`)}>see location</button
 		>
 	{/if}
 

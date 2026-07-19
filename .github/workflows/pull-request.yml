@@ -5,7 +5,7 @@
 name: Pull Request (main branch)
 on:
   pull_request:
-    branches: ["main"]
+    branches: ['main']
 jobs:
   pull-request:
     runs-on: ubuntu-latest
@@ -58,7 +58,7 @@ jobs:
         with:
           install: false
           start: npm run preview
-          wait-on: "http://localhost:4173/sk-movies-fe"
+          wait-on: 'http://localhost:4173/sk-movies-fe'
           browser: chrome
 
       # Scans the repo (incl. coverage/lcov.info) and posts the result as a PR check/comment.

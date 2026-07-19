@@ -3,7 +3,6 @@
 	import { selectedGenres } from '$store/genres';
 	import SelectedMovieDetails from './SelectedMovieDetails.svelte';
 	import MovieRow from './MovieRow.svelte';
-	import Button from '$lib/components/Button.svelte';
 	import { filteredMovies, filters, moviesStore } from '$store/movies';
 	import { onMount } from 'svelte';
 	let minimizeTable = $derived($selectedGenres.key !== '');

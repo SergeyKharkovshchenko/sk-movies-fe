@@ -77,7 +77,11 @@ export function renameNodeByKey(nodes: any[], targetKey: string, newName: string
 	);
 }
 
-export function replaceChildrenByNodeKey(nodes: any[], targetKey: string, newChildren: any[]): any[] {
+export function replaceChildrenByNodeKey(
+	nodes: any[],
+	targetKey: string,
+	newChildren: any[]
+): any[] {
 	return nodes.map((node) => {
 		if (node.nodeKey === targetKey || targetKey == 'root') {
 			return { ...node, children: newChildren };
@@ -105,7 +109,11 @@ function assignToAllChildrenWithInherited(nodes: any, newProperyBars: any[]) {
 	});
 }
 
-export function assignPropertyBarsByNodeKey(nodes: any[] | undefined, targetKey: string, newProperyBars: any[]): any[] {
+export function assignPropertyBarsByNodeKey(
+	nodes: any[] | undefined,
+	targetKey: string,
+	newProperyBars: any[]
+): any[] {
 	return (nodes || []).map((node) => {
 		if (node.nodeKey === targetKey || targetKey == 'root') {
 			node.assignedPropertyBars = [...newProperyBars];

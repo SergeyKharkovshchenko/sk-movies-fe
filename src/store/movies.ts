@@ -29,20 +29,17 @@ async function addCommentsByMovieId(comment: any, id: any, user: any) {
 	}));
 }
 
-async function getPoster(id:string) {
-	return await moviesAPIService.getPoster(id)
+async function getPoster(id: string) {
+	return await moviesAPIService.getPoster(id);
 }
 
-async function embedPoster(id:string) {
-	return await moviesAPIService.embedPoster(id)
+async function embedPoster(id: string) {
+	return await moviesAPIService.embedPoster(id);
 }
 
-async function getPosterSimilarity(id:string) {
-	return await moviesAPIService.getPosterSimilarity(id)
+async function getPosterSimilarity(id: string) {
+	return await moviesAPIService.getPosterSimilarity(id);
 }
-
-
-
 
 export const filters: Writable<{ search: string }> = writable({
 	search: ''

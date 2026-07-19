@@ -50,7 +50,10 @@
 	on:click={() => navigate(menuItem.path)}
 	class:active={isActive}
 >
-	<div data-cy={`sideBar-navigation-items-${menuItem.linktext}`} class="h-8 w-8 p-1.5 flex justify-center items-center">
+	<div
+		data-cy={`sideBar-navigation-items-${menuItem.linktext}`}
+		class="h-8 w-8 p-1.5 flex justify-center items-center"
+	>
 		{#if menuItem.img}
 			<img src={menuItem.img} alt="{menuItem.linktext} of a user" class="w-5 h-5 rounded-full" />
 		{:else}

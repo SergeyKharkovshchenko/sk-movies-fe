@@ -17,9 +17,11 @@
 		"test": "npm run test:unit -- --run",
 		"test:coverage": "vitest run --coverage",
 		"cy:open": "cypress open",
-		"cy:run": "cypress run"
+		"cy:run": "cypress run",
+		"sbom": "cyclonedx-npm --output-format JSON --output-file bom.json"
 	},
 	"devDependencies": {
+		"@cyclonedx/cyclonedx-npm": "^6.0.0",
 		"@eslint/compat": "^1.2.5",
 		"@eslint/js": "^9.18.0",
 		"@sveltejs/adapter-auto": "^6.0.0",

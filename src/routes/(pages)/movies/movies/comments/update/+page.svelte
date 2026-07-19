@@ -5,7 +5,6 @@
 	import Headline from '$lib/components/Headline.svelte';
 	import { goto } from '$lib/utils/navigate';
 	import HeadlineSecondary from '$lib/components/HeadlineSecondary.svelte';
-
 </script>
 
 <div class="grid {$treeviewSidebarVisible ? 'grid-cols-[280px_1fr]' : ''}">

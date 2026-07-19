@@ -1,12 +1,12 @@
 <script lang="ts">
 	type Commentary = {
-		user: { userId: string | number; name: string }
-		movie: { movieId: string | number; title: string }
-		text: string
-		createdAt?: string
-	}
+		user: { userId: string | number; name: string };
+		movie: { movieId: string | number; title: string };
+		text: string;
+		createdAt?: string;
+	};
 
-	let { commentary }: { commentary: Commentary } = $props()
+	let { commentary }: { commentary: Commentary } = $props();
 </script>
 
 <div class="flex flex-col gap-4 rounded-md border border-primary-500 px-5 py-5">

@@ -1,20 +1,20 @@
 <script lang="ts">
-	import Headline from '$components/Headline.svelte'
-	import SecondaryNavigation from '$lib/components/SecondaryNavigation.svelte'
-	import HierarchyTree from '$lib/components/HierarchyTree.svelte'
-	import BikeChat from './components/BikeChat.svelte'
-	import RagControls from './components/RagControls.svelte'
-	import { treeviewSidebarVisible } from '$store/store'
-	import { goto } from '$lib/utils/navigate'
-	import { BikesAPIService } from '$services/apiService'
-	import { onMount } from 'svelte'
+	import Headline from '$components/Headline.svelte';
+	import SecondaryNavigation from '$lib/components/SecondaryNavigation.svelte';
+	import HierarchyTree from '$lib/components/HierarchyTree.svelte';
+	import BikeChat from './components/BikeChat.svelte';
+	import RagControls from './components/RagControls.svelte';
+	import { treeviewSidebarVisible } from '$store/store';
+	import { goto } from '$lib/utils/navigate';
+	import { BikesAPIService } from '$services/apiService';
+	import { onMount } from 'svelte';
 
-	let relations: { parent: string; child: string }[] = []
-	let exampleQuestions: string[] = []
+	let relations: { parent: string; child: string }[] = [];
+	let exampleQuestions: string[] = [];
 
 	onMount(async () => {
-		relations = (await BikesAPIService.getRelations()) ?? []
-	})
+		relations = (await BikesAPIService.getRelations()) ?? [];
+	});
 </script>
 
 <div class="grid {$treeviewSidebarVisible ? 'grid-cols-[280px_1fr]' : ''}">

@@ -11,7 +11,7 @@
 		minHeightPercentage = '50',
 		isSubmitDisabled = false,
 		children,
-		submit,
+		submit
 	} = $props();
 
 	function close() {

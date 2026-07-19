@@ -8,7 +8,7 @@
 	let { movie, minimizeTable } = $props();
 
 	async function handleProductRowClick(movie: Property) {
-		const result = await moviesStore.getCommentsByMovieId(movie.movieId);
+		await moviesStore.getCommentsByMovieId(movie.movieId);
 
 		// if ($selectedMovie.movieId == movie.genre0.movieId) {
 		// 	// selectedMovie.reset();

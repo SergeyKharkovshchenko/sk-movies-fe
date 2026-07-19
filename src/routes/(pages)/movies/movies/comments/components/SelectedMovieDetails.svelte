@@ -2,7 +2,6 @@
 	import ArticleMenuButton from '$lib/components/ArticleMenuButton.svelte';
 	import { Tabs } from 'bits-ui';
 	import AboutTheMovie from './tabViews/AboutTheMovie.svelte';
-	import { selectedGenres } from '$store/genres';
 
 	let modeTabState = $state('edit');
 

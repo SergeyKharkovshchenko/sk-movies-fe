@@ -1,4 +1,5 @@
 // Core event types that React.ChangeEvent builds upon
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- T is threaded through to ChangeEvent below
 interface SyntheticEvent<T = Element> {
 	bubbles?: boolean;
 	cancelable?: boolean;

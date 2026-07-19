@@ -17,7 +17,7 @@
 		movies: {
 			menuItemsTop: [
 				{ linktext: 'Users', icon: 'fa-user-tie', path: '/movies/users' },
-				{ linktext: 'Movies', icon: 'fa-film', path: '/movies/movies' },
+				{ linktext: 'Movies', icon: 'fa-film', path: '/movies/movies' }
 			],
 			menuItemsBottom: []
 		},

@@ -1,0 +1,69 @@
+# Generates a CycloneDX SBOM (software bill of materials) from this project's dependency tree and
+# uploads it to an OWASP Dependency-Track server, which continuously matches it against
+# vulnerability databases (NVD, OSS Index, etc.) and flags newly-disclosed CVEs in dependencies
+# even without a new commit. Runs on push to main and can also be triggered manually.
+#
+# To make this work:
+#   1. You need a running Dependency-Track server. Easiest option for a personal project is the
+#      official Docker Compose bundle:
+#        curl -LO https://dependencytrack.org/docker-compose.yml
+#        docker compose up -d
+#      This starts the API server on :8081 and the frontend on :8080. Default login is
+#      admin/admin — change it on first login. See https://docs.dependencytrack.org/getting-started/
+#      for hosted/production alternatives if you don't want to self-host.
+#   2. In the Dependency-Track UI: Administration > Access Management > Teams > Automation (or
+#      create a team) > Permissions, grant BOM_UPLOAD (and PROJECT_CREATION_UPLOAD if you want
+#      auto-create, used below) > Team API Keys > generate one.
+#   3. In GitHub: this repo's Settings > Secrets and variables > Actions:
+#      - Secret DTRACK_API_KEY: the API key from step 2.
+#      - Variable DTRACK_HOSTNAME: the server's hostname (no protocol), e.g. dtrack.example.com or
+#        an IP/tailscale address if self-hosted without a public DNS name.
+#      - Variables DTRACK_PORT / DTRACK_PROTOCOL: only needed if not the defaults (443 / https) —
+#        e.g. a local Docker Compose instance is typically DTRACK_PORT=8081, DTRACK_PROTOCOL=http.
+#   4. Push to main (or run this workflow manually) — the project "sk-movies-fe" should appear in
+#      the Dependency-Track UI (auto-created on first upload) with this build's dependency tree.
+name: Dependency-Track SBOM
+
+on:
+  push:
+    branches: ['main']
+  workflow_dispatch:
+
+jobs:
+  sbom:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Restore node_modules cache
+        id: node-modules-cache
+        uses: actions/cache@v6
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      - name: Install dependencies
+        if: steps.node-modules-cache.outputs.cache-hit != 'true'
+        run: npm ci
+
+      - name: Generate SBOM
+        run: npm run sbom
+
+      - name: Read project version
+        id: project-version
+        run: echo "VERSION=$(jq -r '.version' package.json)" >> "$GITHUB_OUTPUT"
+
+      - name: Upload SBOM to Dependency-Track
+        uses: DependencyTrack/gh-upload-sbom@v4.1.0
+        with:
+          serverhostname: ${{ vars.DTRACK_HOSTNAME }}
+          port: ${{ vars.DTRACK_PORT || '443' }}
+          protocol: ${{ vars.DTRACK_PROTOCOL || 'https' }}
+          apikey: ${{ secrets.DTRACK_API_KEY }}
+          projectname: sk-movies-fe
+          projectversion: ${{ steps.project-version.outputs.VERSION }}
+          bomfilename: bom.json
+          autocreate: true
