@@ -4,3 +4,7 @@ pnpm-lock.yaml
 yarn.lock
 bun.lock
 bun.lockb
+
+# Linted by StandardJS (see .github/workflows/ci.yml's `lint` job), which conflicts with this
+# repo's Prettier config (tabs vs. StandardJS's required 2-space/no-semicolons/no-tabs style).
+src/lib/utils/dnd.js
