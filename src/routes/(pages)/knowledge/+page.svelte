@@ -1,6 +1,6 @@
 <script lang="ts">
-	import KnowledgeWizard from './components/KnowledgeWizard.svelte'
-	import KnowledgeAdmin from './components/KnowledgeAdmin.svelte'
+	import KnowledgeWizard from './components/KnowledgeWizard.svelte';
+	import KnowledgeAdmin from './components/KnowledgeAdmin.svelte';
 </script>
 
 <div class="flex flex-col gap-6 m-6">

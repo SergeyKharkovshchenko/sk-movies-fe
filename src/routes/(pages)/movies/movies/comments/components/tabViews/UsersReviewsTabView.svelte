@@ -1,7 +1,6 @@
 <script lang="ts">
 	import Button from '$components/Button.svelte';
 	import { comments, moviesStore, selectedMovie } from '$store/movies';
-	import { onMount } from 'svelte';
 
 	let poster = $state<string | undefined>();
 

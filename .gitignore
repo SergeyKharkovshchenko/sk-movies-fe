@@ -29,3 +29,7 @@ vite.config.ts.timestamp-*
 
 # Vitest coverage
 /coverage
+
+# CycloneDX SBOM
+/bom.json
+/bom.xml

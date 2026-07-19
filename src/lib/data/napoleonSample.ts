@@ -51,19 +51,17 @@ I had occupied that post with a detachment from General Byng 's brigade of Guard
 When I reached Lloyd 's abandoned guns, I stood near them for about a minute to contemplate the scene: it was grand beyond description. Hougoumont and its wood sent up a broad flame through the dark masses of smoke that overhung the field; beneath this cloud the French were indistinctly visible. Here a waving mass of long red feathers could be seen; there, gleams as from a sheet of steel showed that the cuirassiers were moving; 400 cannon were belching forth fire and death on every side; the roaring and shouting were indistinguishably commixed—together they gave me an idea of a labouring volcano. Bodies of infantry and cavalry were pouring down on us, and it was time to leave contemplation, so I moved towards our columns, which were standing up in square.
 The fighting at Hougoumont has often been characterised as a diversionary attack to draw in Wellington's reserves which escalated into an all-day battle and drew in French reserves instead. In fact there is a good case to believe that both Napoleon and Wellington thought that holding Hougoumont was key to winning the battle. Hougoumont was a part of the battlefield that Napoleon could see clearly, and he continued to direct resources towards it and its surroundings all afternoon (33 battalions in all, 14,000 troops). Similarly, though the house never contained a large number of troops, Wellington devoted 21 battalions (12,000 troops) over the course of the afternoon in keeping the hollow way open to allow fresh troops and ammunition to reach the buildings. He moved several artillery batteries from his hard-pressed centre to support Hougoumont, and later stated that "the success of the battle turned upon closing the gates at Hougoumont". Much like the fight for Little Round Top during the Battle of Gettysburg in the US Civil War some fifty years later, the struggle for Hougoumont became the key battle within the battle. Hougoumont proved to be decisive terrain.
 
-`
+`;
 
 // == The Grand Battery starts its bombardment ==
 
 // The 80 guns of Napoleon's grande batterie drew up in the centre. These opened fire at 11:50, according to Lord Hill (commander of the Anglo-allied II Corps), while other sources put the time between noon and 13:30. The grande batterie was too far back to aim accurately, and the only other troops they could see were skirmishers of the regiments of Kempt and Pack, and Perponcher 's 2nd Dutch division (the others were employing Wellington's characteristic "reverse slope defence").
 // The bombardment caused a large number of casualties. Although some projectiles buried themselves in the soft soil, most found their marks on the reverse slope of the ridge. The bombardment forced the cavalry of the Union Brigade (in third line) to move to its left, to reduce their casualty rate.
 
-
 // == Napoleon spots the Prussians ==
 
 // At about 13:15, Napoleon saw the first columns of Prussians around the village of Lasne-Chapelle-Saint-Lambert , 4 to 5 miles (6.4 to 8.0 km) away from his right flank—about three hours march for an army. Napoleon's reaction was to have Marshal Soult send a message to Grouchy telling him to come towards the battlefield and attack the arriving Prussians. Grouchy, however, had been executing Napoleon's previous orders to follow the Prussians "with your sword against his back" towards Wavre, and was by then too far away to reach Waterloo.
 // Grouchy was advised by his subordinate, Gérard , to "march to the sound of the guns", but stuck to his orders and engaged the Prussian III Corps rearguard, under the command of Lieutenant-General Baron von Thielmann , at the Battle of Wavre . Moreover, Soult's letter ordering Grouchy to move quickly to join Napoleon and attack Bülow would not actually reach Grouchy until after 20:00.
-
 
 // == First French infantry attack ==
 
@@ -78,7 +76,6 @@ The fighting at Hougoumont has often been characterised as a diversionary attack
 // The French advance drove in the British skirmishers and reached the sunken road. As they did so, Pack's men stood up, formed into a four-deep line formation for fear of the French cavalry, advanced, and opened fire. However, a firefight had been anticipated and the French infantry had accordingly advanced in more linear formation. Now, fully deployed into line, they returned fire and successfully pressed the British troops; although the attack faltered at the centre, the line in front of d'Erlon's right started to crumble. Picton was killed shortly after ordering a counter-attack, and the British and Hanoverian troops also began to give way under the pressure of numbers.
 // Pack's regiments, all four ranks deep, advanced to attack the French in the road but faltered and began to fire on the French instead of charging. The 42nd Black Watch halted at the hedge and the resulting fire-fight drove back the British 92nd Foot, while the leading French 45e Ligne burst through the hedge cheering. Along the sunken road, the French were forcing the Anglo-allies back, the British line was dispersing, and at two o'clock in the afternoon Napoleon was winning the Battle of Waterloo.
 // Reports from Baron von Müffling , the Prussian liaison officer attached to Wellington's army, relate that, "After 3 o'clock the Duke's situation became critical, unless the succour of the Prussian army arrived soon".
-
 
 // == Charge of the British heavy cavalry ==
 
@@ -103,7 +100,6 @@ The fighting at Hougoumont has often been characterised as a diversionary attack
 // This service was rendered at a very high cost, as close combat with French cavalry, carbine fire, infantry musketry, and—more deadly than all of these—artillery fire steadily eroded the number of effectives in the two brigades. At 6 o'clock in the afternoon the whole Union Brigade could field only three squadrons, though these countercharged French cavalry, losing half their number in the process. At the end of the fighting, the two brigades, by this time combined, could muster one squadron.
 // Fourteen thousand French troops of d'Erlon's I Corps had been committed to this attack. The I Corps had been driven in rout back across the valley, costing Napoleon 3,000 casualties including over 2,000 prisoners taken. Also some valuable time was lost, as the charge had dispersed numerous units and it would take until 16:00 for d'Erlon's shaken corps to reform. And although elements of the Prussians now began to appear on the field to his right, Napoleon had already ordered Lobau's VI corps to move to the right flank to hold them back before d'Erlon's attack began.
 
-
 // == The French cavalry attack ==
 
 // A little before 16:00, Ney noted an apparent exodus from Wellington's centre. He mistook the movement of casualties to the rear for the beginnings of a retreat, and sought to exploit it. Following the defeat of d'Erlon's Corps, Ney had few infantry reserves left, as most of the infantry had been committed either to the futile Hougoumont attack or to the defence of the French right. Ney therefore tried to break Wellington's centre with cavalry alone. Initially, Milhaud's reserve cavalry corps of cuirassiers and Lefebvre-Desnoëttes ' light cavalry division of the Imperial Guard, some 4,800 sabres, were committed. When these were repulsed, Kellermann 's heavy cavalry corps and Guyot 's heavy cavalry of the Guard were added to the massed assault, a total of around 9,000 cavalry in 67 squadrons. When Napoleon saw the charge he said it was an hour too soon.
@@ -118,13 +114,11 @@ The fighting at Hougoumont has often been characterised as a diversionary attack
 // For reasons that remain unclear, no attempt was made to spike other Anglo-allied guns while they were in French possession. In line with Wellington's orders, gunners were able to return to their pieces and fire into the French cavalry as they withdrew after each attack. After numerous costly but fruitless attacks on the Mont-Saint-Jean ridge, the French cavalry was spent.
 // Their casualties cannot easily be estimated. Senior French cavalry officers, in particular the generals, experienced heavy losses. Four divisional commanders were wounded, nine brigadiers wounded, and one killed—testament to their courage and their habit of leading from the front. Illustratively, Houssaye reports that the Grenadiers à Cheval numbered 796 of all ranks on 15 June, but just 462 on 19 June, while the Empress Dragoons lost 416 of 816 over the same period. Overall, Guyot's Guard heavy cavalry division lost 47% of its strength.
 
-
 // == Second French infantry attack ==
 
 // Eventually it became obvious, even to Ney, that cavalry alone were achieving little. Belatedly, he organised a combined-arms attack, using Bachelu's division and Tissot's regiment of Foy's division from Reille's II Corps (about 6,500 infantrymen) plus those French cavalry that remained in a fit state to fight. This assault was directed along much the same route as the previous heavy cavalry attacks (between Hougoumont and La Haye Sainte). It was halted by a charge of the Household Brigade cavalry led by Uxbridge. The British cavalry were unable, however, to break the French infantry, and fell back with losses from musketry fire.
 // Uxbridge recorded that he tried to lead the Dutch Carabiniers, under Major-General Trip , to renew the attack and that they refused to follow him. Other members of the British cavalry staff also commented on this occurrence. However, there is no support for this incident in Dutch or Belgian sources, and Wellington wrote in his Dispatch to Secretary for War Bathurst on 19 June 1815 that General Trip had "conducted himself much to my satisfaction". Uxbridge then ordered a charge by three squadrons of the 3rd Hussars of the King's German Legion. They broke through the French cavalry, but became hemmed in, were cut off and suffered severe losses. Meanwhile, Bachelu's and Tissot's men and their cavalry supports were being hard hit by fire from artillery and from Adam's infantry brigade, and they eventually fell back.
 // Although the French cavalry caused few direct casualties to Wellington's centre, artillery fire onto his infantry squares caused many. Wellington's cavalry, except for Sir John Vandeleur's and Sir Hussey Vivian's brigades on the far left, had all been committed to the fight, and had taken significant losses. The situation appeared so desperate that the Cumberland Hussars, the only Hanoverian cavalry regiment present, fled the field spreading alarm all the way to Brussels.
-
 
 // == French capture of La Haye Sainte ==
 
@@ -142,14 +136,12 @@ The fighting at Hougoumont has often been characterised as a diversionary attack
 // During this time many of Wellington's generals and aides were killed or wounded including FitzRoy Somerset , Canning, de Lancey , Alten and Cooke . The situation was now critical and Wellington, trapped in an infantry square and ignorant of events beyond it, was desperate for the arrival of help from the Prussians. He later wrote,
 // The time they occupied in approaching seemed interminable. Both they and my watch seemed to have stuck fast.
 
-
 // == Arrival of the Prussian IV Corps: Plancenoit ==
 
 // Night or the Prussians must come.
 // The Prussian IV Corps (Bülow's) was the first to arrive in strength. Bülow's objective was Plancenoit, which the Prussians intended to use as a springboard into the rear of the French positions. Blücher intended to secure his right upon the Châteaux Frichermont using the Bois de Paris road. Blücher and Wellington had been exchanging communications since 10:00 and had agreed to this advance on Frichermont if Wellington's centre was under attack. General Bülow noted that the way to Plancenoit lay open and that the time was 16:30.
 // At about this time, the Prussian 15th Brigade ( Losthin's ) was sent to link up with the Nassauers of Wellington's left flank in the Frichermont- La Haie area, with the brigade's horse artillery battery and additional brigade artillery deployed to its left in support. Napoleon sent Lobau's corps to stop the rest of Bülow's IV Corps proceeding to Plancenoit. The 15th Brigade threw Lobau's troops out of Frichermont with a determined bayonet charge, then proceeded up the Frichermont heights, battering French Chasseurs with 12-pounder artillery fire, and pushed on to Plancenoit. This sent Lobau's corps into retreat to the Plancenoit area, driving Lobau past the rear of the Armee Du Nord ' s right flank and directly threatening its only line of retreat. Hiller's 16th Brigade also pushed forward with six battalions against Plancenoit.
 // Napoleon had dispatched all eight battalions of the Young Guard to reinforce Lobau, who was now seriously pressed. The Young Guard counter-attacked and, after very hard fighting, secured Plancenoit, but were themselves counter-attacked and driven out. Napoleon sent two battalions of the Middle/Old Guard into Plancenoit and after ferocious bayonet fighting—they did not deign to fire their muskets—this force recaptured the village.
-
 
 // == Zieten's flank march ==
 
@@ -159,7 +151,6 @@ The fighting at Hougoumont has often been characterised as a diversionary attack
 // The French were expecting Grouchy to march to their support from Wavre, and when Prussian I Corps (Zieten's) appeared at Waterloo instead of Grouchy, "the shock of disillusionment shattered French morale" and "the sight of Zieten's arrival caused turmoil to rage in Napoleon's army". I Corps proceeded to attack the French troops before Papelotte and by 19:30 the French position was bent into a rough horseshoe shape. The ends of the line were now based on Hougoumont on the left, Plancenoit on the right, and the centre on La Haie.
 // Durutte had taken the positions of La Haie and Papelotte in a series of attacks, but now retreated behind Smohain without opposing the Prussian 24th Regiment (Laurens') as it retook both. The 24th advanced against the new French position, was repulsed, and returned to the attack supported by Silesian Schützen (riflemen) and the F/1st Landwehr . The French initially fell back before the renewed assault, but now began seriously to contest ground, attempting to regain Smohain and hold on to the ridgeline and the last few houses of Papelotte.
 // The Prussian 24th Regiment linked up with a Highlander battalion on its far right and along with the 13th Landwehr Regiment and cavalry support threw the French out of these positions. Further attacks by the 13th Landwehr and the 15th Brigade drove the French from Frichermont. Durutte's division, finding itself about to be charged by massed squadrons of Zieten's I Corps cavalry reserve, retreated from the battlefield. The rest of d'Erlon's I Corps also broke and fled in panic, while to the west the French Middle Guard were assaulting Wellington's centre. The Prussian I Corps then advanced towards the Brussels road, the only line of retreat available to the French.
-
 
 // == Attack of the Imperial Guard ==
 
@@ -175,14 +166,12 @@ The fighting at Hougoumont has often been characterised as a diversionary attack
 // The last of the Guard retreated headlong. A ripple of panic passed through the French lines as the astounding news spread: " La Garde recule. Sauve qui peut !" ("The Guard is retreating. Every man for himself!") Wellington now stood up in Copenhagen 's stirrups and waved his hat in the air to signal a general advance. His army rushed forward from the lines and threw themselves upon the retreating French.
 // The surviving Imperial Guard rallied on their three reserve battalions (some sources say four) just south of La Haye Sainte for a last stand . A charge from Adam 's Brigade and the Hanoverian Landwehr Osnabrück Battalion, plus Vivian's and Vandeleur's relatively fresh cavalry brigades to their right, threw them into confusion. Those left in semi-cohesive units retreated towards La Belle Alliance . It was during this retreat that some of the Guards were invited to surrender, eliciting the famous, if apocryphal, retort " La Garde meurt, elle ne se rend pas! " ("The Guard dies, it does not surrender!").
 
-
 // == Prussian capture of Plancenoit ==
 
 // At about the same time, the Prussian 5th, 14th, and 16th Brigades were starting to push through Plancenoit, in the third assault of the day. The church was by now on fire, while its graveyard—the French centre of resistance—had corpses strewn about "as if by a whirlwind". Five Guard battalions were deployed in support of the Young Guard, virtually all of which was now committed to the defence, along with remnants of Lobau's corps. The key to the Plancenoit position proved to be the Chantelet woods to the south. Pirch's II Corps had arrived with two brigades and reinforced the attack of IV Corps, advancing through the woods.
 // The 25th Regiment's musketeer battalions threw the 1/2e Grenadiers (Old Guard) out of the Chantelet woods, outflanking Plancenoit and forcing a retreat. The Old Guard retreated in good order until they met the mass of troops retreating in panic, and became part of that rout. The Prussian IV Corps advanced beyond Plancenoit to find masses of French retreating in disorder from British pursuit. The Prussians were unable to fire for fear of hitting Wellington's units. This was the fifth and final time that Plancenoit changed hands.
 // French forces not retreating with the Guard were surrounded in their positions and eliminated, neither side asking for nor offering quarter. The French Young Guard Division reported 96 per cent casualties, and two-thirds of Lobau's Corps ceased to exist.
 // Despite their great courage and stamina, the French Guards fighting in the village began to show signs of wavering. The church was already on fire with columns of red flame coming out of the windows, aisles and doors. In the village itself—still the scene of bitter house-to-house fighting—everything was burning, adding to the confusion. However, once Major von Witzleben's manoeuvre was accomplished and the French Guards saw their flank and rear threatened, they began to withdraw. The Guard Chasseurs under General Pelet formed the rearguard. The remnants of the Guard left in a great rush, leaving large masses of artillery, equipment and ammunition wagons in the wake of their retreat. The evacuation of Plancenoit led to the loss of the position that was to be used to cover the withdrawal of the French Army to Charleroi. The Guard fell back from Plancenoit in the direction of Maison du Roi and Caillou. Unlike other parts of the battlefield, there were no cries of "Sauve qui peut!" here. Instead, the cry "Sauvons nos aigles!" ("Let's save our eagles!") could be heard.
-
 
 // == French disintegration ==
 
@@ -200,13 +189,11 @@ The fighting at Hougoumont has often been characterised as a diversionary attack
 // Peregrine Maitland's 1st Foot Guards , who had defeated the Chasseurs of the Middle Guard, were mistakenly thought to have defeated the Grenadiers of the Old Guard. They were thus awarded the title of Grenadier Guards in recognition of their feat and adopted bearskins in the style of the Grenadiers. Britain's Household Cavalry likewise adopted the cuirass in 1821 in recognition of their success against their armoured French counterparts. The effectiveness of the lance was noted by all participants and this weapon subsequently became more widespread throughout Europe; the British converted their first light cavalry regiment to lancers in 1816, their uniforms, of Polish origin, were based on those of the Imperial Guard lancers .
 // Teeth of tens of thousands of dead soldiers were removed by surviving troops, locals or even scavengers who had travelled there from Britain, then used for making denture replacements in Britain and elsewhere. The so-called "Waterloo teeth" were in demand because they came from relatively healthy young men. Despite the efforts of scavengers both human and otherwise, human remains could still be seen at Waterloo a year after the battle.
 
-
 // == Historical importance ==
 
 // Waterloo proved a decisive battle in more than one sense. Each generation in Europe up to the outbreak of the First World War looked back at Waterloo as the turning point that dictated the course of subsequent world history, seeing it in retrospect as the event that ushered in the Concert of Europe , an era characterised by relative peace, material prosperity and technological progress. The battle definitively ended the series of wars that had convulsed Europe—and involved other regions of the world—since the French Revolution of the early 1790s. It also ended the First French Empire and the political and military career of Napoleon Bonaparte, one of the greatest commanders and statesmen in history.
 // There followed almost four decades of international peace in Europe. No further major international conflict occurred until the Crimean War of 1853–1856. Changes to the configuration of European states, as refashioned in the aftermath of Waterloo, included the formation of the Holy Alliance of reactionary governments intent on repressing revolutionary and democratic ideas, and the reshaping of the former Holy Roman Empire into a German Confederation increasingly marked by the political dominance of Prussia .
 // The bicentenary of Waterloo prompted renewed attention to the geopolitical and economic legacy of the battle and to the century of relative transatlantic peace which followed.
-
 
 // == Views on the reasons for Napoleon's defeat ==
 
@@ -219,7 +206,6 @@ The fighting at Hougoumont has often been characterised as a diversionary attack
 // In his famous study of the Campaign of 1815, the Prussian Clausewitz does not agree with Wellington on this assessment. Indeed, he claims that if Bonaparte had attacked in the morning, the battle would probably have been decided by the time the Prussians arrived, and an attack by Blücher, while not impossible or useless, would have been much less certain of success.
 // Parkinson (2000) adds: "Neither army beat Napoleon alone. But whatever the part played by Prussian troops in the actual moment when the Imperial Guard was repulsed, it is difficult to see how Wellington could have staved off defeat, when his centre had been almost shattered, his reserves were almost all committed, the French right remained unmolested and the Imperial Guard intact. ... Blücher may not have been totally responsible for victory over Napoleon, but he deserved full credit for preventing a British defeat". Steele (2014) writes: "Blücher's arrival not only diverted vital reinforcements, but also forced Napoleon to accelerate his effort against Wellington. The tide of battle had been turned by the hard-driving Blücher. As his Prussians pushed in Napoleon's flank, Wellington was able to shift to the offensive".
 // It has also been noted that Wellington's maps of the battlefield were based on a recent reconnaissance and therefore more up to date than those used by Napoleon, who had to rely on Ferraris - Capitaine maps of 1794.
-
 
 // == The battlefield today ==
 
@@ -234,19 +220,13 @@ The fighting at Hougoumont has often been characterised as a diversionary attack
 // The remains of a soldier thought to be 23-year-old Friederich Brandt were discovered in 2012. He was a slightly hunchbacked infantryman, 1.60 metres (5 ft 3 in) tall, and was hit in the chest by a French bullet. His coins, rifle and position on the battlefield identified him as an Hanoverian fighting in the King's German Legion. In 2022 a second skeleton was found in a ditch near a former field hospital by the Waterloo Uncovered charity. In December 2022, the historians Dr. Bernard Wilkin (Belgium) and Robin Schäfer (Germany), assisted by Belgian archaeologist Dominique Bosquet, discovered and recovered the largest assembly of remains of Waterloo battlefield casualties found in recent times. In the aftermath of the historian's research into the fate of the fallen once buried on the Waterloo battlefield (see below), several local individuals had come forward who were in the possession of human remains recovered on it. Forensic examination has shown that these remains belonged to at least four soldiers, some of whom are likely to be Prussian. Another set of human remains, initially discovered on the central battlefield by illegal metal detecting and consisting of the remains of six British soldiers, was also recovered by the team. Objects found with the casualties on the central battlefield point to the fact that at least one of them served in the First Foot Guards.
 // A possible reason for the absence of human remains in any quantity is that European battlefields of the time were often scoured for bones to make bone meal , which was much in demand as a fertilizer before the discovery of superphosphates in the 1840s. Bernard Wilkin and Robin Schäfer, supported by the British archaeologist Tony Pollard, concluded that in the aftermath of the conflict, local farmers dug up the corpses of horses and men and sold them to the Waterloo sugar factory . There, the ground-down bones were fired in kilns to make bone-char, which was then used to filter sugar syrup as part of the production process.
 
-
 // == Coin controversy ==
 
 // As part of the bicentennial celebration of the battle, in 2015 Belgium minted a two- euro coin depicting the Lion monument over a map of the field of battle. France officially protested against this issue of coins, while the Belgian government noted that the French mint sells souvenir medals at Waterloo. After 180,000 coins were minted but not released, the issue was melted. Instead, Belgium issued an identical commemorative coin in the non-standard value of ⁠2 + 1 / 2 ⁠ euros. Legally valid only within the issuing country it was minted in brass, packaged, and sold by the Belgian mint for 6 euros. A ten-euro coin, showing Wellington, Blücher, their troops and the silhouette of Napoleon, was also available in silver for 42 euros.
 
-
 // == Further reading ==
 
-
-
 // == Historiography and memory ==
-
-
 
 // == Primary sources ==
 
@@ -261,7 +241,6 @@ The fighting at Hougoumont has often been characterised as a diversionary attack
 // From childhood, Talleyrand walked with a limp, which caused him to later be called le diable boiteux (French for "the lame devil") among other nicknames. In his Memoirs , he linked this infirmity to an accident at age four, but recent research has shown that his limp was in fact congenital. It might have been a congenital clubfoot . In any case, his handicap made him unable to follow his father into a military career, leaving the obvious career of the Church .
 // The latter held out the hope for Charles-Maurice of succeeding his uncle, Alexandre Angélique de Talleyrand-Périgord , then Archbishop of Reims , one of the most prestigious and richest dioceses in France. At eight years old, Talleyrand attended the Collège d'Harcourt , the seminary of Saint-Sulpice , while studying theology at the Sorbonne until the age of 21. In his free time, he read the works of Montesquieu , Voltaire , and other writers who were beginning to question the authority of the ancien régime in matters of church and state. As subdeacon he witnessed the coronation of Louis XVI at Reims in 1775.
 // He was not ordained a priest until four years later, on 19 December 1779, at the age of 25. Very soon, in 1780, he attained the influential position of Agent-General of the Clergy, and was instrumental in promoting the drawing up of a general inventory of Church properties in France as of 1785, along with a defense of "inalienable rights of the Church", the latter being a stance he later denied. In 1788, the influence of Talleyrand's father and family overcame the King's dislike and obtained his appointment as Bishop of Autun , with a stipend of 22,000 livres . He was consecrated a bishop on 4 January 1789 by Louis-André de Grimaldi . The undoubtedly able Talleyrand, though hardly devout and even free-thinking in the Enlightenment mold, was outwardly respectful of religious observance. In the course of the Revolution, however, he was to manifest his cynicism and abandon all orthodox Catholic practice. He resigned his bishopric on 13 April 1791. On 29 June 1802, Pope Pius VII laicized Talleyrand, an event most uncommon at the time in the history of the Church.
-
 
 // == French Revolution ==
 
@@ -281,7 +260,6 @@ The fighting at Hougoumont has often been characterised as a diversionary attack
 // After his resignation in 1807 from the ministry, Talleyrand began to accept bribes from hostile powers (mainly Austria, but also Russia), to betray Napoleon's secrets. Talleyrand and Joseph Fouché , who were typically enemies in both politics and the salons , had a rapprochement in late 1808 and entered into discussions over the imperial line of succession. Napoleon had yet to address this matter and the two men knew that without a legitimate heir a struggle for power would erupt in the wake of Napoleon's death. Even Talleyrand, who believed that Napoleon's policies were leading France to ruin, understood the necessity of peaceful transitions of power. Napoleon received word of their actions and deemed them treasonous. This perception caused the famous dressing down of Talleyrand in front of Napoleon's marshals , during which Napoleon famously claimed that he could "break him like a glass, but it's not worth the trouble" and added with a scatological tone that Talleyrand was "shit in a silk stocking", to which the minister coldly retorted, once Napoleon had left, "Pity that so great a man should have been so badly brought up!"
 // Talleyrand opposed the further harsh treatment of Austria in 1809 after the War of the Fifth Coalition . He was also a critic of the French invasion of Russia in 1812. He was invited to resume his former office in late 1813, but Talleyrand could see that power was slipping from Napoleon's hands. He offered to resign from the council in early 1814, but Napoleon refused the move. Talleyrand then hosted the tsar at the end of March after the fall of Paris, persuaded him that the best chance of stability lay with the House of Bourbon , and gained his support. On 1 April 1814 he led the Sénat conservateur in establishing a provisional government in Paris, of which he was elected president. On 2 April the Senate officially deposed Napoleon with the Acte de déchéance de l'Empereur ; by 11 April it had approved the Treaty of Fontainebleau and adopted a new constitution to re-establish the Bourbon monarchy.
 
-
 // == Bourbon Restoration and July Monarchy ==
 
 // When Napoleon was succeeded by Louis XVIII in April 1814, Talleyrand was one of the key agents of the restoration of the House of Bourbon , although he opposed the new legislation of Louis's rule. Talleyrand was the chief French negotiator at the Congress of Vienna ; earlier that same year he signed the Treaty of Paris . It was due in part to his skills that the terms of the treaty were remarkably lenient towards France. As the Congress opened, the right to make decisions was restricted to four countries: Austria, the United Kingdom, Prussia and Russia. France and other European countries were invited to attend, but were not allowed to influence the process. Talleyrand promptly became the champion of the small countries and demanded admission into the ranks of the decision-making process. The four powers admitted France and Spain to the decision-making backrooms of the conference after a good deal of diplomatic maneuvering by Talleyrand, who had the support of the Spanish representative, Pedro Gómez Labrador, Marquis of Labrador . Spain was excluded after a while (a result of both the Marquis of Labrador's incompetence as well as the quixotic nature of Spain's agenda), but France (Talleyrand) was allowed to participate until the end. Russia and Prussia sought to enlarge their territory at the Congress. Russia demanded annexation of Poland (already occupied by Russian troops); this demand was finally satisfied, despite protests by France, Austria and the United Kingdom. Austria was afraid of future conflicts with Russia or Prussia and the United Kingdom was opposed to their expansion as well—and Talleyrand managed to take advantage of these contradictions within the former anti-French coalition. On 3 January 1815, a secret treaty was signed by France's Talleyrand, Austria's Metternich and Britain's Castlereagh . By this tract, officially a secret treaty of defensive alliance, the three powers agreed to use force if necessary to "repulse aggression" (of Russia and Prussia) and to protect the "state of security and independence."
@@ -298,18 +276,11 @@ The fighting at Hougoumont has often been characterised as a diversionary attack
 // Near the end of his life, Talleyrand became interested in Catholicism again while teaching his young granddaughter simple prayers. The Abbé Félix Dupanloup came to Talleyrand in his last hours, and according to his account Talleyrand made confession and received extreme unction . When the abbé tried to anoint Talleyrand's palms, as prescribed by the rite, he turned his hands over to make the priest anoint him on the back of the hands, since he was a bishop. He also signed, in the abbé's presence, a solemn declaration in which he openly disavowed "the great errors which … had troubled and afflicted the Catholic, Apostolic and Roman Church, and in which he himself had had the misfortune to fall." He died on 17 May 1838 and was buried in the Notre-Dame Chapel, near his Château de Valençay .
 // Today, when speaking of the art of diplomacy, the phrase "they are a Talleyrand" is variously used to describe a statesman of great resourcefulness and craft, or a cynical and conscienceless self-serving politician.
 
-
 // == Further reading ==
-
-
 
 // == Scholarly studies ==
 
-
-
 // == Primary sources ==
-
-
 
 // == Non-English language ==
 
@@ -330,13 +301,11 @@ The fighting at Hougoumont has often been characterised as a diversionary attack
 // One story of Napoleon at the school is that he led junior students to victory against senior students in a snowball fight, which allegedly showed his leadership abilities. But the story was only told after Napoleon had become famous. In his later years at Brienne, Napoleon became an outspoken Corsican nationalist and admirer of Paoli.
 // In September 1784, Napoleon was admitted to the École militaire in Paris where he trained to become an artillery officer. He excelled at mathematics, and read widely in geography, history and literature. However, he was poor at French and German. His father's death in February 1785 cut the family income and forced him to complete the two-year course in one year. In September he was examined by the famed scientist Pierre-Simon Laplace and became the first Corsican to graduate from the École militaire .
 
-
 // == Return to Corsica ==
 
 // Upon graduating in September 1785, Bonaparte was commissioned a second lieutenant in La Fère artillery regiment . He served in Valence and Auxonne until after the outbreak of the French Revolution in 1789, but spent long periods of leave in Corsica which fed his Corsican nationalism. In September 1789, he returned to Corsica and promoted the French revolutionary cause. Paoli returned to the island in July 1790, but he had no sympathy for Bonaparte, as he deemed his father a traitor for having deserted the cause of Corsican independence.
 // Bonaparte plunged into a complex three-way struggle among royalists, revolutionaries, and Corsican nationalists. He became a supporter of the Jacobins and joined the pro-French Corsican Republicans who opposed Paoli's policy and his aspirations to secede. He was given command over a battalion of Corsican volunteers and promoted to captain in the regular army in 1792, despite exceeding his leave of absence and a dispute between his volunteers and the French garrison in Ajaccio.
 // In February 1793, Bonaparte took part in the failed French expedition to Sardinia . Following allegations that Paoli had sabotaged the expedition and that his regime was corrupt and incompetent, the French National Convention outlawed him. In early June, Bonaparte and 400 French troops failed to capture Ajaccio from Corsican volunteers and the island was now controlled by Paoli's supporters. When Bonaparte learned that the Corsican assembly had condemned him and his family, the Buonapartes fled to Toulon on the French mainland.
-
 
 // == Siege of Toulon ==
 
@@ -351,7 +320,6 @@ The fighting at Hougoumont has often been characterised as a diversionary attack
 // Bonaparte's role in defeating the rebellion earned him and his family the patronage of the new government, the French Directory . On 26 October, he was promoted to commander of the Army of the Interior, and in January 1796 he was appointed head of the Army of Italy.
 // Within weeks of the Vendémiaire uprising , Bonaparte was romantically involved with Joséphine de Beauharnais , the former mistress of Barras. The couple married on 9 March 1796 in a civil ceremony. Bonaparte now habitually styled himself "Napoleon Bonaparte" rather than using the Italian form "Napoleone di Buonaparte."
 
-
 // == First Italian campaign ==
 
 // Two days after the marriage, Bonaparte left Paris to take command of the Army of Italy. He went on the offensive, hoping to defeat the Kingdom of Sardinia in Piedmont before their Austrian allies could intervene. In a series of victories during the Montenotte campaign , he knocked the Piedmontese out of the war in two weeks. The French then focused on the Austrians, laying siege to Mantua . The Austrians launched offensives against the French to break the siege, but Bonaparte defeated every relief effort, winning the Battle of Castiglione , the Battle of Bassano , the Battle of Arcole , and the Battle of Rivoli . The French triumph at Rivoli in January 1797 led to the collapse of the Austrian position in Italy. At Rivoli, Austria lost 43% of its soldiers dead, wounded or taken prisoner.
@@ -360,7 +328,6 @@ The fighting at Hougoumont has often been characterised as a diversionary attack
 // In this Italian campaign, Bonaparte's army captured 150,000 prisoners, 540 cannons, and 170 standards . The French army fought 67 actions and won 18 pitched battles through superior artillery technology and Bonaparte's tactics. Bonaparte extracted an estimated 45 million French pounds from Italy during the campaign, another 12 million pounds in precious metals and jewels, and more than 300 paintings and sculptures.
 // During the campaign, Bonaparte became increasingly influential in French politics. He founded two newspapers: one for the troops in his army and one for circulation in France. The royalists attacked him for looting Italy and warned that he might become a dictator.
 // Bonaparte sent General Pierre Augereau to Paris to support a coup d'état that purged royalists from the legislative councils on 4 September—the Coup of 18 Fructidor . This left Barras and his republican allies in control again but more dependent upon Bonaparte who finalized peace terms with Austria by the Treaty of Campo Formio . Bonaparte returned to Paris on 5 December 1797 as a hero. He met Charles Maurice de Talleyrand , France's Foreign Minister, and took command of the Army of England for the planned invasion of Britain.
-
 
 // == Egyptian expedition ==
 
@@ -371,12 +338,10 @@ The fighting at Hougoumont has often been characterised as a diversionary attack
 // Bonaparte began with an army of 13,000 men. 1,500 were reported missing, 1,200 died in combat, and thousands perished from disease—mostly bubonic plague . He failed to reduce the fortress of Acre , so he marched his army back to Egypt in May. Bonaparte was alleged to have ordered plague-stricken men to be poisoned with opium to speed the retreat. Back in Egypt on 25 July, Bonaparte defeated an Ottoman amphibious invasion at Abukir .
 // Bonaparte stayed informed of European affairs. He learned that France had suffered a series of defeats in the War of the Second Coalition . On 24 August 1799, fearing that the Republic's future was in doubt, he took advantage of the temporary departure of British ships from French coastal ports and set sail for France, despite the fact that he had received no explicit orders from Paris. The army was left in the charge of Jean-Baptiste Kléber .
 
-
 // == Ruler of France ==
 
 // Unknown to Bonaparte, the Directory had sent him orders to return from Egypt with his army to ward off a possible invasion of France, but these messages never arrived. By the time that he reached Paris in October, France's situation had been improved by a series of victories. The Republic, however, was bankrupt and the ineffective Directory was unpopular. Despite the failures in Egypt, Bonaparte returned to a hero's welcome. The Directory discussed Bonaparte's desertion but was too weak to punish him.
 // Bonaparte formed an alliance with Talleyrand and leading members of the Council of Five Hundred and Directory: Lucien Bonaparte, Emmanuel Joseph Sieyès , Roger Ducos and Joseph Fouché to overthrow the government. On 9 November 1799 ( 18 Brumaire according to the revolutionary calendar), the conspirators launched a coup, and the following day, backed by grenadiers with fixed bayonets, forced the Council of Five Hundred to dissolve the Directory and appoint Bonaparte, Sieyès and Ducos provisional consuls.
-
 
 // == French Consulate ==
 
@@ -388,7 +353,6 @@ The fighting at Hougoumont has often been characterised as a diversionary attack
 // When peace negotiations with Austria stalled, Bonaparte reopened hostilities in November. A French army under General Moreau swept through Bavaria and scored an overwhelming victory over the Austrians at Hohenlinden in December. The Austrians capitulated and signed the Treaty of Lunéville in February 1801. The treaty reaffirmed and expanded earlier French gains at Campo Formio.
 // Bonaparte's triumph at Marengo increased his popularity and political authority. However, he still faced royalist plots and feared Jacobin influence, especially in the army. Several assassination plots, including the Conspiration des poignards (Dagger plot) in October 1800 and the Plot of the Rue Saint-Nicaise two months later, gave him a pretext to arrest about 100 suspected Jacobins and royalists, some of whom were shot and many others deported to penal colonies.
 
-
 // == Temporary peace in Europe ==
 
 // After a decade of war, France and Britain signed the Treaty of Amiens in March 1802, bringing the Revolutionary Wars to an end. Under the treaty, Britain agreed to withdraw from most of the colonies it had recently captured from France and her allies, and France agreed to evacuate Naples. In April, Bonaparte publicly celebrated the peace and his controversial Concordat of 1801 with Pope Pius VII under which the Pope recognized Bonaparte's regime and the regime recognized Catholicism as the majority religion of France. In a further step towards national reconciliation (known as "fusion"), Bonaparte offered an amnesty to most émigrés who wished to return to France.
@@ -398,7 +362,6 @@ The fighting at Hougoumont has often been characterised as a diversionary attack
 // As war with Britain again loomed in 1803, Bonaparte realized that his American colony of Louisiana would be difficult to defend. In need of funds, he agreed to the Louisiana Purchase with the United States, doubling the latter's size. The price was $15 million.
 // The peace with Britain was uneasy. Britain did not evacuate Malta as promised and protested against Bonaparte's annexation of Piedmont and his Act of Mediation , which established a new Swiss Confederation . Neither of these territories were covered by Amiens, but they inflamed tensions significantly, as did Bonaparte's occupation of Holland and apparent ambitions in India. The dispute culminated in a declaration of war by Britain in May 1803. Bonaparte responded by reassembling the invasion camp at Boulogne and ordering the arrest of every British male between eighteen and sixty years old in France and its dependencies as a prisoner of war .
 
-
 // == Bonaparte becomes Napoleon I ==
 
 // In February 1804, Bonaparte's police made a series of arrests in relation to a royalist plot to kidnap or assassinate him that involved the British government, Moreau and an unnamed Bourbon prince. On the advice of his foreign minister, Talleyrand, Napoleon ordered the kidnapping of the Duke of Enghien , violating the sovereignty of Baden . The Duke was quickly executed after a secret military trial, even though there was no proof he had been involved in the plot. Enghien's kidnapping and execution infuriated royalists and monarchs throughout Europe, and drew a formal protest from Russia.
@@ -406,7 +369,6 @@ The fighting at Hougoumont has often been characterised as a diversionary attack
 // The hereditary empire was confirmed by a plebiscite in June. The official result showed 3.5 million voted "yes" and 2,569 voted "no". The yes count, however, was falsely inflated by 300,000 to 500,000 votes. The turnout, at 35%, was below the figure for the previous plebiscite. Britain, Russia, Sweden and the Ottoman Empire refused to recognize Napoleon's new title. Austria, however, recognized Napoleon as Emperor of the French in return for his recognition of Francis I as Emperor of Austria .
 // Napoleon's coronation, with the participation of Pope Pius VII , took place at Notre Dame de Paris , on 2 December 1804. After having been anointed by the pope, Napoleon crowned himself with a replica of Charlemagne's crown. He then crowned Joséphine, who became only the second woman in French history, after Marie de' Medici , to be crowned and anointed. He then swore an oath to defend the territory of the Republic; to respect the Concordat, freedom of worship, political and civil liberty and the sale of nationalized lands; to raise no taxes except by law; to maintain the Legion of Honour ; and to govern in the interests, wellbeing and the glory of the French people.
 // On 26 May, Napoleon crowned himself King of Italy , with the Iron Crown of Lombardy , at the Cathedral of Milan . Austria saw this as a provocation because of its own territorial interests in Italy. When Napoleon incorporated Genoa and Liguria into his empire, Austria formally protested against this violation of the Treaty of Lunéville.
-
 
 // == War of the Third Coalition ==
 
@@ -421,11 +383,9 @@ The fighting at Hougoumont has often been characterised as a diversionary attack
 // The disaster at Austerlitz led Austria to seek an armistice. By the subsequent Treaty of Pressburg, signed on 26 December, Austria left the coalition, lost substantial territory to the Kingdom of Italy and Bavaria, and was forced to pay an indemnity of 40 million francs. Alexander's army was granted safe passage back to Russia.
 // Napoleon went on to say, "The battle of Austerlitz is the finest of all I have fought". Frank McLynn suggests that Napoleon was so successful at Austerlitz that he lost touch with reality, and what used to be French foreign policy became a "personal Napoleonic one". Vincent Cronin disagrees, stating that Napoleon was not overly ambitious for himself, "he embodied the ambitions of thirty million Frenchmen".
 
-
 // == Middle-Eastern alliances ==
 
 // Napoleon continued to entertain a grand scheme to establish a French presence in the Middle East in order to put pressure on Britain and Russia, possibly by forming an alliance with the Ottoman Empire . In February 1806, Ottoman Emperor Selim III recognized Napoleon as Emperor . He also opted for an alliance with France, calling France "our sincere and natural ally". That decision brought the Ottoman Empire into a losing war against Russia and Britain. A Franco-Persian alliance was formed between Napoleon and the Persian Empire of Fat′h-Ali Shah Qajar . It collapsed in 1807 when France and Russia formed an unexpected alliance. In the end, Napoleon made no effective alliances in the Middle East.
-
 
 // == War of the Fourth Coalition and Tilsit ==
 
@@ -439,7 +399,6 @@ The fighting at Hougoumont has often been characterised as a diversionary attack
 // Napoleon offered Alexander relatively lenient terms—demanding that Russia join the Continental System, withdraw its forces from Wallachia and Moldavia , and hand over the Ionian Islands to France. In contrast, Prussia was treated harshly. It lost half its territory and population and underwent a two-year occupation costing it about 1.4 billion francs. From former Prussian territory, Napoleon created the Kingdom of Westphalia , ruled by his young brother Jérôme, and the Duchy of Warsaw .
 // Prussia's humiliating treatment at Tilsit caused lasting resentment against France in that country. The treaty was also unpopular in Russia, putting pressure on Alexander to end the alliance with France. Nevertheless, the Treaties of Tilsit gave Napoleon a respite from war and allowed him to return to France, which he had not seen in over 300 days.
 
-
 // == Peninsular War and Erfurt ==
 
 // After Tilsit, Napoleon turned his attention to Portugal , which was reluctant to strictly enforce the blockade against its traditional ally Britain. On 17 October 1807, 24,000 French troops under General Junot crossed the Pyrenees with Spanish consent and headed towards Portugal to enforce the blockade. Junot occupied Lisbon in November, but the Portuguese royal family had already fled to Brazil with the Portuguese fleet.
@@ -451,7 +410,6 @@ The fighting at Hougoumont has often been characterised as a diversionary attack
 // Napoleon never returned to Spain after the 1808 campaign. In April, the British sent another army to the peninsula under Arthur Wellesley, the future Duke of Wellington . British, Portuguese and Spanish regular forces engaged the French in a protracted series of conflicts. Meanwhile, a brutal guerrilla war engulfed much of the Spanish countryside, a conflict in which atrocities were committed by both sides.
 // Napoleon later called the Peninsular campaign, "the unlucky war ruined me." It tied up some 300,000 French troops from 1808 to 1812. By 1814, the French had been driven from the peninsula, with over 150,000 casualties in the campaign.
 
-
 // == War of the Fifth Coalition ==
 
 // The overthrow of the Spanish Bourbons caused alarm in Austria over Napoleon's ambitions while France's military difficulties in the Peninsular encouraged Austria to go to war. In the early morning of 10 April 1809, the Austrian army crossed the Inn River and invaded Bavaria. The Austrian advance, however, was disorganized and they were unable to defeat the Bavarian army before the French could concentrate their forces. Napoleon arrived from Paris on the 17th to lead the French campaign. In the following Battle of Eckmühl he was slightly wounded in the heel but the Austrians were forced to retreat across the Danube. The French occupied Vienna on 13 May but most of the population had fled and the retreating army had destroyed all four bridges across the river.
@@ -460,13 +418,11 @@ The fighting at Hougoumont has often been characterised as a diversionary attack
 // In August, a British force landed in Holland but lost 4,000 men, mainly to illness, before withdrawing in December.
 // The Treaty of Schönbrunn in October 1809 was harsh for Austria which lost substantial territory and over three million subjects. France received Carinthia , Carniola , and the Adriatic ports of Trieste and Fiume(Rijeka); the part of Poland annexed by Austria in the third partition in 1795, known at the time as West Galicia, was given to the Polish-ruled Duchy of Warsaw ; and the territory of the former Archbishopric of Salzburg went to Bavaria. Austria was required to pay an indemnity of 200 million francs and its army was reduced to 150,000 men.
 
-
 // == Consolidation of the Empire ==
 
 // Napoleon's union with Joséphine had not produced a child, and he decided to secure the dynasty and strengthen its position in Europe by a strategic marriage into one of Europe's major royal houses. In November 1809, he announced his decision to divorce Joséphine and the marriage was annulled in January 1810. Napoleon had already commenced negotiations for the marriage of Tsar Alexander's sister Anna, but the Tsar responded that she was too young. Napoleon then turned to Austria, and a marriage to the Austrian Emperor's daughter, Marie Louise, was quickly agreed.
 // The marriage was formalized in a civil ceremony on 1 April and a religious service at the Louvre on the following day. The marriage to Marie Louise was widely seen as a shift in French policy towards stronger ties with Austria and away from the already strained relationship with Russia. On 20 March 1811, Marie Louise gave birth to the heir apparent, François Charles Joseph Napoleon , King of Rome.
 // With the annexation of the Papal states (May 1809, February 1810), Holland (July 1810) and the northern coastal regions of Westphalia (August 1810), mainland France further increased its territory. Napoleon now ruled about 40% of the European population either directly or indirectly through his satellite kingdoms.
-
 
 // == Invasion of Russia ==
 
@@ -477,7 +433,6 @@ The fighting at Hougoumont has often been characterised as a diversionary attack
 // The Russians retreated to Tarutino , and Napoleon entered Moscow on 14 September. The following evening, the city was set on fire on the orders of its governor Feodor Rostopchin . Alexander, in St Petersburg , refused to negotiate a peace, and after six weeks Napoleon's army evacuated Moscow.
 // After capturing Maloyaroslavets with the loss of 4,000 to 10,000 men, Napoleon retreated towards Smolensk. The French were attacked by Cossacks and peasants and suffered from the intense cold, disease and lack of food and water. Around 40,000 to 50,000 troops reached Smolensk on 9 November, a loss of about 60,000 in three weeks. Napoleon also heard that an attempted coup by General Malet in Paris had only narrowly failed.
 // From Smolensk, Napoleon's army headed for Vilnius, where there was a French garrison of 20,000. In late November, under attack from all sides by Russian forces, the grande armée managed to cross the Berezina river on pontoon bridges in temperatures reaching −40 °C (−40 °F). On 5 December, shortly before arriving in Vilnius, Napoleon left his disintegrating army for Paris. In the following weeks, the remnants of the grande armée , about 75,000 troops, crossed the Nieman into allied territory. Russian military losses in the campaign were up to 300,000 and total deaths were up to one million.
-
 
 // == War of the Sixth Coalition ==
 
@@ -497,7 +452,6 @@ The fighting at Hougoumont has often been characterised as a diversionary attack
 // Napoleon returned to Paris and found that the legislature had turned against him. Realizing that his position was untenable, he abdicated on 22 June in favour of his son . He left Paris three days later and settled at Joséphine's former palace in Château de Malmaison . By 28 June, the Prussian army was at Senlis , just north of Paris.
 // When Napoleon heard that Prussian troops had orders to capture him dead or alive, he fled to Rochefort, Charente-Maritime , considering an escape to the United States. However, when he found that British ships were blockading the port, he surrendered to Frederick Lewis Maitland on HMS Bellerophon on 15 July 1815.
 
-
 // == Exile on Saint Helena ==
 
 // Napoleon was held in British custody and transferred to the island of Saint Helena in the Atlantic Ocean, 1,870 km (1,010 nmi) from the west coast of Africa. Napoleon and 27 followers arrived at Jamestown, Saint Helena, in October 1815 on board HMS Northumberland . The prisoner was guarded by a garrison of 2,100 soldiers while a squadron of 10 ships continuously patrolled the waters to prevent escape. In the following years, there were rumours of escape plots, but no serious attempts were made.
@@ -512,7 +466,6 @@ The fighting at Hougoumont has often been characterised as a diversionary attack
 // Antommarchi and the British wrote separate autopsy reports, each concluding that Napoleon had died of internal bleeding caused by stomach cancer , the disease that had killed his father. A later theory, based on high concentrations of arsenic found in samples of Napoleon's hair, held that Napoleon had died of arsenic poisoning . However, subsequent studies also found high concentrations of arsenic in hair samples from Napoleon's childhood and from his son and Joséphine. Arsenic was widely used in medicines and products such as hair creams in the 19th century. A 2021 study by an international team of gastrointestinal pathologists once again concluded that Napoleon died of stomach cancer.
 // Napoleon was buried with military honors in the Valley of the Geraniums . Napoleon's heart and intestines were removed and sealed inside his coffin. Napoleon's penis was allegedly removed during the autopsy and sold and exhibited. In 1840, the British government gave Louis Philippe I permission to return Napoleon's remains to France. Napoleon's body was exhumed and found to be well preserved as it had been sealed in four coffins (two of metal and two of mahogany) and placed in a masonry tomb. On 15 December 1840, a state funeral was held in Paris with 700,000-1,000,000 attendees who lined the route of the funeral procession to the chapel of Les Invalides . The coffin was later placed in the cupola in St Jérôme's Chapel, where it remained until Napoleon's tomb , designed by Louis Visconti , was completed. In 1861, during the reign of Napoleon III , his remains were entombed in a sarcophagus in the crypt under the dome at Les Invalides.
 
-
 // == Religious beliefs ==
 
 // Napoleon was baptized in Ajaccio on 21 July 1771, and raised a Roman Catholic. He began to question his faith at age 13 while at Brienne. Biographers have variously described him from that time as a deist , a follower of Rousseau's "natural religion" or a believer in destiny. He consistently expressed his belief in a God or creator.
@@ -522,11 +475,9 @@ The fighting at Hougoumont has often been characterised as a diversionary attack
 // Seeking national reconciliation between revolutionaries and Catholics, Napoleon and Pope Pius VII agreed to the Concordat of 1801 . The agreement recognized the Catholic Church as the majority church of France and in return the Church recognized Napoleon's regime, undercutting much of the ground from royalists. The Concordat confirmed the seizure of Church lands and endowments during the revolution, but reintroduced state salaries for the clergy. The government also controlled the nomination of bishops for investiture by the pope. Bishops and other clergy were required to swear an oath of loyalty to the regime.
 // When the Concordat was published on 8 April 1802, Napoleon presented another set of laws called the Organic Articles , which further increased state control over the French Church. Similar arrangements were made with the Church in territories controlled by Napoleon, especially in Italy and Germany.
 
-
 // == Arrest of Pope Pius VII ==
 
 // Napoleon progressively occupied and annexed the Papal States from 1805. When he annexed Rome in May 1809, the pope excommunicated him the following month. In July, French officials arrested the pope in the Vatican and exiled him to Savona . In 1812 the pontiff was transferred to the Palace of Fontainebleau in France. In January 1813, Napoleon pressured the pope to sign a new "Concordat of Fontainebleau" which was soon repudiated by the pontiff. The pope was not released until 1814.
-
 
 // == Religious emancipation ==
 
@@ -540,7 +491,6 @@ The fighting at Hougoumont has often been characterised as a diversionary attack
 // Some historians talk of Napoleon's dual nature: a rationalist with a strong romantic streak. He took a team of scholars, artists and engineers with him to Egypt in order to scientifically study the country's culture and history, but at the same time was struck by romantic "orientalism". "I was full of dreams," he stated. "I saw myself founding a religion, marching into Asia, riding an elephant, a turban on my head and in my hand a new Koran that I would have composed to suit my need."
 // Napoleon was superstitious. He believed in omens , numerology, fate and lucky stars, and always asked of his generals: is he lucky? Dwyer states that Napoleon's victories at Austerlitz and Jena in 1805–06 left him even more certain of his destiny and invincibility. "I am of the race that founds empires", he once boasted, deeming himself an heir to the Ancient Romans.
 // Various psychologists have attempted to explain Napoleon's personality. Alfred Adler cited Napoleon to describe an inferiority complex in which short people adopt over-aggressive behaviour to compensate for lack of height; this inspired the term Napoleon complex . Adler, Erich Fromm and Wilhelm Reich ascribed his nervous energy to sexual dysfunction . Harold T. Parker speculated that rivalry with his older brother and bullying when he moved to France led him to develop an inferiority complex which made him domineering.
-
 
 // == Appearance and image ==
 
@@ -556,7 +506,6 @@ The fighting at Hougoumont has often been characterised as a diversionary attack
 // An enduring reform was the foundation, in December 1799, of the Council of State , an advisory body of experts which could also draft laws for submission to the legislative body. Napoleon drew many of his ministers and ambassadors from the council. It was the council which undertook the codification of French law.
 // After several attempts by revolutionary governments, Napoleon officially introduced the metric system in France in 1801 and it was spread through western Europe by his armies. The new system was unpopular in some circles, so in 1812 he introduced a compromise system in the retail trade called the mesures usuelles (traditional units of measurement). In December 1805, Napoleon abolished the Revolutionary calendar, with its ten-day week, which had been introduced in 1793.
 
-
 // == Napoleonic Code ==
 
 // Napoleon's civil code of laws , known from 1807 as the Napoleonic Code, was implemented in March 1804. It was prepared by committees of legal experts under the supervision of Jean Jacques Régis de Cambacérès , the Second Consul . Napoleon participated actively in the sessions of the Council of State that revised the drafts. The code introduced a clearly written and accessible set of national laws to replace the various regional and customary law systems that had operated in France.
@@ -571,14 +520,12 @@ The fighting at Hougoumont has often been characterised as a diversionary attack
 // In 1808, he founded the Imperial University, a supervisory body with control over curriculum and discipline. The following year he introduced the baccalaureate. The system was designed to produce the efficient bureaucrats, technicians, professionals and military officers that the Napoleonic state required. It outperformed its European counterparts, many of which borrowed from the French system.
 // Female education, in contrast, was designed to be practical and religious, based on home science, the catechism, basic literacy and numeracy, and enough science to eradicate superstition.
 
-
 // == Memory and evaluation ==
 
 // There is debate over whether Napoleon was "an enlightened despot who laid the foundations of modern Europe" or "a megalomaniac who wrought greater misery than any man before the coming of Hitler". He was compared to Adolf Hitler by Pieter Geyl in 1947, and Claude Ribbe in 2005. Most modern critics of Napoleon, however, reject the Hitler comparison, arguing that Napoleon did not commit genocide and did not engage in the mass murder and imprisonment of his political opponents. Nevertheless, Bell and McLynn condemn his killing of 3,000-5,000 Turkish prisoners of war in Syria.
 // A number of historians have argued that his expansionist foreign policy was a major factor in the Napoleonic wars which cost six million lives and caused economic disruption for a generation. McLynn and Barnett suggest that Napoleon's reputation as a military genius is exaggerated. Cobban and Conner argue that Napoleon had insufficient regard for the lives of his soldiers and that his battle tactics led to excessive casualties.
 // Critics also cite Napoleon's exploitation of conquered territories. To finance his wars, Napoleon increased taxes and levies of troops from annexed territories and satellite states. He also introduced discriminatory tariff policies which promoted French trade at the expense of allies and satellite states. He institutionalized plunder: French museums contain art stolen by Napoleon's forces from across Europe. Artefacts were brought to the Musée du Louvre for a grand central museum; an example which would later be followed by others.
 // Many historians have criticized Napoleon's authoritarian rule, especially after 1807, which included censorship, the closure of independent newspapers, the bypassing of direct elections and representative government, the dismissal of judges showing independence, and the exile of critics of the regime. Historians also blame Napoleon for reducing the civil rights of women, children and people of colour, and reintroducing the legal penalties of civil death and confiscation of property. His reintroduction of an hereditary monarchy and nobility remains controversial. His role in the Haitian Revolution and decision to reinstate slavery in France's colonies in the Caribbean and Indian Ocean adversely affect his reputation.
-
 
 // == Propaganda and memory ==
 
@@ -588,7 +535,6 @@ The fighting at Hougoumont has often been characterised as a diversionary attack
 // Bell sees the return of Napoleon's remains to France in 1840 as an attempt by Louis-Phillipe to prop up his unpopular regime by associating it with Napoleon, and that the regime of Napoleon III was only possible due to the continued resonance of the Napoleonic legend.
 // Venita Datta argues that following the collapse of militaristic Boulangism in the late 1880s, the Napoleonic legend was divorced from party politics and revived in popular culture. Writers and critics of the Belle Époque exploited the Napoleonic legend for diverse political and cultural ends.
 // In the 21st century, Napoleon appears regularly in popular fiction, drama and advertising. Napoleon and his era remain major topics of historical research with a sharp increase in historical books, articles and symposia during the bicentenary years of 1999 to 2015.
-
 
 // == Long-term influence outside France ==
 

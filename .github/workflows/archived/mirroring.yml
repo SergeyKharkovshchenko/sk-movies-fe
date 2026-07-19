@@ -5,7 +5,7 @@
 
 # jobs:
 #   sync:
-#     runs-on: 
+#     runs-on:
 #     steps:
 #       - name: Set environment variables
 #         run: |

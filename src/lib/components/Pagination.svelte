@@ -43,7 +43,9 @@
 	});
 </script>
 
-<section class="flex justify-start h-12 p-3 pl-7 bg-zinc-50 tracking-wide text-xs text-gray-500 items-center">
+<section
+	class="flex justify-start h-12 p-3 pl-7 bg-zinc-50 tracking-wide text-xs text-gray-500 items-center"
+>
 	{#if productsQty}
 		<div class="flex items-center text-gray-500 relative">
 			<button
@@ -53,7 +55,9 @@
 					showLocaleMenu = !showLocaleMenu;
 				}}
 			>
-				<span data-cy="products-footer-selectedRowsPerPage" class="mr-2">Rows per page: {selectedRowsPerPage}</span>
+				<span data-cy="products-footer-selectedRowsPerPage" class="mr-2"
+					>Rows per page: {selectedRowsPerPage}</span
+				>
 				{#if isPagePerPageSelectable}
 					<i class="fa-solid fa-angle-up mr-2"></i>
 				{/if}
@@ -66,7 +70,10 @@
 								class="cursor-pointer mx-3 w-36 p-2 bg-gray-200 text-center"
 								class:font-bold={selectedRowsPerPage == option}
 							>
-								<button data-cy={`rows-per-page-${option}`} onclick={() => changeRowsPerPage(option)}>
+								<button
+									data-cy={`rows-per-page-${option}`}
+									onclick={() => changeRowsPerPage(option)}
+								>
 									Rows per page: {option}
 								</button>
 							</li>
@@ -83,7 +90,11 @@
 			}}
 			disabled={disablePreviousButton}
 		>
-			<i class="fa-solid fa-md fa-circle-arrow-left mr-2 {disablePreviousButton ? 'opacity-50' : 'cursor-pointer'}"></i>
+			<i
+				class="fa-solid fa-md fa-circle-arrow-left mr-2 {disablePreviousButton
+					? 'opacity-50'
+					: 'cursor-pointer'}"
+			></i>
 		</button>
 		<p data-cy="products-footer-pagenumber-totalpages" class="mr-2">
 			{page}/ {Math.ceil(productsQty / selectedRowsPerPage)}
@@ -96,7 +107,11 @@
 			}}
 			disabled={disableNextButton}
 		>
-			<i class="fa-solid fa-md fa-circle-arrow-right mr-2 {disableNextButton ? 'opacity-50' : 'cursor-pointer'}"></i>
+			<i
+				class="fa-solid fa-md fa-circle-arrow-right mr-2 {disableNextButton
+					? 'opacity-50'
+					: 'cursor-pointer'}"
+			></i>
 		</button>
 	{/if}
 </section>

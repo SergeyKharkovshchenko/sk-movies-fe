@@ -8,14 +8,14 @@ export async function fetchAuthToken() {
 		return token;
 	}
 
-	return 123
+	return 123;
 	const response = await fetch('/api/getToken', { method: 'GET' });
 	// handle faulty response from getToken
 	try {
 		const data = await response.json();
 		localStorage.setItem('token', data.token);
 		return data.token;
-	} catch (error) {
+	} catch {
 		window.location.reload();
 	}
 }

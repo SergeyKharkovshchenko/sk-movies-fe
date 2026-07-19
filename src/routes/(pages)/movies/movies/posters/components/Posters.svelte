@@ -113,7 +113,9 @@
 					{#each similarityResults as result, i (result.movieId)}
 						<tr class="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
 							<td class="px-4 py-2 text-zinc-400">{i + 1}</td>
-							<td class="px-4 py-2 font-medium">{result.movieTitle || getMovieTitle(result.movieId)}</td>
+							<td class="px-4 py-2 font-medium"
+								>{result.movieTitle || getMovieTitle(result.movieId)}</td
+							>
 							<td class="px-4 py-2 text-zinc-500">{result.movieId}</td>
 							<td class="px-4 py-2">
 								<div class="flex items-center gap-2">
@@ -123,7 +125,9 @@
 											style="width: {(result.similarity * 100).toFixed(1)}%"
 										></div>
 									</div>
-									<span class="text-zinc-600 tabular-nums">{(result.similarity * 100).toFixed(1)}%</span>
+									<span class="text-zinc-600 tabular-nums"
+										>{(result.similarity * 100).toFixed(1)}%</span
+									>
 								</div>
 							</td>
 						</tr>

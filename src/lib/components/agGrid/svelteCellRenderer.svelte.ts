@@ -1,7 +1,7 @@
 import type { ICellRenderer, ICellRendererParams } from 'ag-grid-community';
-import { mount, unmount, type Component } from 'svelte';
+import { mount, unmount } from 'svelte';
 
-export default function svelteCellRenderer(RenderingComponent: any, containerDivClass?: string, props?: any) {
+export default function svelteCellRenderer(RenderingComponent: any, containerDivClass?: string) {
 	//
 	return class SvelteCellRenderer implements ICellRenderer {
 		element: HTMLElement | undefined = undefined;
@@ -49,7 +49,7 @@ export default function svelteCellRenderer(RenderingComponent: any, containerDiv
 			try {
 				Object.assign(this.props, params);
 				return true;
-			} catch (error) {
+			} catch {
 				return false;
 			}
 		}

@@ -7,5 +7,7 @@ export function getTooltipText(label: string, error: string | string[] | null | 
 		default:
 			baseTooltip = '';
 	}
-	return error ? `${baseTooltip}\n${Array.isArray(error) ? error[0] || '' : error || ''}` : baseTooltip;
+	return error
+		? `${baseTooltip}\n${Array.isArray(error) ? error[0] || '' : error || ''}`
+		: baseTooltip;
 }

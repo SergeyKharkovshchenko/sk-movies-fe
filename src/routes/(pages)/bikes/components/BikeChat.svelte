@@ -1,44 +1,44 @@
 <script lang="ts">
-	import { fetchAuthToken } from '$lib/utils/token'
-	import { BikesAPIService } from '$services/apiService'
+	import { fetchAuthToken } from '$lib/utils/token';
+	import { BikesAPIService } from '$services/apiService';
 
-	const apiUrl = import.meta.env.VITE_API_URL
+	const apiUrl = import.meta.env.VITE_API_URL;
 
-	let { externalSuggestions = [] }: { externalSuggestions?: string[] } = $props()
+	let { externalSuggestions = [] }: { externalSuggestions?: string[] } = $props();
 
 	interface GraphEntry {
-		node: string
-		relationship: string
-		neighbor: string
-		neighborLabels: string[]
+		node: string;
+		relationship: string;
+		neighbor: string;
+		neighborLabels: string[];
 	}
 
 	interface Message {
-		id: string
-		role: 'user' | 'assistant'
-		content: string
-		timestamp: Date
-		error?: boolean
-		model?: string
-		graphContext?: GraphEntry[]
-		suggestedQuestions?: string[]
+		id: string;
+		role: 'user' | 'assistant';
+		content: string;
+		timestamp: Date;
+		error?: boolean;
+		model?: string;
+		graphContext?: GraphEntry[];
+		suggestedQuestions?: string[];
 	}
 
 	interface Settings {
-		temperature: number
-		maxTokens: number
-		systemPrompt: string
-		stream: boolean
+		temperature: number;
+		maxTokens: number;
+		systemPrompt: string;
+		stream: boolean;
 	}
 
 	const DEFAULT_PROMPTS = [
 		'What CUBE bike categories are available?',
 		'Explain the drivetrain components of a bicycle',
 		'What makes the Agree different from the Attain?',
-		'Walk me through the Wheel Assembly hierarchy',
-	]
+		'Walk me through the Wheel Assembly hierarchy'
+	];
 
-	let dynamicSuggestions = $state<string[]>([])
+	let dynamicSuggestions = $state<string[]>([]);
 
 	let suggestedPrompts = $derived(
 		dynamicSuggestions.length > 0
@@ -46,51 +46,52 @@
 			: externalSuggestions.length > 0
 				? externalSuggestions
 				: DEFAULT_PROMPTS
-	)
+	);
 
-	let ragMode = $state<'combined' | 'vector' | 'graph'>('combined')
-	let embedder = $state('jina')
+	let ragMode = $state<'combined' | 'vector' | 'graph'>('combined');
+	let embedder = $state('jina');
 
-	let messages = $state<Message[]>([])
-	let input = $state('')
-	let loading = $state(false)
-	let showSettings = $state(false)
-	let copiedId = $state<string | null>(null)
-	let messagesEl: HTMLElement
+	let messages = $state<Message[]>([]);
+	let input = $state('');
+	let loading = $state(false);
+	let showSettings = $state(false);
+	let copiedId = $state<string | null>(null);
+	let messagesEl: HTMLElement;
 
 	let settings = $state<Settings>({
 		temperature: 0.7,
 		maxTokens: 512,
 		systemPrompt:
 			'You are an expert assistant for CUBE bicycles. You have deep knowledge of the CUBE product taxonomy including bike categories (Road, Mountain Bike, Gravel, Trekking, Hybrid, Kids, Cargo, E-Bike), model lines (Agree, Attain, Litening, Reaction, Stereo, etc.), and bicycle component hierarchy (Frame, Fork, Wheel Assembly, Drivetrain, Brake System, Cockpit, etc.). Answer questions accurately and helpfully based on this knowledge graph.',
-		stream: false,
-	})
+		stream: false
+	});
 
 	$effect(() => {
-		const _ = messages.length
-		setTimeout(() => messagesEl?.scrollTo({ top: messagesEl.scrollHeight, behavior: 'smooth' }), 0)
-	})
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars -- read to register as an $effect dependency
+		const _ = messages.length;
+		setTimeout(() => messagesEl?.scrollTo({ top: messagesEl.scrollHeight, behavior: 'smooth' }), 0);
+	});
 
 	function uid() {
-		return Math.random().toString(36).slice(2)
+		return Math.random().toString(36).slice(2);
 	}
 
 	function formatTime(d: Date) {
-		return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+		return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 	}
 
 	async function send(text?: string) {
-		const content = (text ?? input).trim()
-		if (!content || loading) return
-		input = ''
+		const content = (text ?? input).trim();
+		if (!content || loading) return;
+		input = '';
 
-		const userMsg: Message = { id: uid(), role: 'user', content, timestamp: new Date() }
-		messages = [...messages, userMsg]
-		loading = true
+		const userMsg: Message = { id: uid(), role: 'user', content, timestamp: new Date() };
+		messages = [...messages, userMsg];
+		loading = true;
 
 		const historyForPayload = messages
 			.filter((m) => !m.error)
-			.map((m) => ({ role: m.role, content: m.content }))
+			.map((m) => ({ role: m.role, content: m.content }));
 
 		const payload = {
 			messages: [{ role: 'system', content: settings.systemPrompt }, ...historyForPayload],
@@ -98,44 +99,44 @@
 			maxTokens: settings.maxTokens,
 			stream: settings.stream,
 			ragMode,
-			embedder,
-		}
+			embedder
+		};
 
-		const assistantId = uid()
+		const assistantId = uid();
 
 		try {
 			if (settings.stream) {
-				const token = await fetchAuthToken()
+				const token = await fetchAuthToken();
 				const response = await fetch(`${apiUrl}/bike-chat`, {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json', Authorization: String(token) },
-					body: JSON.stringify(payload),
-				})
-				if (!response.ok) throw new Error(`HTTP ${response.status}`)
+					body: JSON.stringify(payload)
+				});
+				if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
 				messages = [
 					...messages,
-					{ id: assistantId, role: 'assistant', content: '', timestamp: new Date() },
-				]
+					{ id: assistantId, role: 'assistant', content: '', timestamp: new Date() }
+				];
 
-				const reader = response.body!.getReader()
-				const decoder = new TextDecoder()
+				const reader = response.body!.getReader();
+				const decoder = new TextDecoder();
 
 				while (true) {
-					const { done, value } = await reader.read()
-					if (done) break
+					const { done, value } = await reader.read();
+					if (done) break;
 					for (const line of decoder.decode(value).split('\n')) {
-						if (!line.startsWith('data: ')) continue
-						const data = line.slice(6).trim()
-						if (data === '[DONE]') break
+						if (!line.startsWith('data: ')) continue;
+						const data = line.slice(6).trim();
+						if (data === '[DONE]') break;
 						try {
-							const parsed = JSON.parse(data)
+							const parsed = JSON.parse(data);
 							const delta =
-								parsed.choices?.[0]?.delta?.content ?? parsed.content ?? parsed.delta ?? ''
+								parsed.choices?.[0]?.delta?.content ?? parsed.content ?? parsed.delta ?? '';
 							if (delta) {
 								messages = messages.map((m) =>
 									m.id === assistantId ? { ...m, content: m.content + delta } : m
-								)
+								);
 							}
 						} catch {
 							/* partial chunk */
@@ -143,13 +144,13 @@
 					}
 				}
 			} else {
-				const result = await BikesAPIService.bikeChat(payload)
-				const text = result?.choice?.message?.content ?? JSON.stringify(result)
-				const graphContext: GraphEntry[] = result?.graphContext ?? []
-				const suggestedQuestions: string[] = result?.suggestedQuestions ?? []
-				const model: string | undefined = result?.model
+				const result = await BikesAPIService.bikeChat(payload);
+				const text = result?.choice?.message?.content ?? JSON.stringify(result);
+				const graphContext: GraphEntry[] = result?.graphContext ?? [];
+				const suggestedQuestions: string[] = result?.suggestedQuestions ?? [];
+				const model: string | undefined = result?.model;
 
-				if (suggestedQuestions.length > 0) dynamicSuggestions = suggestedQuestions
+				if (suggestedQuestions.length > 0) dynamicSuggestions = suggestedQuestions;
 
 				messages = [
 					...messages,
@@ -160,9 +161,9 @@
 						timestamp: new Date(),
 						model,
 						graphContext,
-						suggestedQuestions,
-					},
-				]
+						suggestedQuestions
+					}
+				];
 			}
 		} catch (err) {
 			messages = [
@@ -172,29 +173,31 @@
 					role: 'assistant',
 					content: `Failed to get a response: ${err}`,
 					timestamp: new Date(),
-					error: true,
-				},
-			]
+					error: true
+				}
+			];
 		} finally {
-			loading = false
+			loading = false;
 		}
 	}
 
 	async function copyMessage(id: string, content: string) {
-		await navigator.clipboard.writeText(content)
-		copiedId = id
-		setTimeout(() => (copiedId = null), 2000)
+		await navigator.clipboard.writeText(content);
+		copiedId = id;
+		setTimeout(() => (copiedId = null), 2000);
 	}
 
 	function handleKeydown(e: KeyboardEvent) {
 		if (e.key === 'Enter' && !e.shiftKey) {
-			e.preventDefault()
-			send()
+			e.preventDefault();
+			send();
 		}
 	}
 </script>
 
-<div class="flex flex-col h-full bg-white rounded-xl border border-zinc-200 shadow-sm overflow-hidden">
+<div
+	class="flex flex-col h-full bg-white rounded-xl border border-zinc-200 shadow-sm overflow-hidden"
+>
 	<!-- Header -->
 	<div class="flex items-center justify-between px-4 py-3 border-b border-zinc-200 bg-zinc-50">
 		<div class="flex items-center gap-2 flex-wrap">
@@ -202,11 +205,7 @@
 			<span class="font-semibold text-sm text-zinc-800 shrink-0">Bike Expert AI</span>
 			<!-- RAG mode segmented control -->
 			<div class="flex rounded-md border border-zinc-300 bg-white text-[11px] overflow-hidden">
-				{#each [
-					{ value: 'combined', label: 'Combined', title: 'Vector + Graph (needs embeddings)' },
-					{ value: 'vector', label: 'Vector', title: 'Vector search only (needs embeddings)' },
-					{ value: 'graph', label: 'Graph', title: 'Graph traversal only (no embeddings needed)' },
-				] as mode (mode.value)}
+				{#each [{ value: 'combined', label: 'Combined', title: 'Vector + Graph (needs embeddings)' }, { value: 'vector', label: 'Vector', title: 'Vector search only (needs embeddings)' }, { value: 'graph', label: 'Graph', title: 'Graph traversal only (no embeddings needed)' }] as mode (mode.value)}
 					<button
 						onclick={() => (ragMode = mode.value as typeof ragMode)}
 						class="px-2.5 py-1 transition-colors border-r border-zinc-300 last:border-r-0"
@@ -329,10 +328,7 @@
 	{/if}
 
 	<!-- Messages -->
-	<div
-		bind:this={messagesEl}
-		class="flex-1 overflow-y-auto px-4 py-4 space-y-4 min-h-0"
-	>
+	<div bind:this={messagesEl} class="flex-1 overflow-y-auto px-4 py-4 space-y-4 min-h-0">
 		{#if messages.length === 0}
 			<div class="flex flex-col items-center justify-center h-full gap-4 text-center">
 				<p class="text-sm text-zinc-500">Ask anything about the bike hierarchy or taxonomy</p>
@@ -350,7 +346,8 @@
 		{:else}
 			{#each messages as msg (msg.id)}
 				{@const isAssistant = msg.role === 'assistant'}
-				{@const isTyping = isAssistant && loading && msg === messages[messages.length - 1] && !msg.content}
+				{@const isTyping =
+					isAssistant && loading && msg === messages[messages.length - 1] && !msg.content}
 				<div class="flex flex-col" class:items-end={msg.role === 'user'}>
 					<!-- Bubble -->
 					<div
@@ -368,9 +365,18 @@
 					>
 						{#if isTyping}
 							<span class="flex gap-1 py-1">
-								<span class="w-1.5 h-1.5 bg-zinc-400 rounded-full animate-bounce" style="animation-delay:0ms"></span>
-								<span class="w-1.5 h-1.5 bg-zinc-400 rounded-full animate-bounce" style="animation-delay:150ms"></span>
-								<span class="w-1.5 h-1.5 bg-zinc-400 rounded-full animate-bounce" style="animation-delay:300ms"></span>
+								<span
+									class="w-1.5 h-1.5 bg-zinc-400 rounded-full animate-bounce"
+									style="animation-delay:0ms"
+								></span>
+								<span
+									class="w-1.5 h-1.5 bg-zinc-400 rounded-full animate-bounce"
+									style="animation-delay:150ms"
+								></span>
+								<span
+									class="w-1.5 h-1.5 bg-zinc-400 rounded-full animate-bounce"
+									style="animation-delay:300ms"
+								></span>
 							</span>
 						{:else}
 							<span class="whitespace-pre-wrap">{msg.content}</span>
@@ -381,8 +387,17 @@
 					{#if isAssistant && msg.graphContext && msg.graphContext.length > 0}
 						{@const gc = msg.graphContext}
 						<details class="max-w-[85%] mt-1.5 text-[11px]">
-							<summary class="cursor-pointer text-zinc-400 hover:text-zinc-600 select-none list-none flex items-center gap-1">
-								<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
+							<summary
+								class="cursor-pointer text-zinc-400 hover:text-zinc-600 select-none list-none flex items-center gap-1"
+							>
+								<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+									><path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
+									/></svg
+								>
 								{gc.length} graph {gc.length === 1 ? 'node' : 'nodes'} used
 							</summary>
 							<div class="mt-1 rounded-lg border border-zinc-200 bg-white overflow-hidden">
@@ -466,7 +481,9 @@
 				aria-label="Send"
 			>
 				<svg class="w-4 h-4 translate-x-[1px]" fill="currentColor" viewBox="0 0 20 20">
-					<path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+					<path
+						d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"
+					/>
 				</svg>
 			</button>
 		</div>

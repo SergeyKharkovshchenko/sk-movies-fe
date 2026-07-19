@@ -24,7 +24,7 @@ jobs:
       # you'd need to stand up your own cache backend (registry, secrets, etc).
       - name: Restore node_modules cache
         id: node-modules-cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: node_modules
           key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}

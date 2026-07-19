@@ -9,12 +9,15 @@
 <div class="grid {$treeviewSidebarVisible ? 'grid-cols-[280px_1fr]' : ''}">
 	{#if $treeviewSidebarVisible}
 		<SecondaryNavigation>
-			<Headline isSelected={false} on:handleClick={() => goto('/movies/comments/manage')}>PROPERTY BARS</Headline
+			<Headline isSelected={false} on:handleClick={() => goto('/movies/comments/manage')}
+				>PROPERTY BARS</Headline
 			>
 			<Headline isSelected={true} on:handleClick={() => goto('/movies/comments/complexcomments')}
 				>COMPLEX PROPERTIES</Headline
 			>
-			<Headline isSelected={false} on:handleClick={() => goto('/movies/comments/comments')}>PROPERTIES</Headline>
+			<Headline isSelected={false} on:handleClick={() => goto('/movies/comments/comments')}
+				>PROPERTIES</Headline
+			>
 		</SecondaryNavigation>
 	{/if}
 

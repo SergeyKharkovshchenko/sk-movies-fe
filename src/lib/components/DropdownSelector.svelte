@@ -3,10 +3,6 @@
 	import type { DropdownSelector } from '$lib/interfaces';
 	import TooltipComponent from '$lib/components/TooltipComponent.svelte';
 
-	interface $$Events {
-		change: CustomEvent<{ text: string; value: string }>;
-	}
-
 	let {
 		disabled = false,
 		options,
@@ -88,7 +84,10 @@
 				}
 			}}
 		>
-			<p class="flex-grow mr-2.5 py-1 text-primary-950 truncate w-64" class:text-secondary-400={disabled}>
+			<p
+				class="flex-grow mr-2.5 py-1 text-primary-950 truncate w-64"
+				class:text-secondary-400={disabled}
+			>
 				{selected.text || defaultValue?.text || 'Select'}
 			</p>
 			<i

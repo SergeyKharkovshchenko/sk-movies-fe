@@ -572,7 +572,7 @@ export const BikesAPIService = {
 	ragDeleteEmbeddings,
 	ragGetStatus,
 	ragGetExampleQuestions,
-	ragDeduplicateGraph,
+	ragDeduplicateGraph
 };
 
 export const KnowledgeAPIService = {
@@ -582,7 +582,7 @@ export const KnowledgeAPIService = {
 	knowledgeDelete,
 	knowledgeStatus,
 	knowledgeLabels,
-	knowledgeClearCache,
+	knowledgeClearCache
 };
 
 export const UsedNamesAPIService = {

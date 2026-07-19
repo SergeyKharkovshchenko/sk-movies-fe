@@ -10,4 +10,4 @@ export function updateSelectedLanguage(value: any) {
 
 export const currentThemeStore: Writable<Theme> = writable('content');
 export const treeviewSidebarVisible = writable(true);
- export const currentRoute = writable('/');
+export const currentRoute = writable('/');

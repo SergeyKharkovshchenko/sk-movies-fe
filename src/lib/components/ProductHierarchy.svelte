@@ -63,7 +63,11 @@
 			<i class="fa-solid fa-angles-down mr-2"></i>
 			<span>Expand all</span>
 		</button>
-		<button data-cy="products-collapseAllButton" class="text-xs pr-[22px] pb-1.5" on:click={collapseAllNodes}>
+		<button
+			data-cy="products-collapseAllButton"
+			class="text-xs pr-[22px] pb-1.5"
+			on:click={collapseAllNodes}
+		>
 			<i class="fa-solid fa-angles-right mr-2"></i>
 			<span>Collapse all</span>
 		</button>

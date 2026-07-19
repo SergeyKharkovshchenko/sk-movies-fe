@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { fade, scale } from 'svelte/transition'
+	import { fade, scale } from 'svelte/transition';
 
-	type Width = 'sm' | 'md' | 'lg' | 'xl' | '2xl'
+	type Width = 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 
 	let {
 		open = $bindable(false),
@@ -9,11 +9,11 @@
 		width = 'md' as Width,
 		onclose
 	}: {
-		open?: boolean
-		title?: string
-		width?: Width
-		onclose?: () => void
-	} = $props()
+		open?: boolean;
+		title?: string;
+		width?: Width;
+		onclose?: () => void;
+	} = $props();
 
 	const widthMap: Record<Width, string> = {
 		sm: 'max-w-sm',
@@ -21,57 +21,57 @@
 		lg: 'max-w-lg',
 		xl: 'max-w-xl',
 		'2xl': 'max-w-2xl'
-	}
+	};
 
 	const reducedMotion =
-		typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+		typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-	let previousFocus: HTMLElement | null = null
+	let previousFocus: HTMLElement | null = null;
 
 	function close() {
-		open = false
-		onclose?.()
-		previousFocus?.focus()
+		open = false;
+		onclose?.();
+		previousFocus?.focus();
 	}
 
 	function handleBackdropClick(e: MouseEvent) {
-		if (e.target === e.currentTarget) close()
+		if (e.target === e.currentTarget) close();
 	}
 
 	function trapFocus(node: HTMLElement) {
-		previousFocus = document.activeElement as HTMLElement
+		previousFocus = document.activeElement as HTMLElement;
 
 		const getFocusable = () =>
 			Array.from(
 				node.querySelectorAll<HTMLElement>(
 					'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
 				)
-			)
+			);
 
 		// Focus first focusable element
-		const focusable = getFocusable()
-		focusable[0]?.focus()
+		const focusable = getFocusable();
+		focusable[0]?.focus();
 
 		function onKeydown(e: KeyboardEvent) {
-			if (e.key !== 'Tab') return
-			const items = getFocusable()
-			const first = items[0]
-			const last = items[items.length - 1]
+			if (e.key !== 'Tab') return;
+			const items = getFocusable();
+			const first = items[0];
+			const last = items[items.length - 1];
 			if (e.shiftKey && document.activeElement === first) {
-				e.preventDefault()
-				last?.focus()
+				e.preventDefault();
+				last?.focus();
 			} else if (!e.shiftKey && document.activeElement === last) {
-				e.preventDefault()
-				first?.focus()
+				e.preventDefault();
+				first?.focus();
 			}
 		}
 
-		node.addEventListener('keydown', onKeydown)
+		node.addEventListener('keydown', onKeydown);
 		return {
 			destroy() {
-				node.removeEventListener('keydown', onKeydown)
+				node.removeEventListener('keydown', onKeydown);
 			}
-		}
+		};
 	}
 </script>
 
@@ -93,7 +93,9 @@
 			role="dialog"
 			aria-modal="true"
 			aria-labelledby={title ? 'modal-title' : undefined}
-			class="relative z-10 flex max-h-[90vh] w-full flex-col {widthMap[width]} rounded-xl bg-white shadow-2xl ring-1 ring-black/5"
+			class="relative z-10 flex max-h-[90vh] w-full flex-col {widthMap[
+				width
+			]} rounded-xl bg-white shadow-2xl ring-1 ring-black/5"
 			use:trapFocus
 			transition:scale={{ duration: reducedMotion ? 0 : 200, start: 0.95 }}
 		>
@@ -120,7 +122,9 @@
 
 			<!-- Footer -->
 			{#if true}
-				<div class="flex shrink-0 items-center justify-end gap-3 border-t border-zinc-100 px-6 py-4">
+				<div
+					class="flex shrink-0 items-center justify-end gap-3 border-t border-zinc-100 px-6 py-4"
+				>
 					<slot name="footer" />
 				</div>
 			{/if}
