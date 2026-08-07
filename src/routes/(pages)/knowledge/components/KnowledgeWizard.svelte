@@ -4,6 +4,22 @@
 	import { fetchAuthToken } from '$lib/utils/token';
 	import KnowledgeChat from './KnowledgeChat.svelte';
 	import { napoleonSampleText } from '$lib/data/napoleonSample';
+	import { munichSampleText } from '$lib/data/munichSample';
+
+	const SAMPLE_TEXTS: Record<string, { label: string; text: string; menuLabel: string; title: string }> = {
+		napoleon: {
+			label: 'napoleon',
+			text: napoleonSampleText,
+			menuLabel: 'Napoleon / Waterloo',
+			title: 'Load Napoleon / Waterloo / Talleyrand sample text'
+		},
+		munich: {
+			label: 'munich-trip',
+			text: munichSampleText,
+			menuLabel: 'Munich Trip Plan',
+			title: 'Load Munich weekend trip planning sample text'
+		}
+	};
 
 	const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8080';
 
@@ -453,16 +469,24 @@
 		<div>
 			<div class="flex items-center justify-between mb-1">
 				<label class="block text-sm font-medium text-zinc-700" for="kg-text">Raw Text</label>
-				<button
-					onclick={() => {
-						rawText = napoleonSampleText;
-						label = 'napoleon';
+				<select
+					value=""
+					onchange={(e) => {
+						const key = e.currentTarget.value;
+						const sample = SAMPLE_TEXTS[key];
+						if (!sample) return;
+						rawText = sample.text;
+						label = sample.label;
+						e.currentTarget.value = '';
 					}}
-					class="text-xs text-zinc-400 hover:text-zinc-700 transition-colors"
-					title="Load Napoleon / Waterloo / Talleyrand sample text"
+					class="text-xs text-zinc-400 hover:text-zinc-700 transition-colors bg-transparent border-none focus:outline-none cursor-pointer"
+					title="Load a sample text"
 				>
-					Load sample ↓
-				</button>
+					<option value="" disabled>Load sample ↓</option>
+					{#each Object.entries(SAMPLE_TEXTS) as [key, sample] (key)}
+						<option value={key} title={sample.title}>{sample.menuLabel}</option>
+					{/each}
+				</select>
 			</div>
 			<textarea
 				id="kg-text"
