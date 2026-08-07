@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { KnowledgeAPIService } from '$services/apiService';
 
 	interface GraphEntry {
@@ -41,51 +42,64 @@
 		stats?: { nodes?: number; relationships?: number } | null;
 	} = $props();
 
-	const PROBE_QUESTIONS: { q: string; why: string }[] = [
-		{
-			q: 'Which commanders were enemies of Napoleon at Waterloo, and what forces did they lead?',
-			why: 'Requires Wellington/Blücher → COMMANDS → their armies in a single answer.'
-		},
-		{
-			q: 'Who did Wellington ally with, and who commanded those allied forces?',
-			why: '2-hop: Wellington → ALLIED_WITH → Blücher → COMMANDS → Prussian Army.'
-		},
-		{
-			q: 'Why did the Seventh Coalition mobilize against Napoleon?',
-			why: "Napoleon's Return → LED_TO → Coalition Mobilization → Seventh Coalition."
-		},
-		{
-			q: "What caused Napoleon's abdication?",
-			why: "Battle of Waterloo → RESULTED_IN → Napoleon's Abdication — not likely to be in one chunk."
-		},
-		{
-			q: 'Why did Napoleon lose the battle?',
-			why: 'Multiple CAUSED/RESULTED_IN paths converging.'
-		},
-		{
-			q: 'What were all the long-term consequences of the Battle of Waterloo?',
-			why: 'Graph has RESULTED_IN → End of French Empire, Congress of Vienna, Pax Britannica.'
-		},
-		{
-			q: 'What happened to Napoleon personally after Waterloo?',
-			why: 'Abdication → exile → Saint Helena chain.'
-		},
-		{
-			q: 'What key locations were part of the Battle of Waterloo battlefield?',
-			why: 'Hougoumont, La Belle Alliance, Mont-Saint-Jean all linked via PART_OF / LOCATED_IN.'
-		},
-		{
-			q: 'How did Hougoumont and La Haye Sainte contribute to the battle outcome?',
-			why: 'PART_OF → Battle of Waterloo → RESULTED_IN — no single chunk covers this.'
-		},
-		{
-			q: 'What battles were fought in the days before Waterloo, and what was their outcome?',
-			why: 'Battle of Ligny, Quatre Bras → PRECEDED → Battle of Waterloo, then expanding to their results.'
-		}
-	];
+	const PROBE_QUESTIONS_BY_LABEL: Record<string, { q: string; why: string }[]> = {
+		napoleon: [
+			{
+				q: 'Which commanders were enemies of Napoleon at Waterloo, and what forces did they lead?',
+				why: 'Requires Wellington/Blücher → COMMANDS → their armies in a single answer.'
+			},
+			{
+				q: 'Who did Wellington ally with, and who commanded those allied forces?',
+				why: '2-hop: Wellington → ALLIED_WITH → Blücher → COMMANDS → Prussian Army.'
+			},
+			{
+				q: 'Why did the Seventh Coalition mobilize against Napoleon?',
+				why: "Napoleon's Return → LED_TO → Coalition Mobilization → Seventh Coalition."
+			},
+			{
+				q: "What caused Napoleon's abdication?",
+				why: "Battle of Waterloo → RESULTED_IN → Napoleon's Abdication — not likely to be in one chunk."
+			},
+			{
+				q: 'Why did Napoleon lose the battle?',
+				why: 'Multiple CAUSED/RESULTED_IN paths converging.'
+			},
+			{
+				q: 'What were all the long-term consequences of the Battle of Waterloo?',
+				why: 'Graph has RESULTED_IN → End of French Empire, Congress of Vienna, Pax Britannica.'
+			},
+			{
+				q: 'What happened to Napoleon personally after Waterloo?',
+				why: 'Abdication → exile → Saint Helena chain.'
+			},
+			{
+				q: 'What key locations were part of the Battle of Waterloo battlefield?',
+				why: 'Hougoumont, La Belle Alliance, Mont-Saint-Jean all linked via PART_OF / LOCATED_IN.'
+			},
+			{
+				q: 'How did Hougoumont and La Haye Sainte contribute to the battle outcome?',
+				why: 'PART_OF → Battle of Waterloo → RESULTED_IN — no single chunk covers this.'
+			},
+			{
+				q: 'What battles were fought in the days before Waterloo, and what was their outcome?',
+				why: 'Battle of Ligny, Quatre Bras → PRECEDED → Battle of Waterloo, then expanding to their results.'
+			}
+		],
+		'munich-trip': [
+			{
+				q: "Which plan satisfies Anna's easy-trip preference, Tom's vegetarian requirement, the museum opening hours, and the train schedule?",
+				why: 'That is much more KG-friendly because it forces the system to combine several facts into one answer.'
+			},
+			{
+				q: 'Which choice works given museum hours, train times, and restaurant closure?',
+				why: 'Combines Deutsches Museum → OPEN_ON → Saturday, the train arrival/return times, and Bavarian Bistro → CLOSED_ON → Sunday into one multi-hop answer.'
+			}
+		]
+	};
 
 	let label = $state(initialLabel);
-	let ragMode = $state<'combined' | 'vector' | 'graph'>('combined');
+	let readyLabels = $state<string[]>([]);
+	let ragMode = $state<'combined' | 'vector' | 'graph' | 'compare'>('combined');
 	let seedPriority = $state<'graph' | 'vector'>('graph');
 	let strict = $state(false);
 	let temperature = $state(0.2);
@@ -97,6 +111,21 @@
 	let showSettings = $state(false);
 	let copiedId = $state<string | null>(null);
 	let messagesEl: HTMLElement;
+
+	// Dropdown options: known-ready knowledge bases, plus whatever label we were opened with
+	// (in case it hasn't shown up in the labels list yet) so the select never renders empty.
+	let labelOptions = $derived(
+		Array.from(new Set([...readyLabels, initialLabel].filter(Boolean)))
+	);
+	let probeQuestions = $derived(PROBE_QUESTIONS_BY_LABEL[label] ?? []);
+
+	onMount(() => {
+		KnowledgeAPIService.knowledgeLabels()
+			.then((res) => {
+				readyLabels = Array.isArray(res) ? res : (res?.labels ?? []);
+			})
+			.catch(() => {});
+	});
 
 	$effect(() => {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars -- read to register as an $effect dependency
@@ -118,25 +147,22 @@
 			.map((m) => ({ role: m.role as 'user' | 'assistant', content: m.content }));
 	}
 
-	async function send(text?: string) {
-		const question = (text ?? input).trim();
-		if (!question || loading) return;
-		input = '';
-
-		const userMsg: Message = { id: uid(), role: 'user', content: question, timestamp: new Date() };
-		messages = [...messages, userMsg];
-		loading = true;
-
+	// Runs a single request against a concrete (non-'compare') rag mode and appends its own
+	// assistant message. Shared by normal sends and by 'compare' mode, which calls this twice.
+	async function sendOne(
+		question: string,
+		history: { role: 'user' | 'assistant'; content: string }[],
+		mode: 'combined' | 'vector' | 'graph'
+	) {
 		const assistantId = uid();
 		try {
-			const history = buildHistory();
 			const result = await KnowledgeAPIService.napoleonChat({
 				question,
 				label,
 				history,
 				topK,
 				neighborLimit,
-				ragMode,
+				ragMode: mode,
 				strict,
 				temperature,
 				seedPriority
@@ -165,7 +191,7 @@
 					graphContext,
 					sources,
 					retrievalInfo,
-					ragMode,
+					ragMode: mode,
 					strict,
 					temperature,
 					seedPriority
@@ -182,6 +208,28 @@
 					error: true
 				}
 			];
+		}
+	}
+
+	async function send(text?: string) {
+		const question = (text ?? input).trim();
+		if (!question || loading) return;
+		input = '';
+
+		const userMsg: Message = { id: uid(), role: 'user', content: question, timestamp: new Date() };
+		messages = [...messages, userMsg];
+		loading = true;
+
+		try {
+			const history = buildHistory();
+			if (ragMode === 'compare') {
+				// Two requests in a row against the same question/history — vector first, then
+				// combined — so both answers land as separate, individually-tagged messages.
+				await sendOne(question, history, 'vector');
+				await sendOne(question, history, 'combined');
+			} else {
+				await sendOne(question, history, ragMode);
+			}
 		} finally {
 			loading = false;
 		}
@@ -211,7 +259,7 @@
 			<span class="font-semibold text-sm text-zinc-800 shrink-0">Knowledge Chat</span>
 			<!-- RAG mode segmented control -->
 			<div class="flex rounded-md border border-zinc-300 bg-white text-[11px] overflow-hidden">
-				{#each [{ value: 'combined', label: 'Combined', title: 'Vector + Graph retrieval' }, { value: 'vector', label: 'Vector', title: 'Vector search only' }, { value: 'graph', label: 'Graph', title: 'Graph traversal only' }] as const as mode (mode.value)}
+				{#each [{ value: 'combined', label: 'Combined', title: 'Vector + Graph retrieval' }, { value: 'vector', label: 'Vector', title: 'Vector search only' }, { value: 'graph', label: 'Graph', title: 'Graph traversal only' }, { value: 'compare', label: 'Compare', title: 'Send the question twice — Vector, then Combined — as separate answers' }] as const as mode (mode.value)}
 					<button
 						onclick={() => (ragMode = mode.value)}
 						class="px-2.5 py-1 transition-colors border-r border-zinc-300 last:border-r-0"
@@ -236,11 +284,15 @@
 			{/if}
 			<div class="flex items-center gap-1 text-xs">
 				<span class="text-zinc-400">label:</span>
-				<input
+				<select
 					bind:value={label}
-					class="w-28 border border-zinc-300 rounded px-1.5 py-0.5 text-xs font-mono bg-white focus:outline-none focus:ring-1 focus:ring-zinc-400"
-					placeholder="napoleon"
-				/>
+					class="w-32 border border-zinc-300 rounded px-1.5 py-0.5 text-xs font-mono bg-white focus:outline-none focus:ring-1 focus:ring-zinc-400"
+					title="Knowledge base to chat against"
+				>
+					{#each labelOptions as opt (opt)}
+						<option value={opt}>{opt}</option>
+					{/each}
+				</select>
 			</div>
 			<button
 				onclick={() => (showSettings = !showSettings)}
@@ -385,7 +437,12 @@
 					Probe questions — Vector vs Graph+Vector
 				</p>
 				<div class="space-y-1 max-h-56 overflow-y-auto pr-1">
-					{#each PROBE_QUESTIONS as item, i (i)}
+					{#if probeQuestions.length === 0}
+						<p class="text-zinc-400 text-[11px] italic px-1 py-1">
+							No canned probe questions for '{label}' yet.
+						</p>
+					{/if}
+					{#each probeQuestions as item, i (i)}
 						<button
 							onclick={() => {
 								send(item.q);
