@@ -64,6 +64,8 @@ jobs:
         run: npm run build
         env:
           VITE_API_URL: ${{ vars.VITE_API_URL }}
+          VITE_SENTRY_DSN: ${{ vars.VITE_SENTRY_DSN }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           BASE_PATH: /sk-movies-fe/staging-pr-${{ github.event.inputs.PR_number }}
 
       # ======================================================
