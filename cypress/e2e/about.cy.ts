@@ -4,5 +4,6 @@ describe('About page', () => {
 
 		cy.get('h2').should('contain.text', 'About');
 		cy.contains('SK Movies is a movie recommendation app').should('be.visible');
+		cy.argosScreenshot('about-page');
 	});
 });

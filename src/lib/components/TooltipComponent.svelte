@@ -4,7 +4,6 @@
 	interface TooltipProps {
 		type: 'error' | 'info' | 'copy' | 'changed';
 		tooltipInfo: string | { [key: string]: string } | string[];
-		error?: string | string[] | null;
 		onCopy?: () => void;
 	}
 
@@ -52,7 +51,7 @@
 						{tooltipInfo}
 					{:else}
 						<div class="grid grid-cols-[40px_1fr] gap-y-1">
-							{#each tooltipContent as [key, value]}
+							{#each tooltipContent as [key, value] (key)}
 								<div class="font-bold">{key}</div>
 								<div>{value}</div>
 							{/each}

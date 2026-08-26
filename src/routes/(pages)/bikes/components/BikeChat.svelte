@@ -333,7 +333,7 @@
 			<div class="flex flex-col items-center justify-center h-full gap-4 text-center">
 				<p class="text-sm text-zinc-500">Ask anything about the bike hierarchy or taxonomy</p>
 				<div class="flex flex-wrap gap-2 justify-center">
-					{#each suggestedPrompts as prompt}
+					{#each suggestedPrompts as prompt (prompt)}
 						<button
 							onclick={() => send(prompt)}
 							class="text-xs px-3 py-1.5 rounded-full border border-zinc-300 text-zinc-600 hover:border-zinc-500 hover:text-zinc-900 hover:bg-zinc-50 transition-colors"

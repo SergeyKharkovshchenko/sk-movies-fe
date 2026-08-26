@@ -27,7 +27,7 @@
 <!-- {JSON.stringify($comments[user.userId])} -->
 
 {#if $comments[user.userId] && $comments[user.userId].length && isCommentsOpen}
-	{#each $comments[user.userId] as comment}
+	{#each $comments[user.userId] as comment (comment.id)}
 		<div class="">({comment.movieId})</div>
 		<div class="">({comment.movieTitle})</div>
 		<div class="">({comment.rating})</div>

@@ -25,7 +25,7 @@
 	{/if}
 {/key}
 
-{#each $comments[$selectedMovie.movieId] as comment}
+{#each $comments[$selectedMovie.movieId] as comment (comment.id)}
 	<div class="">by {comment.userId}:</div>
 	<div class="">({comment.rating})</div>
 	<div class="">({$selectedMovie?.movieId})</div>

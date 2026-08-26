@@ -6,5 +6,6 @@ describe('Home', () => {
 		cy.contains('SK Movies').should('be.visible');
 		cy.contains('button', 'Movies').should('be.visible');
 		cy.contains('button', 'About').should('be.visible');
+		cy.argosScreenshot('movies-page');
 	});
 });

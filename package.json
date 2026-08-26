@@ -21,6 +21,7 @@
 		"sbom": "cyclonedx-npm --output-format JSON --output-file bom.json"
 	},
 	"devDependencies": {
+		"@argos-ci/cypress": "^6.3.6",
 		"@cyclonedx/cyclonedx-npm": "^6.0.0",
 		"@eslint/compat": "^1.2.5",
 		"@eslint/js": "^9.18.0",

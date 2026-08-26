@@ -52,7 +52,7 @@
 			{:else}
 				<div class="h-[11px]" />
 			{/if}
-			{#each navigationItems[$currentThemeStore].menuItemsTop as menuItem}
+			{#each navigationItems[$currentThemeStore].menuItemsTop as menuItem (menuItem.linktext)}
 				<SidebarMenuItem {menuItem} />
 			{/each}
 		</div>

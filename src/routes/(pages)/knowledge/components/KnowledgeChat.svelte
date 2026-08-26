@@ -114,9 +114,7 @@
 
 	// Dropdown options: known-ready knowledge bases, plus whatever label we were opened with
 	// (in case it hasn't shown up in the labels list yet) so the select never renders empty.
-	let labelOptions = $derived(
-		Array.from(new Set([...readyLabels, initialLabel].filter(Boolean)))
-	);
+	let labelOptions = $derived(Array.from(new Set([...readyLabels, initialLabel].filter(Boolean))));
 	let probeQuestions = $derived(PROBE_QUESTIONS_BY_LABEL[label] ?? []);
 
 	onMount(() => {

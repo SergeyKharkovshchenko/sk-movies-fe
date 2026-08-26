@@ -6,7 +6,10 @@
 	import { napoleonSampleText } from '$lib/data/napoleonSample';
 	import { munichSampleText } from '$lib/data/munichSample';
 
-	const SAMPLE_TEXTS: Record<string, { label: string; text: string; menuLabel: string; title: string }> = {
+	const SAMPLE_TEXTS: Record<
+		string,
+		{ label: string; text: string; menuLabel: string; title: string }
+	> = {
 		napoleon: {
 			label: 'napoleon',
 			text: napoleonSampleText,

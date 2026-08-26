@@ -1,5 +1,6 @@
 <script lang="ts">
 	import HierarchyNode from './HierarchyNode.svelte';
+	import { SvelteMap, SvelteSet } from 'svelte/reactivity';
 
 	export let relations: { parent: string; child: string }[] = [];
 
@@ -10,7 +11,7 @@
 	$: roots = findRoots(relations);
 
 	function buildChildrenMap(rels: { parent: string; child: string }[]) {
-		const map = new Map<string, string[]>();
+		const map = new SvelteMap<string, string[]>();
 		for (const { parent, child } of rels) {
 			const siblings = map.get(child) ?? [];
 			siblings.push(parent);
@@ -21,7 +22,7 @@
 
 	function findRoots(rels: { parent: string; child: string }[]) {
 		const namesWithParent = new Set(rels.map((r) => r.parent));
-		const allNames = new Set<string>();
+		const allNames = new SvelteSet<string>();
 		for (const { parent, child } of rels) {
 			allNames.add(parent);
 			allNames.add(child);

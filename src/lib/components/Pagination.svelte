@@ -65,7 +65,7 @@
 			{#if showLocaleMenu}
 				<div class="absolute z-10 h-5 -top-32 left-4">
 					<ul>
-						{#each options as option}
+						{#each options as option (option)}
 							<li
 								class="cursor-pointer mx-3 w-36 p-2 bg-gray-200 text-center"
 								class:font-bold={selectedRowsPerPage == option}

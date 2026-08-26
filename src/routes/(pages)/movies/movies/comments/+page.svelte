@@ -23,7 +23,7 @@
 				>COMMENTS</Headline
 			>
 
-			{#each propertiesFilters as filter}
+			{#each propertiesFilters as filter (filter.genre)}
 				<HeadlineSecondary
 					isSelected={filter.genre === selectedDatatype}
 					handleClick={() => {
