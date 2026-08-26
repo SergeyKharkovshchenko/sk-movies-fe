@@ -2,12 +2,21 @@
 	import Button from '$components/Button.svelte';
 	import { comments, moviesStore, selectedMovie } from '$store/movies';
 
-	let poster = $state<string | undefined>();
+	// moviesStore.getPoster() goes through handleFetch(), which has no explicit return type (it's
+	// effectively `any`) -- this interface is just the one field actually read below.
+	let poster = $state<{ imageBase64?: string } | undefined>();
 
-	$effect(async () => {
+	// $effect callbacks must be synchronous (return void or a cleanup function) -- an async
+	// callback implicitly returns a Promise, which doesn't type-check. Delegate to an async
+	// helper instead, called from within the (still synchronous) effect.
+	async function loadPoster(movieId: string) {
+		poster = await moviesStore.getPoster(movieId);
+		console.log(poster);
+	}
+
+	$effect(() => {
 		if ($selectedMovie?.movieId) {
-			poster = await moviesStore.getPoster($selectedMovie.movieId);
-			console.log(poster);
+			loadPoster($selectedMovie.movieId);
 		}
 	});
 
