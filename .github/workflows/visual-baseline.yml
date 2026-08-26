@@ -1,0 +1,49 @@
+# Runs on every push to main (i.e. every merge) to give Argos a real main-branch build to diff
+# future PRs against -- per Argos's own model, a build's first run on main is auto-approved as
+# the baseline. pull-request.yml only triggers on pull_request events, so merging a PR alone
+# never produces this on its own.
+#
+# Deliberately a separate, focused workflow rather than adding a `push` trigger to
+# pull-request.yml: that would re-run lint/typecheck/unit-tests/SonarCloud a second time on code
+# already verified pre-merge, for no new signal beyond the Cypress/Argos part actually needed
+# here.
+name: Visual regression baseline (main)
+on:
+  push:
+    branches: ['main']
+jobs:
+  baseline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Restore node_modules + Cypress binary cache
+        id: node-modules-cache
+        uses: actions/cache@v6
+        with:
+          path: |
+            node_modules
+            ~/.cache/Cypress
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      - name: Install dependencies
+        if: steps.node-modules-cache.outputs.cache-hit != 'true'
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+        env:
+          VITE_API_URL: ${{ vars.VITE_API_URL }}
+
+      - name: Cypress run
+        uses: cypress-io/github-action@v7.4.1
+        with:
+          install: false
+          start: npm run preview
+          wait-on: 'http://localhost:4173/sk-movies-fe'
+          browser: chrome
+        env:
+          ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
