@@ -6,5 +6,8 @@ describe('Header navigation', () => {
 
 		cy.location('pathname').should('include', '/about');
 		cy.contains('button', 'About').should('have.class', 'active');
+		// Distinct from about.cy.ts's snapshot -- this one catches drift in the active-nav-item
+		// styling specifically, not just the About page content.
+		cy.argosScreenshot('navigation-active-state');
 	});
 });

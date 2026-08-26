@@ -60,6 +60,12 @@ jobs:
           start: npm run preview
           wait-on: 'http://localhost:4173/sk-movies-fe'
           browser: chrome
+        env:
+          # Argos SDK (wired into cypress.config.ts/cypress/support/e2e.ts) uploads screenshots
+          # from cy.argosScreenshot() calls in the specs automatically when this is set -- see the
+          # trailing comment block for one-time setup. Without it, screenshots still get captured
+          # locally for debugging but nothing is uploaded.
+          ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
 
       # Scans the repo (incl. coverage/lcov.info) and posts the result as a PR check/comment.
       # Needs SONAR_TOKEN configured — see the trailing comment block for setup.
@@ -98,3 +104,13 @@ jobs:
 #    Analysis) — Automatic Analysis conflicts with a CI-driven scan like this one.
 # 7. Push a PR — the "SonarCloud Scan" check should appear and, once configured, SonarCloud posts
 #    a summary comment directly on the PR.
+#
+# Argos (visual regression) — one-time setup required:
+# 1. Go to https://app.argos-ci.com and sign in with your GitHub account.
+# 2. Create a project for this repo (or import it if Argos offers to).
+# 3. Project Settings > General > copy the Token.
+# 4. In GitHub: this repo's Settings > Secrets and variables > Actions > Secrets > New repository
+#    secret, name it ARGOS_TOKEN, paste the token.
+# 5. Push a PR — cy.argosScreenshot() calls in the specs (see cypress/e2e/*.cy.ts) upload to
+#    Argos, which posts a status check on the PR once it has a baseline. The very first build on
+#    main has nothing to diff against; every PR build after that compares against main's latest.
