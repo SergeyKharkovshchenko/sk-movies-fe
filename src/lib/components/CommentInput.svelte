@@ -5,10 +5,7 @@
 	let isSubmitting = $state(false);
 	let error = $state<string | null>(null);
 
-	let isValid = $state(true);
-	$effect(() => {
-		isValid = commentText.trim().length >= 3 && commentText.trim().length <= 500;
-	});
+	let isValid = $derived(commentText.trim().length >= 3 && commentText.trim().length <= 500);
 
 	async function handleSubmit() {
 		if (!isValid) {

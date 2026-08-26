@@ -54,7 +54,7 @@
 				<Divider class="bg-primary-900" />
 			</div>
 
-			{#each $filteredMovies as movie, i}
+			{#each $filteredMovies as movie (movie.movieId)}
 				<MovieRow {movie} {minimizeTable} />
 			{/each}
 		</section>

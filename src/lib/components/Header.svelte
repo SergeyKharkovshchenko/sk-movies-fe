@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { currentRoute } from '$store/store';
 	import { goto } from '$lib/utils/navigate';
+	import { resolve } from '$app/paths';
 	import { page } from '$app/stores';
 	import {
 		currentLanguage,
@@ -44,7 +45,7 @@
 	class="grid grid-cols-3 h-12 w-full px-4 border-b-zinc-200 border-b border-solid items-center"
 >
 	<a
-		href="/"
+		href={resolve('/')}
 		class="flex items-center gap-2 no-underline transition-opacity hover:opacity-75 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-600 rounded"
 	>
 		<img src="/favicon.png" alt="SK Movies logo" width="32" height="32" class="h-8 w-8" />
@@ -119,7 +120,7 @@
 			{#if showLocaleMenu}
 				<div class="absolute rounded-lg ring-2 ring-gray-300 bg-white z-10 shadow-lg top-12">
 					<ul>
-						{#each availableLanguages as l}
+						{#each availableLanguages as l (l.key)}
 							<!-- svelte-ignore a11y-click-events-have-key-events -->
 							<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 							<li

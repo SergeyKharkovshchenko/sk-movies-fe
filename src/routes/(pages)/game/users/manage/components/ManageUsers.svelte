@@ -21,7 +21,7 @@
 
 <!-- <Button on:customclick={handleShowAllUsers}>Show all users</Button> -->
 {#if $users.length}
-	{#each $users as user}
+	{#each $users as user (user.userId)}
 		<UserCard {user} />
 	{/each}
 {/if}

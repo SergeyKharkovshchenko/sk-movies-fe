@@ -101,7 +101,7 @@
 					class="absolute z-10 top-12 left-0 border rounded-sm shadow-lg border-zinc-200 px-2.5 pt-3 pb-2 text-green-950 bg-white overflow-y-auto max-h-[260px] w-full"
 				>
 					<ul>
-						{#each options as option}
+						{#each options as option (option.value)}
 							<li
 								role="option"
 								tabindex="0"

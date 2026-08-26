@@ -32,7 +32,7 @@
 		</div>
 		<!-- Display user comments with more details -->
 		{#if $comments[userId] && $comments[userId].length}
-			{#each $comments[userId] as comment}
+			{#each $comments[userId] as comment (comment.id)}
 				<div class="bg-white p-4 mb-2 rounded-lg">
 					<h4 class="text-lg font-semibold">{comment.movieTitle}</h4>
 					<p class="text-gray-600">Rating: {comment.rating}</p>
@@ -42,7 +42,7 @@
 		{/if}
 	</div>
 	<div>
-		{#each $similarityTable as similarity}
+		{#each $similarityTable as similarity (similarity.userId)}
 			<div>
 				{similarity.userId} - {similarity.similarity} - {similarity.rank}
 			</div>
