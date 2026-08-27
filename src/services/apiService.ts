@@ -100,6 +100,16 @@ async function knowledgeLabels() {
 	return await handleFetch(`${apiUrl}/knowledge/labels`, FetchMethods.GET);
 }
 
+async function compareAnalyze(payload: {
+	question: string;
+	answerA: string;
+	labelA: string;
+	answerB: string;
+	labelB: string;
+}) {
+	return await handleFetch(`${apiUrl}/knowledge/compare-analyze`, FetchMethods.POST, {}, payload);
+}
+
 async function knowledgeGraph(label: string) {
 	return await handleFetch(
 		`${apiUrl}/knowledge/graph/${encodeURIComponent(label)}`,
@@ -598,7 +608,8 @@ export const KnowledgeAPIService = {
 	knowledgeLabels,
 	knowledgeClearCache,
 	knowledgeGraph,
-	knowledgeHierarchy
+	knowledgeHierarchy,
+	compareAnalyze
 };
 
 export const UsedNamesAPIService = {
