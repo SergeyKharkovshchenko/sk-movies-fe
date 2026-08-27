@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import cytoscape from 'cytoscape';
 	import { KnowledgeAPIService } from '$services/apiService';
+	import HierarchyTree from '$components/HierarchyTree.svelte';
 
 	type OpState = 'idle' | 'loading' | 'ok' | 'error';
 
@@ -16,6 +17,11 @@
 	let nodeCount = $state(0);
 	let edgeCount = $state(0);
 
+	// Parent-child pairs only (from the opt-in "deep analysis" taxonomy step at process time) --
+	// rendered separately as a collapsible tree via the same component the Bikes page uses.
+	let hierarchyState = $state<OpState>('idle');
+	let hierarchyRelations = $state<{ parent: string; child: string }[]>([]);
+
 	async function fetchLabels() {
 		labelsState = 'loading';
 		try {
@@ -24,11 +30,16 @@
 			labelsState = 'ok';
 			if (!selectedLabel && labelsList.length > 0) {
 				selectedLabel = labelsList[0];
-				loadGraph();
+				loadSelected();
 			}
 		} catch {
 			labelsState = 'error';
 		}
+	}
+
+	function loadSelected() {
+		loadGraph();
+		loadHierarchy();
 	}
 
 	async function loadGraph() {
@@ -44,6 +55,18 @@
 			graphState = 'ok';
 		} catch {
 			graphState = 'error';
+		}
+	}
+
+	async function loadHierarchy() {
+		if (!selectedLabel) return;
+		hierarchyState = 'loading';
+		try {
+			const res = await KnowledgeAPIService.knowledgeHierarchy(selectedLabel);
+			hierarchyRelations = Array.isArray(res) ? res : [];
+			hierarchyState = 'ok';
+		} catch {
+			hierarchyState = 'error';
 		}
 	}
 
@@ -144,7 +167,7 @@
 				<span class="font-medium text-zinc-600">Knowledge base</span>
 				<select
 					bind:value={selectedLabel}
-					onchange={loadGraph}
+					onchange={loadSelected}
 					disabled={labelsState === 'loading' || labelsList.length === 0}
 					class="rounded-full border border-zinc-300 bg-white px-2 py-1 text-[11px] disabled:opacity-50"
 				>
@@ -182,6 +205,31 @@
 				class="h-[500px] w-full rounded-lg border border-zinc-200 bg-zinc-50"
 				class:hidden={labelsList.length === 0}
 			></div>
+
+			<!-- Hierarchy tree: parent-child pairs only, from the opt-in deep-analysis taxonomy
+			     step. Empty unless that toggle was checked when this knowledge base was built. -->
+			{#if labelsList.length > 0}
+				<div class="border-t border-zinc-100 pt-3">
+					<h3 class="font-medium text-zinc-600 mb-1.5">Hierarchy Tree (parent-child only)</h3>
+					{#if hierarchyState === 'loading'}
+						<p class="text-zinc-400 flex items-center gap-1.5">
+							<span
+								class="w-2.5 h-2.5 border-2 border-zinc-400 border-t-transparent rounded-full animate-spin"
+							></span>
+							Loading…
+						</p>
+					{:else if hierarchyState === 'error'}
+						<p class="text-red-500">Failed to load hierarchy for "{selectedLabel}".</p>
+					{:else if hierarchyState === 'ok' && hierarchyRelations.length === 0}
+						<p class="text-zinc-400">
+							No parent-child relations found for "{selectedLabel}" — this knowledge base was likely
+							built without the "deep analysis (taxonomy)" option checked.
+						</p>
+					{:else if hierarchyRelations.length > 0}
+						<HierarchyTree relations={hierarchyRelations} />
+					{/if}
+				</div>
+			{/if}
 		</div>
 	{/if}
 </div>
