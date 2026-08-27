@@ -100,6 +100,13 @@ async function knowledgeLabels() {
 	return await handleFetch(`${apiUrl}/knowledge/labels`, FetchMethods.GET);
 }
 
+async function knowledgeGraph(label: string) {
+	return await handleFetch(
+		`${apiUrl}/knowledge/graph/${encodeURIComponent(label)}`,
+		FetchMethods.GET
+	);
+}
+
 async function getProductHierarchy() {
 	return {
 		id: 'GPH:3042193b-f710-4187-94ff-3f4a0e65faf6',
@@ -582,7 +589,8 @@ export const KnowledgeAPIService = {
 	knowledgeDelete,
 	knowledgeStatus,
 	knowledgeLabels,
-	knowledgeClearCache
+	knowledgeClearCache,
+	knowledgeGraph
 };
 
 export const UsedNamesAPIService = {
