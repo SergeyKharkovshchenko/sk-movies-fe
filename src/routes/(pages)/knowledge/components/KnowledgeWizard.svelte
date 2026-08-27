@@ -79,6 +79,10 @@
 	let step = $state<WizardStep>(1);
 	let label = $state('napoleon');
 	let readyLabels = $state<string[]>([]);
+	// Opt-in extra BE step: feeds every extracted entity to the LLM specifically looking for
+	// parent-child/taxonomic structure, stored as dedicated PARENT_OF edges. Off by default --
+	// it's an additional LLM call on top of the main extraction, not needed for every run.
+	let deepAnalysis = $state(false);
 
 	onMount(() => {
 		KnowledgeAPIService.knowledgeLabels()
@@ -103,6 +107,8 @@
 	let sectionProgress = $state<SectionProgress[]>([]);
 	let relationshipsStored = $state(false);
 	let entitiesEmbedded = $state(false);
+	let taxonomyState = $state<'idle' | 'running' | 'done' | 'error'>('idle');
+	let taxonomyCount = $state<number | null>(null);
 	let processingDone = $state(false);
 	let labelAlreadyExists = $state(false);
 	let streamEnded = $state(false);
@@ -209,6 +215,8 @@
 		sseLog = [];
 		relationshipsStored = false;
 		entitiesEmbedded = false;
+		taxonomyState = 'idle';
+		taxonomyCount = null;
 		processingDone = false;
 		labelAlreadyExists = false;
 		streamEnded = false;
@@ -233,7 +241,13 @@
 			const res = await fetch(`${API_URL}/knowledge/process-graph`, {
 				method: 'POST',
 				headers,
-				body: JSON.stringify({ label, entities, sections: graphSections, entityRelationships })
+				body: JSON.stringify({
+					label,
+					entities,
+					sections: graphSections,
+					entityRelationships,
+					deepAnalysis
+				})
 			});
 
 			if (!res.ok || !res.body) throw new Error(`HTTP ${res.status}`);
@@ -357,6 +371,13 @@
 			relationshipsStored = true;
 		} else if (type === 'entities_embedded') {
 			entitiesEmbedded = true;
+		} else if (type === 'taxonomy_start') {
+			taxonomyState = 'running';
+		} else if (type === 'taxonomy_stored') {
+			taxonomyState = 'done';
+			taxonomyCount = typeof parsed.count === 'number' ? parsed.count : null;
+		} else if (type === 'taxonomy_error') {
+			taxonomyState = 'error';
 		} else if (type === 'complete' || type === 'done') {
 			processingDone = true;
 			const nodes = (parsed.nodes ?? parsed.node_count ?? 0) as number;
@@ -468,6 +489,24 @@
 				class="w-full max-w-xs border border-zinc-300 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-zinc-400"
 				placeholder="napoleon"
 			/>
+		</div>
+		<div>
+			<span class="block text-sm font-medium text-zinc-700 mb-1">Deep analysis (taxonomy)</span>
+			<div class="flex items-center gap-4 text-sm text-zinc-600">
+				<label class="flex items-center gap-1.5 cursor-pointer">
+					<input type="radio" name="deep-analysis" bind:group={deepAnalysis} value={false} />
+					No
+				</label>
+				<label class="flex items-center gap-1.5 cursor-pointer">
+					<input type="radio" name="deep-analysis" bind:group={deepAnalysis} value={true} />
+					Yes — also look for parent-child (taxonomy) relationships
+				</label>
+			</div>
+			<p class="text-xs text-zinc-400 mt-1">
+				Runs one extra LLM pass over the extracted entities after the main graph is built,
+				specifically looking for hierarchical structure (broader/narrower, whole/part, is-a). Stored
+				as dedicated PARENT_OF edges — doesn't affect the main relationships.
+			</p>
 		</div>
 		<div>
 			<div class="flex items-center justify-between mb-1">
@@ -851,6 +890,24 @@
 				{/if}
 				{#if relationshipsStored}
 					<span class="text-[11px] text-emerald-600 font-medium">relationships stored ✓</span>
+				{/if}
+				{#if deepAnalysis}
+					{#if taxonomyState === 'running'}
+						<span class="text-[11px] text-zinc-500 font-medium flex items-center gap-1">
+							<span
+								class="w-2.5 h-2.5 border-2 border-zinc-400 border-t-transparent rounded-full animate-spin"
+							></span>
+							finding taxonomy…
+						</span>
+					{:else if taxonomyState === 'done'}
+						<span class="text-[11px] text-emerald-600 font-medium"
+							>taxonomy: {taxonomyCount ?? 0} parent-child pairs ✓</span
+						>
+					{:else if taxonomyState === 'error'}
+						<span class="text-[11px] text-amber-600 font-medium"
+							>taxonomy step failed (main graph unaffected)</span
+						>
+					{/if}
 				{/if}
 			</div>
 			<div class="flex flex-wrap gap-1.5">
