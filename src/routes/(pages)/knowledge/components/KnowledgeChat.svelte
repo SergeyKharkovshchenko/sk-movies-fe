@@ -94,6 +94,28 @@
 				q: 'Which choice works given museum hours, train times, and restaurant closure?',
 				why: 'Combines Deutsches Museum → OPEN_ON → Saturday, the train arrival/return times, and Bavarian Bistro → CLOSED_ON → Sunday into one multi-hop answer.'
 			}
+		],
+		'cube-bikes': [
+			{
+				q: 'Which CUBE bikes are affected by the fork recall?',
+				why: 'Transitive 2-hop: recall → AFFECTS → CUBE CSL Race fork → USES_COMPONENT → 5 models across 3 lines. Vector retrieves the recall chunk plus maybe one fork mention; graph returns the complete list.'
+			},
+			{
+				q: 'How many models are in the Mountain Bike line? List them.',
+				why: 'Aggregation/completeness: 12 MTB models, above default top-k. Vector returns a partial list and hedges on the count; graph gives an exact count via IN_LINE/IN_SERIES traversal.'
+			},
+			{
+				q: 'Does any Aim model have a carbon frame?',
+				why: "Negation/absence: correct answer is no (all 3 Aim models are aluminium). Carbon-frame chunks from same-line siblings (Reaction C:62, Stereo 140) sit close to 'Aim' in embedding space, so vector often blends them into a wrong yes."
+			},
+			{
+				q: 'Will the rear wheel from the Litening Aero take the cassette from the Attain Race?',
+				why: "Constraint reasoning through an intermediate standard: Litening Aero's wheelset provides Freehub: Micro Spline, but Attain Race's cassette requires Freehub: HG 11-speed — no. Vector tends to hallucinate a plausible-sounding yes from generic bike-domain priors."
+			},
+			{
+				q: "What line is the Stereo Hybrid 140 in, and what's the difference from the Stereo 140?",
+				why: 'Near-duplicate entity confusion: both chunks share most vocabulary (Stereo, 140, 29-inch, disc, 2024). Vector tends to merge specs or answer Mountain Bike for both; graph resolves the two distinct IN_LINE edges (E-Bike vs Mountain Bike) and diffs frame material + motor.'
+			}
 		]
 	};
 

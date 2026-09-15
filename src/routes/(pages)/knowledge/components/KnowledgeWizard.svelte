@@ -5,6 +5,7 @@
 	import KnowledgeChat from './KnowledgeChat.svelte';
 	import { napoleonSampleText } from '$lib/data/napoleonSample';
 	import { munichSampleText } from '$lib/data/munichSample';
+	import { cubeBikesSampleText } from '$lib/data/cubeBikesSample';
 
 	const SAMPLE_TEXTS: Record<
 		string,
@@ -21,6 +22,12 @@
 			text: munichSampleText,
 			menuLabel: 'Munich Trip Plan',
 			title: 'Load Munich weekend trip planning sample text'
+		},
+		cubeBikes: {
+			label: 'cube-bikes',
+			text: cubeBikesSampleText,
+			menuLabel: 'CUBE Bikes (Graph vs Vector)',
+			title: 'Load CUBE bicycle taxonomy sample text, built to benchmark graph/taxonomy RAG against vector RAG'
 		}
 	};
 
