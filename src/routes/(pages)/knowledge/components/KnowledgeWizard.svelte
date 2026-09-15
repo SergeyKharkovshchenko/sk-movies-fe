@@ -495,7 +495,7 @@
 				id="kg-label"
 				bind:value={label}
 				class="w-full max-w-xs border border-zinc-300 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-zinc-400"
-				placeholder="napoleon"
+				placeholder="insert Label"
 			/>
 		</div>
 		<div>
