@@ -255,125 +255,20 @@ The CUBE CSL Race fork is a fork. It is a carbon disc-brake fork that provides t
 Thru-axle 12x100 standard. It is used on the Agree C:62, the Nuroad C:62, the Nuroad
 C:62 Race, and the 2024 and 2025 Reaction C:62 models.
 
-The CUBE FM Disc fork is a fork. It is an aluminium disc-brake fork used on the Agree
-GTC SL, Attain Race, Attain GTC SLT, and Litening Aero models.
-
-The CUBE Gravel fork is a fork. It is an aluminium disc-brake fork used on the Nuroad
-and Nuroad SL models.
-
-The CUBE Trekking fork is a fork. It is an aluminium suspension-corrected fork used on
-the Touring EXC and Touring Pro models.
-
-The RockShox Judy Silver TK fork is a fork. It is a 100mm-travel suspension fork with
-Thru-axle 15x110, used on the Aim SL, Aim Race, Aim EX, Acid, and Acid TM models.
-
-The RockShox Recon Silver RL fork is a fork. It is a 120mm-travel suspension fork with
-Thru-axle 15x110, used on the Stereo 150 and Reaction Pro models.
-
-The Fox Float 34 Performance fork is a fork. It is a 140mm-travel suspension fork with
-Thru-axle 15x110, used on the Stereo 140, Stereo ONE44, and the 2023 Reaction C:62.
-
 ### Wheelset components
 
 The Newmen Evolution SL wheelset is a wheel assembly. It provides the Freehub: HG
 11-speed standard and the Thru-axle 12x142 standard. It is used on the Agree C:62,
 Attain Race, Nuroad C:62, and Nuroad C:62 Race models.
 
-The DT Swiss E1900 Spline wheelset is a wheel assembly. It provides the Freehub: HG
-11-speed standard. It is used on the Attain GTC SLT model.
-
 The DT Swiss ARC 1400 Dicut wheelset is a wheel assembly. It provides the Freehub:
 Micro Spline standard. It is used on the Litening Aero model.
-
-The Fulcrum Racing 4 wheelset is a wheel assembly. It provides the Freehub: HG 11-speed
-standard. It is used on the Agree GTC SL model.
-
-The DT Swiss H1900 Spline wheelset is a wheel assembly. It provides the Freehub: HG
-11-speed standard and the Thru-axle 12x142 standard. It is used on the Nuroad and
-Nuroad SL models.
-
-The Newmen Advanced SL A.30 wheelset is a wheel assembly. It provides the Freehub:
-Micro Spline standard and the Thru-axle 12x148 Boost standard. It is used on the 2024
-and 2025 Reaction C:62, and on the Stereo 140 and Stereo ONE44 models.
-
-The DT Swiss M1900 Spline wheelset is a wheel assembly. It provides the Freehub: Micro
-Spline standard and the Thru-axle 12x148 Boost standard. It is used on the Aim SL, Aim
-Race, Acid, Stereo 150, and the 2023 Reaction C:62 models.
 
 ### Drivetrain components
 
 The Shimano 105 R7100 cassette 11-34 is a cassette. It requires the Freehub: HG
 11-speed standard. It is used on the Agree C:62, Attain Race, Nuroad, and Nuroad SL
 models.
-
-The Shimano Ultegra R8100 cassette 11-30 is a cassette. It requires the Freehub: HG
-11-speed standard. It is used on the Agree GTC SL and Attain GTC SLT models.
-
-The SRAM XPLR XG-1271 cassette 10-44 is a cassette. It requires the Freehub: XDR
-standard. It is used on the Nuroad C:62 and Nuroad C:62 Race models.
-
-The Shimano Deore M6100 cassette 10-51 is a cassette. It requires the Freehub: Micro
-Spline standard. It is used on the Stereo 150, Aim SL, Aim Race, and Acid models.
-
-The Shimano XT M8100 cassette 10-51 is a cassette. It requires the Freehub: Micro
-Spline standard. It is used on the 2023 and 2024 Reaction C:62, Reaction Pro, Stereo
-140, and Stereo ONE44 models.
-
-The Shimano CUES U6000 cassette 11-50 is a cassette. It requires the Freehub: HG
-11-speed standard. It is used on the Aim EX and Acid TM models.
-
-The Shimano 105 R7100 crankset is a crankset. It is used on the Agree C:62 and Attain
-Race models.
-
-The Shimano Ultegra R8100 crankset is a crankset. It is used on the Agree GTC SL,
-Attain GTC SLT, and Litening Aero models.
-
-The Shimano Deore M6100 crankset is a crankset. It is used on the Aim SL, Aim Race,
-and Acid models.
-
-The Shimano XT M8100 crankset is a crankset. It is used on the 2023 and 2024 Reaction
-C:62 models.
-
-The SRAM Rival XPLR crankset is a crankset. It is used on the Nuroad, Nuroad C:62,
-Nuroad C:62 Race, and Nuroad SL models.
-
-The SRAM Rival XPLR derailleur is a derailleur. It is used on the Nuroad models.
-
-The Shimano XT M8100 derailleur is a derailleur. It is used on the Reaction and Stereo
-models.
-
-The Shimano Deore M6100 derailleur is a derailleur. It is used on the Aim and Acid
-models.
-
-The KMC X11 chain is a chain. It is used on 11-speed road and gravel drivetrains, such
-as the Agree C:62 and Nuroad.
-
-The Shimano CN-M6100 chain is a chain. It is used on 11/12-speed mountain bike
-drivetrains, such as the Reaction C:62 and Stereo 140.
-
-### Brake components
-
-The Shimano 105 hydraulic disc caliper is a caliper. It requires the Rotor: 160 mm
-standard. It is used on road disc models such as the Agree C:62 and Attain Race.
-
-The Shimano Deore hydraulic disc caliper is a caliper. It requires the Rotor: 160 mm
-standard. It is used on entry mountain bike models such as the Aim SL and Acid.
-
-The Shimano XT hydraulic 4-piston caliper is a caliper. It requires the Rotor: 180 mm
-standard. It is used on the Reaction and Stereo models.
-
-The Shimano RT64 rotor 160mm is a rotor. It provides the Rotor: 160 mm standard.
-
-The Shimano RT86 rotor 180mm is a rotor. It provides the Rotor: 180 mm standard.
-
-### Seatpost components
-
-The CUBE Performance seatpost Ø27.2 is a seatpost. It provides the Seatpost: Ø27.2
-standard. It is used on the Agree, Attain, and Litening series models.
-
-The RockShox Reverb AXS dropper post Ø31.6 is a seatpost. It provides the Seatpost:
-Ø31.6 standard. It is used on the 2025 Reaction C:62, Reaction Pro, Stereo 140, Stereo
-150, and Stereo ONE44 models.
 
 ### Compatibility standards
 
