@@ -77,7 +77,7 @@
 	};
 
 	let step = $state<WizardStep>(1);
-	let label = $state('napoleon');
+	let label = $state('');
 	let readyLabels = $state<string[]>([]);
 	// Opt-in extra BE step: feeds every extracted entity to the LLM specifically looking for
 	// parent-child/taxonomic structure, stored as dedicated PARENT_OF edges. Off by default --
@@ -143,7 +143,7 @@
 	});
 
 	async function runSuggestGraph() {
-		if (!rawText.trim()) return;
+		if (!rawText.trim() || !label.trim()) return;
 		suggesting = true;
 		suggestError = '';
 		entities = [];
@@ -545,7 +545,7 @@
 		{/if}
 		<button
 			onclick={runSuggestGraph}
-			disabled={!rawText.trim() || suggesting}
+			disabled={!rawText.trim() || !label.trim() || suggesting}
 			class="flex items-center gap-2 px-5 py-2 rounded-lg bg-zinc-800 text-white text-sm font-medium hover:bg-zinc-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
 		>
 			{#if suggesting}
