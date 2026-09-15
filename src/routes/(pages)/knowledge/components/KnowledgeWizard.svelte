@@ -86,10 +86,11 @@
 	let step = $state<WizardStep>(1);
 	let label = $state('');
 	let readyLabels = $state<string[]>([]);
-	// Opt-in extra BE step: feeds every extracted entity to the LLM specifically looking for
-	// parent-child/taxonomic structure, stored as dedicated PARENT_OF edges. Off by default --
-	// it's an additional LLM call on top of the main extraction, not needed for every run.
-	let deepAnalysis = $state(false);
+	// Extra BE step: feeds every extracted entity to the LLM specifically looking for
+	// parent-child/taxonomic structure, stored as dedicated PARENT_OF edges. On by default --
+	// it's an additional LLM call on top of the main extraction, but the Hierarchy Tree view
+	// is empty without it and that's not obvious until you go looking for it.
+	let deepAnalysis = $state(true);
 
 	onMount(() => {
 		KnowledgeAPIService.knowledgeLabels()
