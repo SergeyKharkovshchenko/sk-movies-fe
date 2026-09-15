@@ -629,7 +629,9 @@
 										class="w-full border-0 bg-transparent text-xs focus:outline-none"
 									/>
 									<datalist id="entity-names">
-										{#each entities as e (e.name)}<option value={e.name}></option>{/each}
+										{#each [...new Set(entities.map((e) => e.name))] as name (name)}<option
+												value={name}
+											></option>{/each}
 									</datalist>
 								</td>
 								<td class="px-2 py-1">
@@ -733,7 +735,9 @@
 										class="w-full border-0 bg-transparent focus:outline-none"
 									/>
 									<datalist id="rel-sources"
-										>{#each entities as e (e.name)}<option value={e.name}></option>{/each}</datalist
+										>{#each [...new Set(entities.map((e) => e.name))] as name (name)}<option
+												value={name}
+											></option>{/each}</datalist
 									>
 								</td>
 								<td class="px-2 py-1">
@@ -751,7 +755,9 @@
 										class="w-full border-0 bg-transparent focus:outline-none"
 									/>
 									<datalist id="rel-targets"
-										>{#each entities as e (e.name)}<option value={e.name}></option>{/each}</datalist
+										>{#each [...new Set(entities.map((e) => e.name))] as name (name)}<option
+												value={name}
+											></option>{/each}</datalist
 									>
 								</td>
 								<td class="px-1">
@@ -817,7 +823,9 @@
 										placeholder="entity name"
 									/>
 									<datalist id="section-entities-{i}">
-										{#each entities as e (e.name)}<option value={e.name}></option>{/each}
+										{#each [...new Set(entities.map((e) => e.name))] as name (name)}<option
+												value={name}
+											></option>{/each}
 									</datalist>
 								</div>
 							</div>
@@ -918,7 +926,7 @@
 				{/if}
 			</div>
 			<div class="flex flex-wrap gap-1.5">
-				{#each entityProgress as ep (ep.name)}
+				{#each entityProgress as ep, i (i)}
 					<div
 						class="flex items-center gap-1 px-2 py-0.5 rounded-full text-xs border transition-colors"
 						class:bg-emerald-50={ep.stored}
@@ -952,7 +960,7 @@
 		<!-- Section progress -->
 		<div class="space-y-2">
 			<h3 class="text-sm font-semibold text-zinc-700">Sections</h3>
-			{#each sectionProgress as sp (sp.title)}
+			{#each sectionProgress as sp, i (i)}
 				{@const steps = [
 					{ key: 'chunk', label: 'Chunk', info: sp.chunk },
 					{ key: 'extract', label: 'Extract', info: sp.extract },
