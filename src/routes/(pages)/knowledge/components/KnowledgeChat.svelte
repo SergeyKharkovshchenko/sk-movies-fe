@@ -101,8 +101,8 @@
 				why: 'Transitive 2-hop: recall → AFFECTS → CUBE CSL Race fork → USES_COMPONENT → 5 models across 3 lines. Vector retrieves the recall chunk plus maybe one fork mention; graph returns the complete list.'
 			},
 			{
-				q: 'How many models are in the Mountain Bike line? List them.',
-				why: 'Aggregation/completeness: 12 MTB models, above default top-k. Vector returns a partial list and hedges on the count; graph gives an exact count via IN_LINE/IN_SERIES traversal.'
+				q: 'How many models are in the Reaction series, and what are they?',
+				why: 'Aggregation/completeness: 4 models (three Reaction C:62 model years plus Reaction Pro), scattered across separate chunks. Vector declines rather than hallucinate; graph returns the exact count and full list via IN_SERIES traversal.'
 			},
 			{
 				q: 'Does any Aim model have a carbon frame?',
@@ -338,11 +338,15 @@
 			const history = buildHistory();
 			if (ragMode === 'compare') {
 				// Two requests in a row against the same question/history — vector first, then
-				// combined — so both answers land as separate, individually-tagged messages.
+				// pure graph — so both answers land as separate, individually-tagged messages.
+				// Deliberately graph, not combined: combined blends vector's own retrieved chunks
+				// back in, which dilutes the contrast this mode exists to show -- confirmed directly
+				// on a constraint question where combined reproduced vector's exact wrong answer
+				// while pure graph got it right.
 				const answerA = await sendOne(question, history, 'vector');
-				const answerB = await sendOne(question, history, 'combined');
+				const answerB = await sendOne(question, history, 'graph');
 				if (answerA && answerB) {
-					await analyzeComparison(question, answerA, 'vector', answerB, 'combined');
+					await analyzeComparison(question, answerA, 'vector', answerB, 'graph');
 				}
 			} else {
 				await sendOne(question, history, ragMode);
@@ -377,7 +381,7 @@
 				<span class="font-semibold text-sm text-zinc-800 shrink-0">Knowledge Chat</span>
 				<!-- RAG mode segmented control -->
 				<div class="flex rounded-md border border-zinc-300 bg-white text-[11px] overflow-hidden">
-					{#each [{ value: 'combined', label: 'Combined', title: 'Vector + Graph retrieval' }, { value: 'vector', label: 'Vector', title: 'Vector search only' }, { value: 'graph', label: 'Graph', title: 'Graph traversal only' }, { value: 'compare', label: 'Compare', title: 'Send the question twice — Vector, then Combined — as separate answers' }] as const as mode (mode.value)}
+					{#each [{ value: 'combined', label: 'Combined', title: 'Vector + Graph retrieval' }, { value: 'vector', label: 'Vector', title: 'Vector search only' }, { value: 'graph', label: 'Graph', title: 'Graph traversal only' }, { value: 'compare', label: 'Compare', title: 'Send the question twice — Vector, then Graph — as separate answers' }] as const as mode (mode.value)}
 						<button
 							onclick={() => (ragMode = mode.value)}
 							class="px-2.5 py-1 transition-colors border-r border-zinc-300 last:border-r-0"
@@ -552,7 +556,7 @@
 				<!-- Probe questions -->
 				<div class="space-y-1 pt-1 border-t border-zinc-200">
 					<p class="text-[11px] font-medium text-zinc-500 mb-2">
-						Probe questions — Vector vs Graph+Vector
+						Probe questions — Vector vs Graph
 					</p>
 					<div class="space-y-1 max-h-56 overflow-y-auto pr-1">
 						{#if probeQuestions.length === 0}

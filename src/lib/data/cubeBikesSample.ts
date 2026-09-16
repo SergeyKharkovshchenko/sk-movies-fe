@@ -22,10 +22,7 @@ The Kids line covers CUBE's children's bikes and contains the Numove series.
 The Cargo line covers CUBE's load-carrying bikes and contains the Trike series.
 
 The E-Bike line covers CUBE's motor-assisted bikes and contains the Stereo Hybrid,
-Reaction Hybrid, and Touring Hybrid series. Note that Stereo Hybrid, Reaction Hybrid,
-and Touring Hybrid are E-Bike series, distinct from the non-electric Stereo (Mountain
-Bike), Reaction (Mountain Bike), and Touring (Trekking) series that share part of their
-name.
+Reaction Hybrid, and Touring Hybrid series.
 
 ### Series
 
@@ -62,8 +59,7 @@ The Numove series belongs to the Kids line and covers CUBE's children's bikes.
 The Trike series belongs to the Cargo line and covers CUBE's cargo trikes.
 
 The Stereo Hybrid series belongs to the E-Bike line and covers motor-assisted versions
-of CUBE's full-suspension trail bikes. It is a separate series from the non-electric
-Stereo series in the Mountain Bike line.
+of CUBE's full-suspension trail bikes.
 
 The Reaction Hybrid series belongs to the E-Bike line and covers motor-assisted versions
 of CUBE's cross-country hardtail bikes. It is a separate series from the non-electric
@@ -135,10 +131,9 @@ a Shimano XT M8100 cassette 10-51.
 
 ### Mountain Bike models — Stereo series
 
-The Stereo 140 (model year 2024) belongs to the Stereo series, a Mountain Bike series
-distinct from the Stereo Hybrid series in the E-Bike line. It has a carbon frame, disc
-brakes, and 29-inch wheels. It is fitted with a Fox Float 34 Performance fork, a Newmen
-Advanced SL A.30 wheelset, and a Shimano XT M8100 cassette 10-51.
+The Stereo 140 (model year 2024) belongs to the Stereo series. It has a carbon frame,
+disc brakes, and 29-inch wheels. It is fitted with a Fox Float 34 Performance fork, a
+Newmen Advanced SL A.30 wheelset, and a Shimano XT M8100 cassette 10-51.
 
 The Stereo 150 (model year 2023) belongs to the Stereo series. It has an aluminium
 frame, disc brakes, and 27.5-inch wheels. It is fitted with a RockShox Recon Silver RL
@@ -232,10 +227,9 @@ frame, disc brakes, 20-inch wheels, and an electric assist motor.
 
 ### E-Bike models
 
-The Stereo Hybrid 140 (model year 2024) belongs to the Stereo Hybrid series, distinct
-from the non-electric Stereo 140 in the Mountain Bike line despite the shared name. It
-has an aluminium frame, disc brakes, 29-inch wheels, a Bosch Performance Line CX motor,
-and a 750Wh battery.
+The Stereo Hybrid 140 (model year 2024) belongs to the Stereo Hybrid series. It has an
+aluminium frame, disc brakes, 29-inch wheels, a Bosch Performance Line CX motor, and a
+750Wh battery.
 
 The Stereo Hybrid 120 (model year 2023) belongs to the Stereo Hybrid series. It has an
 aluminium frame, disc brakes, 27.5-inch wheels, and a Bosch Performance Line CX motor.
@@ -252,8 +246,7 @@ has an aluminium frame, disc brakes, 28-inch wheels, and a Bosch Active Line mot
 ### Fork components
 
 The CUBE CSL Race fork is a fork. It is a carbon disc-brake fork that provides the
-Thru-axle 12x100 standard. It is used on the Agree C:62, the Nuroad C:62, the Nuroad
-C:62 Race, and the 2024 and 2025 Reaction C:62 models.
+Thru-axle 12x100 standard.
 
 ### Wheelset components
 
