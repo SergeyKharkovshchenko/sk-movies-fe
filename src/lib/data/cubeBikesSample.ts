@@ -89,18 +89,10 @@ The Agree C:62 (model year 2024) belongs to the Agree series. It has a carbon fr
 disc brakes, and 700c wheels. It is fitted with a CUBE CSL Race fork, a Newmen Evolution
 SL wheelset, a Shimano 105 R7100 cassette 11-34, and a Shimano 105 R7100 crankset.
 
-The Agree GTC SL (model year 2023) belongs to the Agree series. It has a carbon frame,
-disc brakes, and 700c wheels. It is fitted with a CUBE FM Disc fork, a Fulcrum Racing 4
-wheelset, and a Shimano Ultegra R8100 cassette 11-30.
-
 The Attain Race (model year 2024) belongs to the Attain series. It has an aluminium
 frame, disc brakes, and 700c wheels. It is fitted with a CUBE FM Disc fork, a Newmen
 Evolution SL wheelset, a Shimano 105 R7100 cassette 11-34, and a Shimano 105 R7100
 crankset.
-
-The Attain GTC SLT (model year 2023) belongs to the Attain series. It has a carbon
-frame, disc brakes, and 700c wheels. It is fitted with a CUBE FM Disc fork, a DT Swiss
-E1900 Spline wheelset, and a Shimano Ultegra R8100 cassette 11-30.
 
 The Litening Aero (model year 2024) belongs to the Litening series. It has a carbon
 frame, disc brakes, and 700c wheels. It is fitted with a CUBE FM Disc fork, a DT Swiss
@@ -108,21 +100,21 @@ ARC 1400 Dicut wheelset, and a Shimano Ultegra R8100 crankset.
 
 ### Mountain Bike models — Reaction series
 
-The Reaction C:62 (model year 2023) belongs to the Reaction series. It has a carbon
+The 2023 Reaction C:62 belongs to the Reaction series. It has a carbon
 frame, disc brakes, and 29-inch wheels. It is fitted with a Fox Float 34 Performance
 fork, a DT Swiss M1900 Spline wheelset, a Shimano XT M8100 cassette 10-51, and a Shimano
 XT M8100 crankset. It is succeeded by the 2024 Reaction C:62.
 
-The Reaction C:62 (model year 2024) belongs to the Reaction series and replaces the 2023
-Reaction C:62. It has a carbon frame, disc brakes, and 29-inch wheels. Compared to the
-2023 model, its fork was swapped from a Fox Float 34 Performance to a CUBE CSL Race
-fork; it is also fitted with a Newmen Advanced SL A.30 wheelset and a Shimano XT M8100
-cassette 10-51. It is succeeded by the 2025 Reaction C:62.
+The 2024 Reaction C:62 belongs to the Reaction series and replaces the
+2023 Reaction C:62. It has a carbon frame, disc brakes, and 29-inch wheels. Compared to
+the 2023 Reaction C:62, its fork was swapped from a Fox Float 34 Performance to a CUBE
+CSL Race fork; it is also fitted with a Newmen Advanced SL A.30 wheelset and a Shimano
+XT M8100 cassette 10-51. It is succeeded by the 2025 Reaction C:62.
 
-The Reaction C:62 (model year 2025) belongs to the Reaction series and replaces the 2024
-Reaction C:62. It has a carbon frame, disc brakes, and 29-inch wheels. It carries over
-the CUBE CSL Race fork and Newmen Advanced SL A.30 wheelset from the 2024 model, and
-adds a RockShox Reverb AXS dropper seatpost.
+The 2025 Reaction C:62 belongs to the Reaction series and replaces
+the 2024 Reaction C:62. It has a carbon frame, disc brakes, and 29-inch wheels. It
+carries over the CUBE CSL Race fork and Newmen Advanced SL A.30 wheelset from the 2024
+Reaction C:62, and adds a RockShox Reverb AXS dropper seatpost.
 
 The Reaction Pro (model year 2024) belongs to the Reaction series, distinct from the
 Reaction C:62 models above. It has an aluminium frame, disc brakes, and 29-inch wheels.
@@ -132,14 +124,6 @@ a Shimano XT M8100 cassette 10-51.
 ### Mountain Bike models — Stereo series
 
 The Stereo 140 (model year 2024) belongs to the Stereo series. It has a carbon frame,
-disc brakes, and 29-inch wheels. It is fitted with a Fox Float 34 Performance fork, a
-Newmen Advanced SL A.30 wheelset, and a Shimano XT M8100 cassette 10-51.
-
-The Stereo 150 (model year 2023) belongs to the Stereo series. It has an aluminium
-frame, disc brakes, and 27.5-inch wheels. It is fitted with a RockShox Recon Silver RL
-fork, a DT Swiss M1900 Spline wheelset, and a Shimano Deore M6100 cassette 10-51.
-
-The Stereo ONE44 (model year 2024) belongs to the Stereo series. It has a carbon frame,
 disc brakes, and 29-inch wheels. It is fitted with a Fox Float 34 Performance fork, a
 Newmen Advanced SL A.30 wheelset, and a Shimano XT M8100 cassette 10-51.
 
@@ -163,16 +147,7 @@ The Acid (model year 2024) belongs to the Acid series. It has an aluminium frame
 brakes, and 29-inch wheels. It is fitted with a RockShox Judy Silver TK fork, a DT Swiss
 M1900 Spline wheelset, and a Shimano Deore M6100 cassette 10-51.
 
-The Acid TM (model year 2023) belongs to the Acid series. It has an aluminium frame,
-disc brakes, and 27.5-inch wheels. It is fitted with a RockShox Judy Silver TK fork and
-a Shimano CUES U6000 cassette 11-50.
-
 ### Gravel models
-
-The Nuroad (model year 2023) belongs to the Nuroad series, distinct from the Nuroad
-C:62 below despite the shared series name. It has an aluminium frame, disc brakes, and
-700c wheels. It is fitted with a CUBE Gravel fork, a DT Swiss H1900 Spline wheelset, a
-Shimano 105 R7100 cassette 11-34, and a SRAM Rival XPLR crankset.
 
 The Nuroad C:62 (model year 2024) belongs to the Nuroad series. It has a carbon frame,
 disc brakes, and 700c wheels. It is fitted with a CUBE CSL Race fork, a Newmen Evolution
@@ -182,47 +157,24 @@ The Nuroad C:62 Race (model year 2024) belongs to the Nuroad series. It has a ca
 frame, disc brakes, and 700c wheels. It is fitted with a CUBE CSL Race fork, a Newmen
 Evolution SL wheelset, and a SRAM XPLR XG-1271 cassette 10-44.
 
-The Nuroad SL (model year 2022) belongs to the Nuroad series. It has an aluminium
-frame, disc brakes, and 700c wheels. It is fitted with a CUBE Gravel fork, a DT Swiss
-H1900 Spline wheelset, and a Shimano 105 R7100 cassette 11-34.
-
 ### Trekking models
-
-The Touring EXC (model year 2023) belongs to the Touring series, distinct from the
-Touring Hybrid series in the E-Bike line. It has an aluminium frame, disc brakes, and
-28-inch wheels. It is fitted with a CUBE Trekking fork.
 
 The Touring Pro (model year 2024) belongs to the Touring series. It has an aluminium
 frame, disc brakes, and 28-inch wheels. It is fitted with a CUBE Trekking fork.
-
-The Touring SL (model year 2022) belongs to the Touring series. It has an aluminium
-frame, rim brakes, and 28-inch wheels.
 
 ### Hybrid models
 
 The Editor Pro (model year 2024) belongs to the Editor series. It has an aluminium
 frame, disc brakes, and 28-inch wheels.
 
-The Editor EXC (model year 2023) belongs to the Editor series. It has an aluminium
-frame, disc brakes, and 28-inch wheels.
-
-The Editor SL (model year 2022) belongs to the Editor series. It has an aluminium
-frame, rim brakes, and 28-inch wheels.
-
 ### Kids models
 
 The Numove 240 (model year 2024) belongs to the Numove series. It has an aluminium
 frame, rim brakes, and 24-inch wheels.
 
-The Numove 200 (model year 2024) belongs to the Numove series. It has an aluminium
-frame, rim brakes, and 20-inch wheels.
-
 ### Cargo models
 
 The Trike 640 (model year 2024) belongs to the Trike series. It has an aluminium
-frame, disc brakes, 20-inch wheels, and an electric assist motor.
-
-The Trike 720 (model year 2023) belongs to the Trike series. It has an aluminium
 frame, disc brakes, 20-inch wheels, and an electric assist motor.
 
 ### E-Bike models
@@ -230,18 +182,6 @@ frame, disc brakes, 20-inch wheels, and an electric assist motor.
 The Stereo Hybrid 140 (model year 2024) belongs to the Stereo Hybrid series. It has an
 aluminium frame, disc brakes, 29-inch wheels, a Bosch Performance Line CX motor, and a
 750Wh battery.
-
-The Stereo Hybrid 120 (model year 2023) belongs to the Stereo Hybrid series. It has an
-aluminium frame, disc brakes, 27.5-inch wheels, and a Bosch Performance Line CX motor.
-
-The Reaction Hybrid ONE (model year 2023) belongs to the Reaction Hybrid series,
-distinct from the non-electric Reaction series in the Mountain Bike line despite the
-shared name. It has an aluminium frame, disc brakes, 29-inch wheels, and a Bosch
-Performance Line motor.
-
-The Touring Hybrid EXC (model year 2024) belongs to the Touring Hybrid series, distinct
-from the non-electric Touring series in the Trekking line despite the shared name. It
-has an aluminium frame, disc brakes, 28-inch wheels, and a Bosch Active Line motor.
 
 ### Fork components
 
@@ -260,8 +200,7 @@ Micro Spline standard. It is used on the Litening Aero model.
 ### Drivetrain components
 
 The Shimano 105 R7100 cassette 11-34 is a cassette. It requires the Freehub: HG
-11-speed standard. It is used on the Agree C:62, Attain Race, Nuroad, and Nuroad SL
-models.
+11-speed standard. It is used on the Agree C:62 and Attain Race models.
 
 ### Compatibility standards
 

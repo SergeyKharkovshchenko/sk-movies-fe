@@ -101,8 +101,8 @@
 				why: 'Transitive 2-hop: recall → AFFECTS → CUBE CSL Race fork → USES_COMPONENT → 5 models across 3 lines. Vector retrieves the recall chunk plus maybe one fork mention; graph returns the complete list.'
 			},
 			{
-				q: 'How many models are in the Reaction series, and what are they?',
-				why: 'Aggregation/completeness: 4 models (three Reaction C:62 model years plus Reaction Pro), scattered across separate chunks. Vector declines rather than hallucinate; graph returns the exact count and full list via IN_SERIES traversal.'
+				q: 'How many Aim models are there, and what are they?',
+				why: 'Aggregation/completeness: 3 models (Aim SL, Aim Race, Aim EX), scattered across separate chunks. Vector tends to guess or decline rather than list all three; graph returns the exact count and full list via IN_SERIES traversal. (Deliberately not the Reaction C:62 model-year trio -- three near-identical names differing only by year are the single hardest case for LLM entity extraction to keep distinct, so results there vary run to run more than this question does.)'
 			},
 			{
 				q: 'Does any Aim model have a carbon frame?',
