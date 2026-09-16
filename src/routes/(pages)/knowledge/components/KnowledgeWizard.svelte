@@ -5,6 +5,7 @@
 	import KnowledgeChat from './KnowledgeChat.svelte';
 	import { napoleonSampleText } from '$lib/data/napoleonSample';
 	import { munichSampleText } from '$lib/data/munichSample';
+	import { cubeBikesSampleText } from '$lib/data/cubeBikesSample';
 
 	const SAMPLE_TEXTS: Record<
 		string,
@@ -21,6 +22,12 @@
 			text: munichSampleText,
 			menuLabel: 'Munich Trip Plan',
 			title: 'Load Munich weekend trip planning sample text'
+		},
+		cubeBikes: {
+			label: 'cube-bikes',
+			text: cubeBikesSampleText,
+			menuLabel: 'CUBE Bikes (Graph vs Vector)',
+			title: 'Load CUBE bicycle taxonomy sample text, built to benchmark graph/taxonomy RAG against vector RAG'
 		}
 	};
 
@@ -77,12 +84,13 @@
 	};
 
 	let step = $state<WizardStep>(1);
-	let label = $state('napoleon');
+	let label = $state('');
 	let readyLabels = $state<string[]>([]);
-	// Opt-in extra BE step: feeds every extracted entity to the LLM specifically looking for
-	// parent-child/taxonomic structure, stored as dedicated PARENT_OF edges. Off by default --
-	// it's an additional LLM call on top of the main extraction, not needed for every run.
-	let deepAnalysis = $state(false);
+	// Extra BE step: feeds every extracted entity to the LLM specifically looking for
+	// parent-child/taxonomic structure, stored as dedicated PARENT_OF edges. On by default --
+	// it's an additional LLM call on top of the main extraction, but the Hierarchy Tree view
+	// is empty without it and that's not obvious until you go looking for it.
+	let deepAnalysis = $state(true);
 
 	onMount(() => {
 		KnowledgeAPIService.knowledgeLabels()
@@ -143,7 +151,7 @@
 	});
 
 	async function runSuggestGraph() {
-		if (!rawText.trim()) return;
+		if (!rawText.trim() || !label.trim()) return;
 		suggesting = true;
 		suggestError = '';
 		entities = [];
@@ -487,7 +495,7 @@
 				id="kg-label"
 				bind:value={label}
 				class="w-full max-w-xs border border-zinc-300 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-zinc-400"
-				placeholder="napoleon"
+				placeholder="insert Label"
 			/>
 		</div>
 		<div>
@@ -545,7 +553,7 @@
 		{/if}
 		<button
 			onclick={runSuggestGraph}
-			disabled={!rawText.trim() || suggesting}
+			disabled={!rawText.trim() || !label.trim() || suggesting}
 			class="flex items-center gap-2 px-5 py-2 rounded-lg bg-zinc-800 text-white text-sm font-medium hover:bg-zinc-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
 		>
 			{#if suggesting}
@@ -622,7 +630,9 @@
 										class="w-full border-0 bg-transparent text-xs focus:outline-none"
 									/>
 									<datalist id="entity-names">
-										{#each entities as e (e.name)}<option value={e.name}></option>{/each}
+										{#each [...new Set(entities.map((e) => e.name))] as name (name)}<option
+												value={name}
+											></option>{/each}
 									</datalist>
 								</td>
 								<td class="px-2 py-1">
@@ -726,7 +736,9 @@
 										class="w-full border-0 bg-transparent focus:outline-none"
 									/>
 									<datalist id="rel-sources"
-										>{#each entities as e (e.name)}<option value={e.name}></option>{/each}</datalist
+										>{#each [...new Set(entities.map((e) => e.name))] as name (name)}<option
+												value={name}
+											></option>{/each}</datalist
 									>
 								</td>
 								<td class="px-2 py-1">
@@ -744,7 +756,9 @@
 										class="w-full border-0 bg-transparent focus:outline-none"
 									/>
 									<datalist id="rel-targets"
-										>{#each entities as e (e.name)}<option value={e.name}></option>{/each}</datalist
+										>{#each [...new Set(entities.map((e) => e.name))] as name (name)}<option
+												value={name}
+											></option>{/each}</datalist
 									>
 								</td>
 								<td class="px-1">
@@ -810,7 +824,9 @@
 										placeholder="entity name"
 									/>
 									<datalist id="section-entities-{i}">
-										{#each entities as e (e.name)}<option value={e.name}></option>{/each}
+										{#each [...new Set(entities.map((e) => e.name))] as name (name)}<option
+												value={name}
+											></option>{/each}
 									</datalist>
 								</div>
 							</div>
@@ -911,7 +927,7 @@
 				{/if}
 			</div>
 			<div class="flex flex-wrap gap-1.5">
-				{#each entityProgress as ep (ep.name)}
+				{#each entityProgress as ep, i (i)}
 					<div
 						class="flex items-center gap-1 px-2 py-0.5 rounded-full text-xs border transition-colors"
 						class:bg-emerald-50={ep.stored}
@@ -945,7 +961,7 @@
 		<!-- Section progress -->
 		<div class="space-y-2">
 			<h3 class="text-sm font-semibold text-zinc-700">Sections</h3>
-			{#each sectionProgress as sp (sp.title)}
+			{#each sectionProgress as sp, i (i)}
 				{@const steps = [
 					{ key: 'chunk', label: 'Chunk', info: sp.chunk },
 					{ key: 'extract', label: 'Extract', info: sp.extract },

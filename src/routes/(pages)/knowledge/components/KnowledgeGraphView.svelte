@@ -18,7 +18,7 @@
 	let edgeCount = $state(0);
 
 	// Parent-child pairs only (from the opt-in "deep analysis" taxonomy step at process time) --
-	// rendered separately as a collapsible tree via the same component the Bikes page uses.
+	// rendered separately as a collapsible tree via the shared HierarchyTree component.
 	let hierarchyState = $state<OpState>('idle');
 	let hierarchyRelations = $state<{ parent: string; child: string }[]>([]);
 
