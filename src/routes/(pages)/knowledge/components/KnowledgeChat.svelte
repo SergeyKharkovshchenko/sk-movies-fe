@@ -134,6 +134,8 @@
 	let copiedId = $state<string | null>(null);
 	let messagesEl: HTMLElement;
 
+	type FailureMode = 'hallucination' | 'false_completeness' | null;
+
 	interface Comparison {
 		id: string;
 		question: string;
@@ -143,6 +145,8 @@
 		modeB: string;
 		verdict: string | null;
 		explanation: string | null;
+		failureModeA: FailureMode;
+		failureModeB: FailureMode;
 		loading: boolean;
 		error: boolean;
 	}
@@ -296,6 +300,8 @@
 				modeB,
 				verdict: null,
 				explanation: null,
+				failureModeA: null,
+				failureModeB: null,
 				loading: true,
 				error: false
 			}
@@ -314,6 +320,8 @@
 							...c,
 							verdict: res?.verdict ?? null,
 							explanation: res?.explanation ?? null,
+							failureModeA: res?.failureModeA ?? null,
+							failureModeB: res?.failureModeB ?? null,
 							loading: false
 						}
 					: c
@@ -878,6 +886,30 @@
 										{c.verdict}
 									</span>
 								</div>
+								{#if c.failureModeA || c.failureModeB}
+									<div class="flex items-center gap-1.5 flex-wrap">
+										{#if c.failureModeA}
+											<span
+												class="px-1.5 py-0.5 rounded font-medium bg-red-100 text-red-700"
+												title="{c.modeA}'s answer shows this failure pattern"
+											>
+												{c.modeA}: {c.failureModeA === 'hallucination'
+													? 'hallucination'
+													: 'incomplete presented as complete'}
+											</span>
+										{/if}
+										{#if c.failureModeB}
+											<span
+												class="px-1.5 py-0.5 rounded font-medium bg-red-100 text-red-700"
+												title="{c.modeB}'s answer shows this failure pattern"
+											>
+												{c.modeB}: {c.failureModeB === 'hallucination'
+													? 'hallucination'
+													: 'incomplete presented as complete'}
+											</span>
+										{/if}
+									</div>
+								{/if}
 								<p class="text-zinc-600 leading-relaxed">{c.explanation}</p>
 							{/if}
 						</div>
