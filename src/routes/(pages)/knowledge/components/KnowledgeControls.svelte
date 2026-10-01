@@ -473,8 +473,9 @@
 		return 'text-zinc-400';
 	}
 
-	// entity names for datalist
-	let entityNames = $derived(entities.map((e) => e.name).filter(Boolean));
+	// entity names for datalist (deduped -- entity names aren't guaranteed unique, e.g. a
+	// series and a same-named base model, and a keyed each block would throw on a duplicate key)
+	let entityNames = $derived([...new Set(entities.map((e) => e.name).filter(Boolean))]);
 </script>
 
 <!-- datalists for graph editing -->
