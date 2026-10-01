@@ -94,6 +94,28 @@
 				q: 'Which choice works given museum hours, train times, and restaurant closure?',
 				why: 'Combines Deutsches Museum → OPEN_ON → Saturday, the train arrival/return times, and Bavarian Bistro → CLOSED_ON → Sunday into one multi-hop answer.'
 			}
+		],
+		'cube-bikes': [
+			{
+				q: 'Which CUBE bikes are affected by the fork recall?',
+				why: 'Transitive 2-hop: recall → AFFECTS → CUBE CSL Race fork → USES_COMPONENT → 5 models across 3 lines. Vector retrieves the recall chunk plus maybe one fork mention; graph returns the complete list.'
+			},
+			{
+				q: 'How many Aim models are there, and what are they?',
+				why: 'Aggregation/completeness: 3 models (Aim SL, Aim Race, Aim EX), scattered across separate chunks. Vector tends to guess or decline rather than list all three; graph returns the exact count and full list via IN_SERIES traversal. (Deliberately not the Reaction C:62 model-year trio -- three near-identical names differing only by year are the single hardest case for LLM entity extraction to keep distinct, so results there vary run to run more than this question does.)'
+			},
+			{
+				q: 'Does any Aim model have a carbon frame?',
+				why: "Negation/absence: correct answer is no (all 3 Aim models are aluminium). Carbon-frame chunks from same-line siblings (Reaction C:62, Stereo 140) sit close to 'Aim' in embedding space, so vector often blends them into a wrong yes."
+			},
+			{
+				q: 'Will the rear wheel from the Litening Aero take the cassette from the Attain Race?',
+				why: "Constraint reasoning through an intermediate standard: Litening Aero's wheelset provides Freehub: Micro Spline, but Attain Race's cassette requires Freehub: HG 11-speed — no. Vector tends to hallucinate a plausible-sounding yes from generic bike-domain priors."
+			},
+			{
+				q: "What line is the Stereo Hybrid 140 in, and what's the difference from the Stereo 140?",
+				why: 'Near-duplicate entity confusion: both chunks share most vocabulary (Stereo, 140, 29-inch, disc, 2024). Vector tends to merge specs or answer Mountain Bike for both; graph resolves the two distinct IN_LINE edges (E-Bike vs Mountain Bike) and diffs frame material + motor.'
+			}
 		]
 	};
 
@@ -112,6 +134,8 @@
 	let copiedId = $state<string | null>(null);
 	let messagesEl: HTMLElement;
 
+	type FailureMode = 'hallucination' | 'false_completeness' | null;
+
 	interface Comparison {
 		id: string;
 		question: string;
@@ -121,6 +145,8 @@
 		modeB: string;
 		verdict: string | null;
 		explanation: string | null;
+		failureModeA: FailureMode;
+		failureModeB: FailureMode;
 		loading: boolean;
 		error: boolean;
 	}
@@ -274,6 +300,8 @@
 				modeB,
 				verdict: null,
 				explanation: null,
+				failureModeA: null,
+				failureModeB: null,
 				loading: true,
 				error: false
 			}
@@ -292,6 +320,8 @@
 							...c,
 							verdict: res?.verdict ?? null,
 							explanation: res?.explanation ?? null,
+							failureModeA: res?.failureModeA ?? null,
+							failureModeB: res?.failureModeB ?? null,
 							loading: false
 						}
 					: c
@@ -316,11 +346,15 @@
 			const history = buildHistory();
 			if (ragMode === 'compare') {
 				// Two requests in a row against the same question/history — vector first, then
-				// combined — so both answers land as separate, individually-tagged messages.
+				// pure graph — so both answers land as separate, individually-tagged messages.
+				// Deliberately graph, not combined: combined blends vector's own retrieved chunks
+				// back in, which dilutes the contrast this mode exists to show -- confirmed directly
+				// on a constraint question where combined reproduced vector's exact wrong answer
+				// while pure graph got it right.
 				const answerA = await sendOne(question, history, 'vector');
-				const answerB = await sendOne(question, history, 'combined');
+				const answerB = await sendOne(question, history, 'graph');
 				if (answerA && answerB) {
-					await analyzeComparison(question, answerA, 'vector', answerB, 'combined');
+					await analyzeComparison(question, answerA, 'vector', answerB, 'graph');
 				}
 			} else {
 				await sendOne(question, history, ragMode);
@@ -355,7 +389,7 @@
 				<span class="font-semibold text-sm text-zinc-800 shrink-0">Knowledge Chat</span>
 				<!-- RAG mode segmented control -->
 				<div class="flex rounded-md border border-zinc-300 bg-white text-[11px] overflow-hidden">
-					{#each [{ value: 'combined', label: 'Combined', title: 'Vector + Graph retrieval' }, { value: 'vector', label: 'Vector', title: 'Vector search only' }, { value: 'graph', label: 'Graph', title: 'Graph traversal only' }, { value: 'compare', label: 'Compare', title: 'Send the question twice — Vector, then Combined — as separate answers' }] as const as mode (mode.value)}
+					{#each [{ value: 'combined', label: 'Combined', title: 'Vector + Graph retrieval' }, { value: 'vector', label: 'Vector', title: 'Vector search only' }, { value: 'graph', label: 'Graph', title: 'Graph traversal only' }, { value: 'compare', label: 'Compare', title: 'Send the question twice — Vector, then Graph — as separate answers' }] as const as mode (mode.value)}
 						<button
 							onclick={() => (ragMode = mode.value)}
 							class="px-2.5 py-1 transition-colors border-r border-zinc-300 last:border-r-0"
@@ -530,7 +564,7 @@
 				<!-- Probe questions -->
 				<div class="space-y-1 pt-1 border-t border-zinc-200">
 					<p class="text-[11px] font-medium text-zinc-500 mb-2">
-						Probe questions — Vector vs Graph+Vector
+						Probe questions — Vector vs Graph
 					</p>
 					<div class="space-y-1 max-h-56 overflow-y-auto pr-1">
 						{#if probeQuestions.length === 0}
@@ -852,6 +886,30 @@
 										{c.verdict}
 									</span>
 								</div>
+								{#if c.failureModeA || c.failureModeB}
+									<div class="flex items-center gap-1.5 flex-wrap">
+										{#if c.failureModeA}
+											<span
+												class="px-1.5 py-0.5 rounded font-medium bg-red-100 text-red-700"
+												title="{c.modeA}'s answer shows this failure pattern"
+											>
+												{c.modeA}: {c.failureModeA === 'hallucination'
+													? 'hallucination'
+													: 'incomplete presented as complete'}
+											</span>
+										{/if}
+										{#if c.failureModeB}
+											<span
+												class="px-1.5 py-0.5 rounded font-medium bg-red-100 text-red-700"
+												title="{c.modeB}'s answer shows this failure pattern"
+											>
+												{c.modeB}: {c.failureModeB === 'hallucination'
+													? 'hallucination'
+													: 'incomplete presented as complete'}
+											</span>
+										{/if}
+									</div>
+								{/if}
 								<p class="text-zinc-600 leading-relaxed">{c.explanation}</p>
 							{/if}
 						</div>

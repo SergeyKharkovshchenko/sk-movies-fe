@@ -9,58 +9,6 @@ async function getAllMovies() {
 	return await handleFetch(`${apiUrl}/getAllMovies`, FetchMethods.GET);
 }
 
-async function getRelations() {
-	return await handleFetch(`${apiUrl}/relations`, FetchMethods.GET);
-}
-
-async function bikeChat(payload: {
-	messages: { role: string; content: string }[];
-	temperature?: number;
-	maxTokens?: number;
-	stream?: boolean;
-	ragMode?: 'combined' | 'vector' | 'graph';
-	embedder?: string;
-}) {
-	return await handleFetch(`${apiUrl}/bike-chat`, FetchMethods.POST, {}, payload);
-}
-
-async function ragEmbedNodes(embedder = 'jina', batchSize = 50) {
-	return await handleFetch(
-		`${apiUrl}/rag/embed/nodes?embedder=${embedder}&batchSize=${batchSize}`,
-		FetchMethods.POST
-	);
-}
-
-async function ragEmbedRelationships(embedder = 'jina', batchSize = 50) {
-	return await handleFetch(
-		`${apiUrl}/rag/embed/relationships?embedder=${embedder}&batchSize=${batchSize}`,
-		FetchMethods.POST
-	);
-}
-
-async function ragEmbedAll(embedder = 'jina', batchSize = 50) {
-	return await handleFetch(
-		`${apiUrl}/rag/embed/all?embedder=${embedder}&batchSize=${batchSize}`,
-		FetchMethods.POST
-	);
-}
-
-async function ragDeleteEmbeddings(type: 'all' | 'nodes' | 'relationships' = 'all') {
-	return await handleFetch(`${apiUrl}/rag/embeddings?type=${type}`, FetchMethods.DELETE);
-}
-
-async function ragGetStatus() {
-	return await handleFetch(`${apiUrl}/rag/embeddings/status`, FetchMethods.GET);
-}
-
-async function ragGetExampleQuestions() {
-	return await handleFetch(`${apiUrl}/rag/questions/examples`, FetchMethods.GET);
-}
-
-async function ragDeduplicateGraph() {
-	return await handleFetch(`${apiUrl}/rag/graph/deduplicate`, FetchMethods.POST);
-}
-
 async function suggestSections(text: string) {
 	return await handleFetch(`${apiUrl}/knowledge/suggest-sections`, FetchMethods.POST, {}, { text });
 }
@@ -587,17 +535,6 @@ export const moviesAPIService = {
 	getPosterSimilarity
 };
 
-export const BikesAPIService = {
-	getRelations,
-	bikeChat,
-	ragEmbedNodes,
-	ragEmbedRelationships,
-	ragEmbedAll,
-	ragDeleteEmbeddings,
-	ragGetStatus,
-	ragGetExampleQuestions,
-	ragDeduplicateGraph
-};
 
 export const KnowledgeAPIService = {
 	suggestSections,
