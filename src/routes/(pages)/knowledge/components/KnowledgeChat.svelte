@@ -151,6 +151,13 @@
 	let seedPriority = $state<'graph' | 'vector'>('graph');
 	let strict = $state(false);
 	let temperature = $state(0.2);
+	// Strict mode's whole point is deterministic, context-only output (including the backend's
+	// exact "Not in knowledge base." fallback) -- a non-zero temperature works against that, so
+	// force it to 0 whenever strict is on. The backend enforces this too regardless of what this
+	// UI sends; mirroring it here just keeps the displayed value honest.
+	$effect(() => {
+		if (strict) temperature = 0;
+	});
 	let topK = $state(5);
 	let neighborLimit = $state(100);
 	let messages = $state<Message[]>([]);
@@ -548,9 +555,17 @@
 							min="0"
 							max="2"
 							step="0.1"
-							class="w-14 border border-zinc-300 rounded px-1.5 py-0.5 text-xs font-mono bg-white focus:outline-none focus:ring-1 focus:ring-zinc-400"
+							disabled={strict}
+							title={strict
+								? 'Forced to 0 by strict mode'
+								: 'LLM sampling temperature — lower = more deterministic'}
+							class="w-14 border border-zinc-300 rounded px-1.5 py-0.5 text-xs font-mono bg-white focus:outline-none focus:ring-1 focus:ring-zinc-400 disabled:opacity-50 disabled:cursor-not-allowed"
 						/>
-						<span class="text-zinc-400">(default 0.2)</span>
+						{#if strict}
+							<span class="text-amber-600 text-[10px]">forced to 0 by strict</span>
+						{:else}
+							<span class="text-zinc-400">(default 0.2)</span>
+						{/if}
 					</label>
 					<label
 						class="flex items-center gap-2 cursor-pointer select-none"
