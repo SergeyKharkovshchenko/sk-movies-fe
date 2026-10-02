@@ -686,6 +686,11 @@
 										/>
 									</svg>
 									{gc.length} graph {gc.length === 1 ? 'node' : 'nodes'} used
+									{#if msg.cypherTrace && msg.cypherTrace.length > 0}
+										· {msg.cypherTrace.length} Cypher {msg.cypherTrace.length === 1
+											? 'query'
+											: 'queries'}
+									{/if}
 								</summary>
 								<div class="mt-1 rounded-lg border border-zinc-200 bg-white overflow-hidden">
 									<table class="w-full text-[10px]">
@@ -711,45 +716,34 @@
 											{/each}
 										</tbody>
 									</table>
-								</div>
-							</details>
-						{/if}
-
-						{#if isAssistant && msg.cypherTrace && msg.cypherTrace.length > 0}
-							{@const trace = msg.cypherTrace}
-							<details class="max-w-[85%] mt-1.5 text-[11px]">
-								<summary
-									class="cursor-pointer text-zinc-400 hover:text-zinc-600 select-none list-none flex items-center gap-1"
-								>
-									<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-										<path
-											stroke-linecap="round"
-											stroke-linejoin="round"
-											stroke-width="2"
-											d="M10 20l4-16m4 4l4 4-4 4M6 8l-4 4 4 4"
-										/>
-									</svg>
-									{trace.length} Cypher {trace.length === 1 ? 'query' : 'queries'} run
-								</summary>
-								<div
-									class="mt-1 rounded-lg border border-zinc-200 bg-white overflow-hidden divide-y divide-zinc-100"
-								>
-									{#each trace as t, i (i)}
-										<div class="p-2 space-y-1">
-											<div class="flex items-center justify-between gap-2">
-												<span class="text-zinc-500 font-medium">{t.stage}</span>
-												<span class="text-zinc-400 shrink-0"
-													>{t.resultCount} row{t.resultCount === 1 ? '' : 's'}</span
-												>
+									{#if msg.cypherTrace && msg.cypherTrace.length > 0}
+										{@const trace = msg.cypherTrace}
+										<div class="border-t border-zinc-200">
+											<p
+												class="px-2 py-1 bg-zinc-50 text-zinc-500 font-medium border-b border-zinc-200"
+											>
+												{trace.length} Cypher {trace.length === 1 ? 'query' : 'queries'} run
+											</p>
+											<div class="divide-y divide-zinc-100">
+												{#each trace as t, i (i)}
+													<div class="p-2 space-y-1">
+														<div class="flex items-center justify-between gap-2">
+															<span class="text-zinc-500 font-medium">{t.stage}</span>
+															<span class="text-zinc-400 shrink-0"
+																>{t.resultCount} row{t.resultCount === 1 ? '' : 's'}</span
+															>
+														</div>
+														<pre
+															class="font-mono text-[10px] text-indigo-700 bg-indigo-50 rounded px-1.5 py-1 whitespace-pre-wrap wrap-break-word">{t.query}</pre>
+														<pre
+															class="font-mono text-[10px] text-zinc-500 whitespace-pre-wrap wrap-break-word">{JSON.stringify(
+																t.params
+															)}</pre>
+													</div>
+												{/each}
 											</div>
-											<pre
-												class="font-mono text-[10px] text-indigo-700 bg-indigo-50 rounded px-1.5 py-1 whitespace-pre-wrap wrap-break-word">{t.query}</pre>
-											<pre
-												class="font-mono text-[10px] text-zinc-500 whitespace-pre-wrap wrap-break-word">{JSON.stringify(
-													t.params
-												)}</pre>
 										</div>
-									{/each}
+									{/if}
 								</div>
 							</details>
 						{/if}
