@@ -6,6 +6,7 @@
 	import { napoleonSampleText } from '$lib/data/napoleonSample';
 	import { munichSampleText } from '$lib/data/munichSample';
 	import { cubeBikesSampleText } from '$lib/data/cubeBikesSample';
+	import { nolanSampleText } from '$lib/data/nolanSample';
 
 	const SAMPLE_TEXTS: Record<
 		string,
@@ -27,7 +28,15 @@
 			label: 'cube-bikes',
 			text: cubeBikesSampleText,
 			menuLabel: 'CUBE Bikes (Graph vs Vector)',
-			title: 'Load CUBE bicycle taxonomy sample text, built to benchmark graph/taxonomy RAG against vector RAG'
+			title:
+				'Load CUBE bicycle taxonomy sample text, built to benchmark graph/taxonomy RAG against vector RAG'
+		},
+		nolan: {
+			label: 'nolan',
+			text: nolanSampleText,
+			menuLabel: 'Nolan Filmography (Graph vs Vector)',
+			title:
+				'Load director/cast/genre/year filmography sample text, built to benchmark graph/taxonomy RAG against vector RAG'
 		}
 	};
 
