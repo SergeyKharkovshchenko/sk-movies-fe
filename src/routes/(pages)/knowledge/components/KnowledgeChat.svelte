@@ -18,6 +18,24 @@
 		seedPriority?: 'graph' | 'vector';
 	}
 
+	// One Cypher query actually executed against Neo4j while building this answer's context
+	// (graph/combined modes only -- empty for pure vector answers).
+	interface CypherTraceEntry {
+		stage: string;
+		query: string;
+		params: Record<string, unknown>;
+		resultCount: number;
+	}
+
+	// One chunk/entity-name entry actually returned by the pgvector similarity search
+	// (vector/combined modes only -- empty for pure graph answers). `text` is always the real
+	// passage or entity name in plain text, never the embedding vector itself.
+	interface VectorChunkEntry {
+		sourceType: string;
+		name: string;
+		text: string;
+	}
+
 	interface Message {
 		id: string;
 		role: 'user' | 'assistant';
@@ -26,6 +44,8 @@
 		error?: boolean;
 		model?: string;
 		graphContext?: GraphEntry[];
+		cypherTrace?: CypherTraceEntry[];
+		vectorChunks?: VectorChunkEntry[];
 		sources?: unknown[];
 		retrievalInfo?: RetrievalInfo;
 		ragMode?: 'combined' | 'vector' | 'graph';
@@ -247,6 +267,8 @@
 				(typeof result === 'string' ? result : JSON.stringify(result));
 
 			const graphContext: GraphEntry[] = result?.graphContext ?? result?.context ?? [];
+			const cypherTrace: CypherTraceEntry[] = result?.cypherTrace ?? [];
+			const vectorChunks: VectorChunkEntry[] = result?.vectorChunks ?? [];
 			const sources: unknown[] = result?.sources ?? [];
 			const model: string | undefined = result?.model;
 			const retrievalInfo: RetrievalInfo | undefined = result?.retrievalInfo;
@@ -260,6 +282,8 @@
 					timestamp: new Date(),
 					model,
 					graphContext,
+					cypherTrace,
+					vectorChunks,
 					sources,
 					retrievalInfo,
 					ragMode: mode,
@@ -688,6 +712,80 @@
 											{/each}
 										</tbody>
 									</table>
+								</div>
+							</details>
+						{/if}
+
+						{#if isAssistant && msg.cypherTrace && msg.cypherTrace.length > 0}
+							{@const trace = msg.cypherTrace}
+							<details class="max-w-[85%] mt-1.5 text-[11px]">
+								<summary
+									class="cursor-pointer text-zinc-400 hover:text-zinc-600 select-none list-none flex items-center gap-1"
+								>
+									<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<path
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											stroke-width="2"
+											d="M10 20l4-16m4 4l4 4-4 4M6 8l-4 4 4 4"
+										/>
+									</svg>
+									{trace.length} Cypher {trace.length === 1 ? 'query' : 'queries'} run
+								</summary>
+								<div
+									class="mt-1 rounded-lg border border-zinc-200 bg-white overflow-hidden divide-y divide-zinc-100"
+								>
+									{#each trace as t, i (i)}
+										<div class="p-2 space-y-1">
+											<div class="flex items-center justify-between gap-2">
+												<span class="text-zinc-500 font-medium">{t.stage}</span>
+												<span class="text-zinc-400 shrink-0"
+													>{t.resultCount} row{t.resultCount === 1 ? '' : 's'}</span
+												>
+											</div>
+											<pre
+												class="font-mono text-[10px] text-indigo-700 bg-indigo-50 rounded px-1.5 py-1 whitespace-pre-wrap wrap-break-word">{t.query}</pre>
+											<pre
+												class="font-mono text-[10px] text-zinc-500 whitespace-pre-wrap wrap-break-word">{JSON.stringify(
+													t.params
+												)}</pre>
+										</div>
+									{/each}
+								</div>
+							</details>
+						{/if}
+
+						{#if isAssistant && msg.vectorChunks && msg.vectorChunks.length > 0}
+							{@const chunks = msg.vectorChunks}
+							<details class="max-w-[85%] mt-1.5 text-[11px]">
+								<summary
+									class="cursor-pointer text-zinc-400 hover:text-zinc-600 select-none list-none flex items-center gap-1"
+								>
+									<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<path
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											stroke-width="2"
+											d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+										/>
+									</svg>
+									{chunks.length} chunk{chunks.length === 1 ? '' : 's'} retrieved from vector DB
+								</summary>
+								<div
+									class="mt-1 rounded-lg border border-zinc-200 bg-white overflow-hidden divide-y divide-zinc-100"
+								>
+									{#each chunks as c, i (i)}
+										<div class="p-2 space-y-1">
+											<div class="flex items-center gap-2">
+												<span
+													class="px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-600 font-mono text-[10px]"
+													>{c.sourceType}</span
+												>
+												<span class="text-zinc-500 font-medium">{c.name}</span>
+											</div>
+											<p class="text-zinc-600 whitespace-pre-wrap">{c.text}</p>
+										</div>
+									{/each}
 								</div>
 							</details>
 						{/if}
