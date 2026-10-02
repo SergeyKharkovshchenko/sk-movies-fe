@@ -519,7 +519,6 @@
 							type="number"
 							bind:value={topK}
 							min="1"
-							max="50"
 							class="w-14 border border-zinc-300 rounded px-1.5 py-0.5 text-xs font-mono bg-white focus:outline-none focus:ring-1 focus:ring-zinc-400"
 						/>
 						<span class="text-zinc-400">(default 5)</span>
