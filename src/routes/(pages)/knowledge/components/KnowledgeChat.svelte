@@ -116,6 +116,12 @@
 				q: "What line is the Stereo Hybrid 140 in, and what's the difference from the Stereo 140?",
 				why: 'Near-duplicate entity confusion: both chunks share most vocabulary (Stereo, 140, 29-inch, disc, 2024). Vector tends to merge specs or answer Mountain Bike for both; graph resolves the two distinct IN_LINE edges (E-Bike vs Mountain Bike) and diffs frame material + motor.'
 			}
+		],
+		nolan: [
+			{
+				q: 'Which actor appeared in more than one Christopher Nolan movie?',
+				why: "2-hop join + count: Director→Movie lives in the Filmography section, Movie→Actor lives in a separate Cast section -- no sentence anywhere states the answer directly. Expected: Christian Bale (The Dark Knight, The Dark Knight Rises). Vector has to retrieve all 5 of Nolan's Cast-section entries and notice the repeat itself; graph walks Nolan -[:DIRECTED]-> movie -[:HAS_ACTOR]-> actor and the repeat falls out of the traversal."
+			}
 		]
 	};
 
