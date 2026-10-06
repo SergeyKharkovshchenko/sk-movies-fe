@@ -7,6 +7,7 @@
 	import { munichSampleText } from '$lib/data/munichSample';
 	import { cubeBikesSampleText } from '$lib/data/cubeBikesSample';
 	import { nolanSampleText } from '$lib/data/nolanSample';
+	import { insuranceSampleText } from '$lib/data/insuranceSample';
 
 	const SAMPLE_TEXTS: Record<
 		string,
@@ -37,6 +38,13 @@
 			menuLabel: 'Nolan Filmography (Graph vs Vector)',
 			title:
 				'Load director/cast/genre/year filmography sample text, built to benchmark graph/taxonomy RAG against vector RAG'
+		},
+		insurance: {
+			label: 'insurance-claims',
+			text: insuranceSampleText,
+			menuLabel: 'Insurance Claims (Graph vs Vector)',
+			title:
+				'Load P&C insurance policy/claim sample text (policies, premiums, claims, underwriting), built to benchmark graph/taxonomy RAG against vector RAG'
 		}
 	};
 

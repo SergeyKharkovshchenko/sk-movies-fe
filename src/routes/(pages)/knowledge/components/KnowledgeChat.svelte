@@ -142,6 +142,28 @@
 				q: 'Which actor appeared in more than one Christopher Nolan movie?',
 				why: "2-hop join + count: Director→Movie lives in the Filmography section, Movie→Actor lives in a separate Cast section -- no sentence anywhere states the answer directly. Expected: Christian Bale (The Dark Knight, The Dark Knight Rises). Vector has to retrieve all 5 of Nolan's Cast-section entries and notice the repeat itself; graph walks Nolan -[:DIRECTED]-> movie -[:HAS_ACTOR]-> actor and the repeat falls out of the traversal."
 			}
+		],
+		'insurance-claims': [
+			{
+				q: 'What is the total loss -- loss payment plus loss reserve plus expense payment plus expense reserve -- for claim 12312701, and how does it compare to claim 12312702?',
+				why: 'Aggregation across 4 separately-stated amounts per claim: 12312701 = $1,000 + $1,100 + $1,200 + $1,300 = $4,600; 12312702 = $2,100 + $2,200 + $2,300 + $2,400 = $9,000. Vector has to retrieve and correctly sum all 4 line items per claim from one chunk; graph walks each Claim -[:HAS_AMOUNT]-> amount-type edges directly.'
+			},
+			{
+				q: "What is the total premium Mary has paid on policy 31003000336 across all five of its coverage years?",
+				why: 'Aggregation across 5 scattered year-by-year premiums ($15k + $16k + $17k + $18k + $20k = $86,000), one per coverage-year line. A single vector chunk is unlikely to contain all five years together; graph walks Policy -[:HAS_COVERAGE_YEAR]-> each year node and sums.'
+			},
+			{
+				q: 'How many properties does Mary Policy Holder insure, and who sold each policy?',
+				why: "Tests whether retrieval correctly resolves that the same agent, Bob Insurance Agent, sold both of Mary's policies rather than assuming two different agents -- a completeness/count check across 2 Policy -[:SOLD_BY]-> Agent edges."
+			},
+			{
+				q: 'Were the underwriting assessments for both of Mary’s policies performed by the same person, and did both pass?',
+				why: "Disambiguation trap: two separate assessments (Nov-Dec 2014 and May 2019), same underwriter (Alice Under Writer), same 'OK' result -- easy for vector to conflate into a single assessment if it doesn't keep the two Policy -[:ASSESSED_BY]-> Assessment edges distinct."
+			},
+			{
+				q: 'Is the historical fire-risk reference data linked to either of Mary’s two claims?',
+				why: "Negation/absence check: correct answer is no, it's a separate, unlinked reference dataset. Vector similarity may wrongly connect it to the claims since both mention 'fire'; graph correctly reports no edge exists between the reference data and either Claim node."
+			}
 		]
 	};
 
