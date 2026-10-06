@@ -36,6 +36,16 @@
 		text: string;
 	}
 
+	// Post-hoc faithfulness check (strict mode only) -- a second, independent LLM call that
+	// checks whether every claim in the answer is actually supported by its own context.
+	// `grounded` is null (not false) when the check itself failed to run, so the UI can tell
+	// "verified clean" apart from "couldn't verify" rather than treating both as fine.
+	interface GroundingCheck {
+		grounded: boolean | null;
+		unsupportedClaims: string[];
+		error?: string;
+	}
+
 	interface Message {
 		id: string;
 		role: 'user' | 'assistant';
@@ -46,6 +56,7 @@
 		graphContext?: GraphEntry[];
 		cypherTrace?: CypherTraceEntry[];
 		vectorChunks?: VectorChunkEntry[];
+		groundingCheck?: GroundingCheck;
 		sources?: unknown[];
 		retrievalInfo?: RetrievalInfo;
 		ragMode?: 'combined' | 'vector' | 'graph';
@@ -298,6 +309,7 @@
 			const graphContext: GraphEntry[] = result?.graphContext ?? result?.context ?? [];
 			const cypherTrace: CypherTraceEntry[] = result?.cypherTrace ?? [];
 			const vectorChunks: VectorChunkEntry[] = result?.vectorChunks ?? [];
+			const groundingCheck: GroundingCheck | undefined = result?.groundingCheck;
 			const sources: unknown[] = result?.sources ?? [];
 			const model: string | undefined = result?.model;
 			const retrievalInfo: RetrievalInfo | undefined = result?.retrievalInfo;
@@ -313,6 +325,7 @@
 					graphContext,
 					cypherTrace,
 					vectorChunks,
+					groundingCheck,
 					sources,
 					retrievalInfo,
 					ragMode: mode,
@@ -707,6 +720,45 @@
 								<span class="whitespace-pre-wrap">{msg.content}</span>
 							{/if}
 						</div>
+
+						{#if isAssistant && msg.groundingCheck}
+							{@const gcheck = msg.groundingCheck}
+							{#if gcheck.grounded === false}
+								<div
+									class="max-w-[85%] mt-1.5 rounded-lg border border-amber-200 bg-amber-50 px-2.5 py-2 text-[11px] text-amber-800"
+								>
+									<p class="font-medium flex items-center gap-1">
+										<svg
+											class="w-3.5 h-3.5 shrink-0"
+											fill="none"
+											stroke="currentColor"
+											viewBox="0 0 24 24"
+										>
+											<path
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												stroke-width="2"
+												d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
+											/>
+										</svg>
+										Grounding check flagged unsupported claims
+									</p>
+									<ul class="mt-1 ml-5 list-disc space-y-0.5">
+										{#each gcheck.unsupportedClaims as claim, i (i)}
+											<li>{claim}</li>
+										{/each}
+									</ul>
+								</div>
+							{:else if gcheck.grounded === null}
+								<p class="max-w-[85%] mt-1 text-[10px] text-zinc-400 px-0.5">
+									grounding check unavailable{gcheck.error ? `: ${gcheck.error}` : ''}
+								</p>
+							{:else}
+								<p class="max-w-[85%] mt-1 text-[10px] text-emerald-600 px-0.5">
+									✓ grounding check passed
+								</p>
+							{/if}
+						{/if}
 
 						{#if isAssistant && msg.graphContext && msg.graphContext.length > 0}
 							{@const gc = msg.graphContext}
