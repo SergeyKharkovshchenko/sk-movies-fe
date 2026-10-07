@@ -763,7 +763,7 @@
 						></span>
 						Importing…
 					{:else}
-						Import {csvFiles.length} CSV{csvFiles.length === 1 ? '' : 's'} to Neo4j
+						Import {csvFiles.length} CSV{csvFiles.length === 1 ? '' : 's'} to Neo4j + Vector DB
 					{/if}
 				</button>
 			{/if}
