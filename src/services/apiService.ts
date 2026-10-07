@@ -58,6 +58,10 @@ async function compareAnalyze(payload: {
 	return await handleFetch(`${apiUrl}/knowledge/compare-analyze`, FetchMethods.POST, {}, payload);
 }
 
+async function knowledgeImportCsv(label: string, files: { name: string; content: string }[]) {
+	return await handleFetch(`${apiUrl}/knowledge/import-csv`, FetchMethods.POST, {}, { label, files });
+}
+
 async function knowledgeGraph(label: string) {
 	return await handleFetch(
 		`${apiUrl}/knowledge/graph/${encodeURIComponent(label)}`,
@@ -546,6 +550,7 @@ export const KnowledgeAPIService = {
 	knowledgeClearCache,
 	knowledgeGraph,
 	knowledgeHierarchy,
+	knowledgeImportCsv,
 	compareAnalyze
 };
 

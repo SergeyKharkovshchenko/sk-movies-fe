@@ -8,6 +8,7 @@
 	import { cubeBikesSampleText } from '$lib/data/cubeBikesSample';
 	import { nolanSampleText } from '$lib/data/nolanSample';
 	import { insuranceSampleText } from '$lib/data/insuranceSample';
+	import { insuranceCsvSamples } from '$lib/data/insuranceCsvSamples';
 
 	const SAMPLE_TEXTS: Record<
 		string,
@@ -45,6 +46,16 @@
 			menuLabel: 'Insurance Claims (Graph vs Vector)',
 			title:
 				'Load P&C insurance policy/claim sample text (policies, premiums, claims, underwriting), built to benchmark graph/taxonomy RAG against vector RAG'
+		}
+	};
+
+	// CSV table sets selectable in the CSV-import panel (Step 1) -- parallel to SAMPLE_TEXTS but
+	// for the deterministic /knowledge/import-csv path instead of the LLM suggest/process path.
+	const CSV_SAMPLE_SETS: Record<string, { menuLabel: string; title: string; files: Record<string, string> }> = {
+		insurance: {
+			menuLabel: 'Insurance Claims CSV Tables',
+			title: 'Load the P&C insurance CSV tables (policies, claims, parties, amounts, …) for direct Neo4j import',
+			files: insuranceCsvSamples
 		}
 	};
 
@@ -117,6 +128,72 @@
 			.catch(() => {});
 	});
 	let rawText = $state('');
+
+	// CSV import panel (Step 1) -- deterministic, independent of the suggest/process LLM flow.
+	// Files are parsed FE-side only to list them; raw content is sent to BE as-is.
+	interface StagedCsvFile {
+		name: string;
+		content: string;
+	}
+	let csvFiles = $state<StagedCsvFile[]>([]);
+	let csvDragOver = $state(false);
+	let csvImporting = $state(false);
+	let csvImportError = $state('');
+	let csvImportResult = $state<Record<string, unknown> | null>(null);
+
+	async function addCsvFiles(fileList: FileList | File[]) {
+		const incoming = Array.from(fileList).filter((f) => f.name.toLowerCase().endsWith('.csv'));
+		const read = await Promise.all(
+			incoming.map(async (f) => ({ name: f.name, content: await f.text() }))
+		);
+		const merged = [...csvFiles];
+		for (const f of read) {
+			const idx = merged.findIndex((existing) => existing.name === f.name);
+			if (idx >= 0) merged[idx] = f;
+			else merged.push(f);
+		}
+		csvFiles = merged;
+		csvImportResult = null;
+		csvImportError = '';
+	}
+
+	function handleCsvDrop(e: DragEvent) {
+		e.preventDefault();
+		csvDragOver = false;
+		if (e.dataTransfer?.files?.length) addCsvFiles(e.dataTransfer.files);
+	}
+
+	function handleCsvFileInput(e: Event) {
+		const input = e.currentTarget as HTMLInputElement;
+		if (input.files?.length) addCsvFiles(input.files);
+		input.value = '';
+	}
+
+	function removeCsvFile(name: string) {
+		csvFiles = csvFiles.filter((f) => f.name !== name);
+	}
+
+	function loadSampleCsvSet(key: string) {
+		const set = CSV_SAMPLE_SETS[key];
+		if (!set) return;
+		csvFiles = Object.entries(set.files).map(([name, content]) => ({ name, content }));
+		csvImportResult = null;
+		csvImportError = '';
+	}
+
+	async function runImportCsv() {
+		if (csvFiles.length === 0 || !label.trim()) return;
+		csvImporting = true;
+		csvImportError = '';
+		csvImportResult = null;
+		try {
+			csvImportResult = await KnowledgeAPIService.knowledgeImportCsv(label.trim(), csvFiles);
+		} catch (err) {
+			csvImportError = `Failed to import CSVs: ${err}`;
+		} finally {
+			csvImporting = false;
+		}
+	}
 
 	// Step 2+3 data
 	let suggesting = $state(false);
@@ -581,6 +658,116 @@
 				Analyze →
 			{/if}
 		</button>
+
+		<div class="border-t border-zinc-200 pt-4">
+			<div class="flex items-center justify-between mb-1">
+				<span class="block text-sm font-medium text-zinc-700">
+					CSV Tables <span class="font-normal text-zinc-400">(optional — direct Neo4j import)</span>
+				</span>
+				<select
+					value=""
+					onchange={(e) => {
+						loadSampleCsvSet(e.currentTarget.value);
+						e.currentTarget.value = '';
+					}}
+					class="text-xs text-zinc-400 hover:text-zinc-700 transition-colors bg-transparent border-none focus:outline-none cursor-pointer"
+					title="Load a sample CSV table set"
+				>
+					<option value="" disabled>Load sample ↓</option>
+					{#each Object.entries(CSV_SAMPLE_SETS) as [key, set] (key)}
+						<option value={key} title={set.title}>{set.menuLabel}</option>
+					{/each}
+				</select>
+			</div>
+			<p class="text-xs text-zinc-400 mb-2">
+				Parsed and written straight to Neo4j by column-naming convention (e.g. "Claim_Identifier")
+				— no LLM step. Each row with its own "&lt;Table&gt;_Identifier" column becomes a node;
+				foreign-key columns become relationships; a flattened sentence per row is also embedded for
+				vector search. Safe to run multiple times or alongside the text flow above under the same
+				label.
+			</p>
+			<div
+				role="region"
+				ondragover={(e) => {
+					e.preventDefault();
+					csvDragOver = true;
+				}}
+				ondragleave={() => (csvDragOver = false)}
+				ondrop={handleCsvDrop}
+				class="rounded-lg border-2 border-dashed px-4 py-6 text-center transition-colors"
+				class:border-zinc-300={!csvDragOver}
+				class:bg-zinc-50={!csvDragOver}
+				class:border-indigo-400={csvDragOver}
+				class:bg-indigo-50={csvDragOver}
+			>
+				<p class="text-sm text-zinc-500">
+					Drag & drop .csv files here, or
+					<label class="text-indigo-600 hover:text-indigo-800 cursor-pointer font-medium">
+						browse
+						<input
+							type="file"
+							accept=".csv"
+							multiple
+							class="hidden"
+							onchange={handleCsvFileInput}
+						/>
+					</label>
+				</p>
+			</div>
+			{#if csvFiles.length > 0}
+				<ul class="mt-2 space-y-1 max-h-48 overflow-y-auto">
+					{#each csvFiles as f (f.name)}
+						<li
+							class="flex items-center justify-between gap-2 text-xs font-mono bg-zinc-50 border border-zinc-200 rounded px-2 py-1"
+						>
+							<span class="truncate">{f.name}</span>
+							<span class="text-zinc-400 shrink-0">{(f.content.length / 1024).toFixed(1)} KB</span>
+							<button
+								onclick={() => removeCsvFile(f.name)}
+								aria-label={`Remove ${f.name}`}
+								class="shrink-0 text-zinc-400 hover:text-red-600 transition-colors"
+							>
+								×
+							</button>
+						</li>
+					{/each}
+				</ul>
+				{#if csvImportError}
+					<p class="mt-2 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+						{csvImportError}
+					</p>
+				{/if}
+				{#if csvImportResult}
+					<div class="mt-2 text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2">
+						Imported {csvImportResult.tablesProcessed} table(s) into '{csvImportResult.label}': {csvImportResult.entityRows}
+						entity row(s), {csvImportResult.joinRows} join row(s), {csvImportResult.tagRows} tag row(s),
+						{csvImportResult.lookupRows} lookup row(s), {csvImportResult.relationshipsCreated}
+						relationship(s), {csvImportResult.rowsEmbedded} row(s) embedded.
+						{#if Array.isArray(csvImportResult.warnings) && csvImportResult.warnings.length > 0}
+							<ul class="mt-1 ml-4 list-disc text-amber-700">
+								{#each csvImportResult.warnings as w, i (i)}
+									<li>{w}</li>
+								{/each}
+							</ul>
+						{/if}
+					</div>
+				{/if}
+				<button
+					onclick={runImportCsv}
+					disabled={!label.trim() || csvImporting}
+					class="mt-2 flex items-center gap-2 px-5 py-2 rounded-lg bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+				>
+					{#if csvImporting}
+						<span
+							class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"
+						></span>
+						Importing…
+					{:else}
+						Import {csvFiles.length} CSV{csvFiles.length === 1 ? '' : 's'} to Neo4j
+					{/if}
+				</button>
+			{/if}
+		</div>
 	</div>
 {/if}
 
