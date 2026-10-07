@@ -174,6 +174,30 @@
 			{
 				q: 'Is the historical fire-risk reference data linked to either of Mary’s two claims?',
 				why: "Negation/absence check: correct answer is no, it's a separate, unlinked reference dataset. Vector similarity may wrongly connect it to the claims since both mention 'fire'; graph correctly reports no edge exists between the reference data and either Claim node."
+			},
+			// The 5 below are verbatim from the data.world KG-vs-SQL benchmark paper's own
+			// "Low Question/High Schema Complexity" question set -- deep multi-table joins that
+			// only become answerable once the raw P&C CSV tables are imported (see the CSV import
+			// panel in Step 1), not from the narrative text sample alone.
+			{
+				q: 'Return policy holders and the claims they have made and the corresponding catastrophe',
+				why: 'Paper question, Low Question/High Schema Complexity: a 5+ table join (Party -[:AGREEMENT_PARTY_ROLE]-> Agreement/Policy -[:HAS_POLICY]<- PolicyCoverageDetail <-[:CLAIM_COVERAGE]- Claim -[:HAS_CATASTROPHE]-> Catastrophe). Graph walks the chain directly; vector would need every intermediate row in one retrieval to answer correctly.'
+			},
+			{
+				q: 'Return agents and the policy they have sold that have had a claim and the corresponding catastrophe it had.',
+				why: "Same join chain as above, rooted at the agent (Party_Role_Code = 'AG') instead of the policyholder -- tests whether retrieval distinguishes the agent's role from the policyholder's on the same Agreement_Party_Role edge."
+			},
+			{
+				q: 'Return agents and the policy they have sold that have had a claim and the corresponding loss reserve amount by agent id, policy number and claim number',
+				why: "Adds a 6th hop: Claim -[:HAS_AMOUNT]-> ClaimAmount tagged :Loss_Reserve (from Loss_Reserve.csv). Correctness also depends on resolving that a Policy's own identifier doubles as its parent Agreement's identifier (Policy IS-A Agreement in the source schema) -- a known limitation of a naming-convention-only CSV importer, since that supertype relationship isn't spelled out in any single column name."
+			},
+			{
+				q: 'What are the loss payment, loss reserve, expense payment, expense reserve amount by claim number and corresponding policy number, policy holder, premium amount paid, the catastrophe it had, and the agent who sold it?',
+				why: 'The paper’s own "High Question/High Schema Complexity" shape: one answer row per claim pulling from 4 Claim_Amount subtype tables plus Policy, Party (both roles), Premium and Catastrophe -- about as many hops as this dataset supports. Good stress test for whether graph retrieval’s result-count/traversal-depth limits start truncating the answer before vector would.'
+			},
+			{
+				q: 'What are the loss payment, loss reserve, expense payment, expense reserve amount by claim number and corresponding policy number, policy holder and premium amount paid?',
+				why: 'Same as above minus the catastrophe/agent columns -- useful as the "one hop shorter" control to see exactly where (if anywhere) graph retrieval starts dropping columns as join depth increases.'
 			}
 		]
 	};
