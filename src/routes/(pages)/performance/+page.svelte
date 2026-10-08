@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { PerformanceAPIService } from '$services/apiService';
 
+	// Fixed deliberately -- this page benchmarks our own deployed app, not an arbitrary site.
+	const TARGET_URL = 'https://sk-movies-fe.vercel.app/';
+
 	interface Scores {
 		performance: number | null;
 		accessibility: number | null;
@@ -73,19 +76,17 @@
 		return 'bg-red-100 text-red-700';
 	}
 
-	let url = $state('');
 	let strategy = $state<'mobile' | 'desktop'>('mobile');
 	let loading = $state(false);
 	let error = $state('');
 	let result = $state<PagespeedResult | null>(null);
 
 	async function run() {
-		if (!url.trim()) return;
 		loading = true;
 		error = '';
 		result = null;
 		try {
-			result = await PerformanceAPIService.runPagespeed(url.trim(), strategy);
+			result = await PerformanceAPIService.runPagespeed(TARGET_URL, strategy);
 		} catch (err) {
 			error = `Failed to run PageSpeed Insights: ${err}`;
 		} finally {
@@ -98,22 +99,12 @@
 	<div class="bg-white rounded-xl border border-zinc-200 shadow-sm p-6">
 		<h1 class="text-base font-semibold text-zinc-800 mb-1">Performance</h1>
 		<p class="text-xs text-zinc-500 mb-5">
-			Runs Google PageSpeed Insights (Lighthouse) against a URL and checks the result against a
+			Runs Google PageSpeed Insights (Lighthouse) against
+			<code class="bg-zinc-100 px-1 rounded">{TARGET_URL}</code> and checks the result against a
 			performance budget.
 		</p>
 
 		<div class="flex items-end gap-3 flex-wrap">
-			<div class="flex-1 min-w-64">
-				<label class="block text-sm font-medium text-zinc-700 mb-1" for="psi-url">URL</label>
-				<input
-					id="psi-url"
-					bind:value={url}
-					type="url"
-					placeholder="https://example.com"
-					class="w-full border border-zinc-300 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-zinc-400"
-					onkeydown={(e) => e.key === 'Enter' && run()}
-				/>
-			</div>
 			<div class="flex rounded-md border border-zinc-300 bg-white text-xs overflow-hidden">
 				{#each ['mobile', 'desktop'] as const as opt (opt)}
 					<button
@@ -129,7 +120,7 @@
 			</div>
 			<button
 				onclick={run}
-				disabled={!url.trim() || loading}
+				disabled={loading}
 				class="flex items-center gap-2 px-5 py-2 rounded-lg bg-zinc-800 text-white text-sm font-medium hover:bg-zinc-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
 			>
 				{#if loading}
