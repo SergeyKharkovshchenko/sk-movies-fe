@@ -14,6 +14,7 @@
 		contextTriplets?: number;
 		topK?: number;
 		neighborLimit?: number;
+		maxHops?: number;
 		temperature?: number;
 		seedPriority?: 'graph' | 'vector';
 	}
@@ -227,6 +228,7 @@
 	});
 	let topK = $state(5);
 	let neighborLimit = $state(100);
+	let maxHops = $state(2);
 	let messages = $state<Message[]>([]);
 	let input = $state('');
 	let loading = $state(false);
@@ -327,6 +329,7 @@
 				history,
 				topK,
 				neighborLimit,
+				maxHops,
 				ragMode: mode,
 				strict,
 				temperature,
@@ -584,14 +587,15 @@
 					>
 					with
 					<code class="font-mono bg-zinc-100 px-1 rounded"
-						>&#123; question, label, history, topK, neighborLimit, ragMode &#125;</code
+						>&#123; question, label, history, topK, neighborLimit, maxHops, ragMode &#125;</code
 					>. History includes all prior messages in this session.
 				</p>
 				<div class="flex items-center gap-5 flex-wrap">
 					<label class="flex items-center gap-2">
 						<span
 							class="text-zinc-600 shrink-0"
-							title="Number of seed nodes retrieved from pgvector per query">topK</span
+							title="How many seed entries pgvector returns for this query, ranked by similarity to the question — higher finds more candidates but can pull in weaker matches"
+							>topK</span
 						>
 						<input
 							type="number"
@@ -614,6 +618,21 @@
 							class="w-14 border border-zinc-300 rounded px-1.5 py-0.5 text-xs font-mono bg-white focus:outline-none focus:ring-1 focus:ring-zinc-400"
 						/>
 						<span class="text-zinc-400">(default 100)</span>
+					</label>
+					<label class="flex items-center gap-2">
+						<span
+							class="text-zinc-600 shrink-0"
+							title="How many relationship hops to walk out from each seed node in Neo4j (graph/combined modes) — 1 stops at direct neighbors, each extra hop also expands neighbors-of-neighbors. Capped at 5: unlike topK, each extra hop re-queries once per node the previous hop found, so cost grows fast on a dense graph"
+							>maxHops</span
+						>
+						<input
+							type="number"
+							bind:value={maxHops}
+							min="1"
+							max="5"
+							class="w-14 border border-zinc-300 rounded px-1.5 py-0.5 text-xs font-mono bg-white focus:outline-none focus:ring-1 focus:ring-zinc-400"
+						/>
+						<span class="text-zinc-400">(default 2, max 5)</span>
 					</label>
 					<label class="flex items-center gap-2">
 						<span
@@ -980,6 +999,8 @@
 									<span title="neighborLimit used for this request"
 										>neighbors={ri.neighborLimit ?? neighborLimit}</span
 									>
+									<span class="text-zinc-300">·</span>
+									<span title="maxHops used for this request">hops={ri.maxHops ?? maxHops}</span>
 									<span class="text-zinc-300">·</span>
 									<span title="LLM temperature used for this request"
 										>temp={ri.temperature ?? msg.temperature}</span
