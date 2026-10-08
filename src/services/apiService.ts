@@ -23,6 +23,7 @@ async function napoleonChat(payload: {
 	history?: { role: 'user' | 'assistant'; content: string }[];
 	topK?: number;
 	neighborLimit?: number;
+	maxHops?: number;
 	ragMode?: 'combined' | 'vector' | 'graph';
 	strict?: boolean;
 	temperature?: number;
