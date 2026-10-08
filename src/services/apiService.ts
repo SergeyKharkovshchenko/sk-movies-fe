@@ -9,6 +9,11 @@ async function getAllMovies() {
 	return await handleFetch(`${apiUrl}/getAllMovies`, FetchMethods.GET);
 }
 
+async function runPagespeed(url: string, strategy: 'mobile' | 'desktop') {
+	const params = new URLSearchParams({ url, strategy });
+	return await handleFetch(`${apiUrl}/performance/pagespeed?${params}`, FetchMethods.GET);
+}
+
 async function suggestSections(text: string) {
 	return await handleFetch(`${apiUrl}/knowledge/suggest-sections`, FetchMethods.POST, {}, { text });
 }
@@ -566,6 +571,10 @@ export const PublicationAPIService = {
 
 export const StructuresAPIService = {
 	getAllStructures
+};
+
+export const PerformanceAPIService = {
+	runPagespeed
 };
 
 // async function sampleRequest(body: unknown) {
