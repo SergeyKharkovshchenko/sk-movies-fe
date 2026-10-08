@@ -46,6 +46,15 @@
 		error?: string;
 	}
 
+	// One LLM call made while answering this question -- always "answer generation", plus
+	// "grounding check" when strict mode ran its post-hoc faithfulness check.
+	interface TokenUsageEntry {
+		step: string;
+		promptTokens: number;
+		completionTokens: number;
+		totalTokens: number;
+	}
+
 	interface Message {
 		id: string;
 		role: 'user' | 'assistant';
@@ -59,6 +68,7 @@
 		groundingCheck?: GroundingCheck;
 		sources?: unknown[];
 		retrievalInfo?: RetrievalInfo;
+		tokenUsage?: TokenUsageEntry[];
 		ragMode?: 'combined' | 'vector' | 'graph';
 		strict?: boolean;
 		temperature?: number;
@@ -337,6 +347,7 @@
 			const sources: unknown[] = result?.sources ?? [];
 			const model: string | undefined = result?.model;
 			const retrievalInfo: RetrievalInfo | undefined = result?.retrievalInfo;
+			const tokenUsage: TokenUsageEntry[] = result?.tokenUsage ?? [];
 
 			messages = [
 				...messages,
@@ -352,6 +363,7 @@
 					groundingCheck,
 					sources,
 					retrievalInfo,
+					tokenUsage,
 					ragMode: mode,
 					strict,
 					temperature,
@@ -890,6 +902,40 @@
 												<span class="text-zinc-500 font-medium">{c.name}</span>
 											</div>
 											<p class="text-zinc-600 whitespace-pre-wrap">{c.text}</p>
+										</div>
+									{/each}
+								</div>
+							</details>
+						{/if}
+
+						{#if isAssistant && msg.tokenUsage && msg.tokenUsage.length > 0}
+							{@const usage = msg.tokenUsage}
+							{@const totalTokens = usage.reduce((sum, u) => sum + u.totalTokens, 0)}
+							<details class="max-w-[85%] mt-1.5 text-[11px]">
+								<summary
+									class="cursor-pointer text-zinc-400 hover:text-zinc-600 select-none list-none flex items-center gap-1"
+								>
+									<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<path
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											stroke-width="2"
+											d="M13 10V3L4 14h7v7l9-11h-7z"
+										/>
+									</svg>
+									{usage.length} LLM call{usage.length === 1 ? '' : 's'} · {totalTokens} tokens
+								</summary>
+								<div
+									class="mt-1 rounded-lg border border-zinc-200 bg-white overflow-hidden divide-y divide-zinc-100"
+								>
+									{#each usage as u, i (i)}
+										<div class="p-2 flex items-center justify-between gap-2">
+											<span class="text-zinc-600">{u.step}</span>
+											<span class="font-mono text-zinc-400">
+												{u.promptTokens} prompt + {u.completionTokens} completion = <span
+													class="text-zinc-600 font-medium">{u.totalTokens}</span
+												>
+											</span>
 										</div>
 									{/each}
 								</div>
