@@ -17,6 +17,19 @@
 		maxHops?: number;
 		temperature?: number;
 		seedPriority?: 'graph' | 'vector';
+		text2cypher?: boolean;
+	}
+
+	// Text-to-Cypher step (graph/combined modes, when enabled): the read-only query the LLM wrote
+	// for the question and what it returned -- the exact computation the answer is based on.
+	interface Text2CypherResult {
+		cypher?: string | null;
+		columns?: string[];
+		rows?: Record<string, unknown>[];
+		rowCount?: number;
+		attempts?: number;
+		cached?: boolean;
+		error?: string;
 	}
 
 	// One Cypher query actually executed against Neo4j while building this answer's context
@@ -44,6 +57,7 @@
 	interface GroundingCheck {
 		grounded: boolean | null;
 		unsupportedClaims: string[];
+		verifiedByQuery?: string[];
 		error?: string;
 	}
 
@@ -70,6 +84,7 @@
 		sources?: unknown[];
 		retrievalInfo?: RetrievalInfo;
 		tokenUsage?: TokenUsageEntry[];
+		text2cypher?: Text2CypherResult;
 		ragMode?: 'combined' | 'vector' | 'graph';
 		strict?: boolean;
 		temperature?: number;
@@ -120,6 +135,23 @@
 			why: 'Expected: €11.50. Aggregation; fish sauce and anchovies hide two of the four dishes.'
 		}
 	];
+
+	// Retrieval settings that measured best for a knowledge base's probe questions, offered as a
+	// one-click "Use recommended settings". For the food set: the importer's derived
+	// *_CATEGORY edges put every category one hop from each dish, so more hops/neighbours only add
+	// noise, and the counting/negation questions need Text-to-Cypher to be exact.
+	interface RetrievalSettings {
+		topK: number;
+		neighborLimit: number;
+		maxHops: number;
+		text2cypher: boolean;
+	}
+	const FOOD_RECOMMENDED: RetrievalSettings = { topK: 10, neighborLimit: 30, maxHops: 2, text2cypher: true };
+	const RECOMMENDED_SETTINGS_BY_LABEL: Record<string, RetrievalSettings> = {
+		food: FOOD_RECOMMENDED,
+		'food-2': FOOD_RECOMMENDED,
+		'food 2': FOOD_RECOMMENDED
+	};
 
 	const PROBE_QUESTIONS_BY_LABEL: Record<string, { q: string; why: string }[]> = {
 		food: FOOD_PROBE_QUESTIONS,
@@ -269,6 +301,9 @@
 	let topK = $state(5);
 	let neighborLimit = $state(100);
 	let maxHops = $state(2);
+	// Text-to-Cypher: the LLM writes one read-only query for counting/ranking/negation questions,
+	// and its exact result leads the answer's context (graph/combined modes only).
+	let text2cypher = $state(false);
 	let messages = $state<Message[]>([]);
 	let input = $state('');
 	let loading = $state(false);
@@ -324,6 +359,19 @@
 	// (in case it hasn't shown up in the labels list yet) so the select never renders empty.
 	let labelOptions = $derived(Array.from(new Set([...readyLabels, initialLabel].filter(Boolean))));
 	let probeQuestions = $derived(PROBE_QUESTIONS_BY_LABEL[label] ?? []);
+	let recommendedSettings = $derived(RECOMMENDED_SETTINGS_BY_LABEL[label]);
+	let usingRecommended = $derived(
+		!!recommendedSettings &&
+			topK === recommendedSettings.topK &&
+			neighborLimit === recommendedSettings.neighborLimit &&
+			maxHops === recommendedSettings.maxHops &&
+			text2cypher === recommendedSettings.text2cypher
+	);
+
+	function applyRecommendedSettings() {
+		if (!recommendedSettings) return;
+		({ topK, neighborLimit, maxHops, text2cypher } = recommendedSettings);
+	}
 
 	onMount(() => {
 		KnowledgeAPIService.knowledgeLabels()
@@ -373,7 +421,8 @@
 				ragMode: mode,
 				strict,
 				temperature,
-				seedPriority
+				seedPriority,
+				text2cypher
 			});
 
 			const content: string =
@@ -391,6 +440,7 @@
 			const model: string | undefined = result?.model;
 			const retrievalInfo: RetrievalInfo | undefined = result?.retrievalInfo;
 			const tokenUsage: TokenUsageEntry[] = result?.tokenUsage ?? [];
+			const text2cypherResult: Text2CypherResult | undefined = result?.text2cypher;
 
 			messages = [
 				...messages,
@@ -407,6 +457,7 @@
 					sources,
 					retrievalInfo,
 					tokenUsage,
+					text2cypher: text2cypherResult,
 					ragMode: mode,
 					strict,
 					temperature,
@@ -711,7 +762,37 @@
 							<span class="text-amber-600 text-[10px]">knowledge-only</span>
 						{/if}
 					</label>
+					<label
+						class="flex items-center gap-2 cursor-pointer select-none"
+						title="Text-to-Cypher — the LLM writes one read-only Cypher query for the question (counts, rankings, averages, negation) and its exact result leads the answer's context. Graph and combined modes only."
+					>
+						<input
+							type="checkbox"
+							bind:checked={text2cypher}
+							class="rounded border-zinc-300 text-zinc-800 focus:ring-zinc-400"
+						/>
+						<span class="text-zinc-600">text-to-Cypher</span>
+						{#if text2cypher && ragMode === 'vector'}
+							<span class="text-amber-600 text-[10px]">not used in vector mode</span>
+						{/if}
+					</label>
 				</div>
+				{#if recommendedSettings}
+					<div class="flex items-center gap-3 flex-wrap">
+						<button
+							onclick={applyRecommendedSettings}
+							disabled={usingRecommended}
+							class="px-2.5 py-1 rounded-md border border-zinc-300 bg-white text-[11px] text-zinc-700 hover:bg-zinc-50 disabled:opacity-50 disabled:cursor-default transition-colors"
+							title="topK={recommendedSettings.topK}, neighbors={recommendedSettings.neighborLimit}, hops={recommendedSettings.maxHops}, text-to-Cypher {recommendedSettings.text2cypher ? 'on' : 'off'}"
+						>
+							{usingRecommended ? 'Using recommended settings' : 'Use recommended settings'}
+						</button>
+						<span class="text-zinc-400 text-[10px]">
+							for '{label}': topK {recommendedSettings.topK} · neighbors {recommendedSettings.neighborLimit} ·
+							hops {recommendedSettings.maxHops} · text-to-Cypher {recommendedSettings.text2cypher ? 'on' : 'off'}
+						</span>
+					</div>
+				{/if}
 				<div class="flex items-center gap-3 flex-wrap">
 					<span class="text-zinc-600 shrink-0">Seed priority</span>
 					<div class="flex rounded-md border border-zinc-300 bg-white text-[11px] overflow-hidden">
@@ -850,9 +931,60 @@
 								</p>
 							{:else}
 								<p class="max-w-[85%] mt-1 text-[10px] text-emerald-600 px-0.5">
-									✓ grounding check passed
+									✓ grounding check passed{gcheck.verifiedByQuery?.length
+										? ` (${gcheck.verifiedByQuery.length} item(s) verified by the Cypher result)`
+										: ''}
 								</p>
 							{/if}
+						{/if}
+
+						{#if isAssistant && msg.text2cypher}
+							{@const t2c = msg.text2cypher}
+							<details class="max-w-[85%] mt-1.5 text-[11px]">
+								<summary
+									class="cursor-pointer text-zinc-400 hover:text-zinc-600 select-none list-none"
+									class:text-amber-600={!!t2c.error}
+								>
+									{#if t2c.error}
+										text-to-Cypher failed{t2c.cypher ? '' : ` — ${t2c.error}`}
+									{:else}
+										text-to-Cypher · {t2c.rowCount ?? 0} row(s){t2c.cached ? ' · cached query' : ''}{(t2c.attempts ?? 1) > 1 ? ' · after retry' : ''}
+									{/if}
+								</summary>
+								{#if t2c.cypher}
+									<pre
+										class="mt-1 whitespace-pre-wrap break-words rounded-md bg-zinc-50 border border-zinc-200 px-2 py-1.5 font-mono text-[10px] text-zinc-700">{t2c.cypher}</pre>
+								{/if}
+								{#if t2c.error && t2c.cypher}
+									<p class="mt-1 text-amber-700">{t2c.error}</p>
+								{/if}
+								{#if t2c.rows && t2c.rows.length > 0}
+									<div class="mt-1 overflow-x-auto">
+										<table class="text-[10px] text-zinc-600 border-collapse">
+											<thead>
+												<tr>
+													{#each t2c.columns ?? Object.keys(t2c.rows[0]) as col (col)}
+														<th class="text-left font-medium pr-3 pb-0.5 border-b border-zinc-200">{col}</th>
+													{/each}
+												</tr>
+											</thead>
+											<tbody>
+												{#each t2c.rows as row, i (i)}
+													<tr>
+														{#each t2c.columns ?? Object.keys(row) as col (col)}
+															<td class="pr-3 py-0.5 align-top"
+																>{Array.isArray(row[col])
+																	? (row[col] as unknown[]).join(', ')
+																	: String(row[col] ?? '')}</td
+															>
+														{/each}
+													</tr>
+												{/each}
+											</tbody>
+										</table>
+									</div>
+								{/if}
+							</details>
 						{/if}
 
 						{#if isAssistant && msg.graphContext && msg.graphContext.length > 0}
@@ -1057,6 +1189,12 @@
 									<span class="text-zinc-300">·</span>
 									<span title="Seed priority used for this request"
 										>seeds: {ri?.seedPriority ?? msg.seedPriority}-first</span
+									>
+								{/if}
+								{#if ri?.text2cypher}
+									<span class="text-zinc-300">·</span>
+									<span class="text-indigo-600 font-medium" title="Text-to-Cypher ran for this request"
+										>text-to-Cypher</span
 									>
 								{/if}
 							</div>
