@@ -304,6 +304,12 @@
 	// Text-to-Cypher: the LLM writes one read-only query for counting/ranking/negation questions,
 	// and its exact result leads the answer's context (graph/combined modes only).
 	let text2cypher = $state(false);
+	// Send earlier turns as history. Off makes every question stand alone -- what a benchmark run
+	// wants, since an earlier answer (e.g. "Not in knowledge base.") otherwise biases the next one.
+	let useHistory = $state(true);
+	// Bumped by Clear: a response that was still in flight belongs to the old conversation and
+	// is dropped instead of landing in (and becoming history of) the cleared one.
+	let conversation = 0;
 	let messages = $state<Message[]>([]);
 	let input = $state('');
 	let loading = $state(false);
@@ -395,10 +401,18 @@
 		return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 	}
 
+	// Turns before the question being sent -- the backend appends the question itself, so it must
+	// not be in here too (it used to be: history was built after the question was added).
 	function buildHistory() {
+		if (!useHistory) return [];
 		return messages
 			.filter((m) => !m.error)
 			.map((m) => ({ role: m.role as 'user' | 'assistant', content: m.content }));
+	}
+
+	function clearChat() {
+		messages = [];
+		conversation += 1;
 	}
 
 	// Runs a single request against a concrete (non-'compare') rag mode and appends its own
@@ -410,6 +424,7 @@
 		mode: 'combined' | 'vector' | 'graph'
 	): Promise<string | undefined> {
 		const assistantId = uid();
+		const conv = conversation;
 		try {
 			const result = await KnowledgeAPIService.napoleonChat({
 				question,
@@ -441,6 +456,7 @@
 			const retrievalInfo: RetrievalInfo | undefined = result?.retrievalInfo;
 			const tokenUsage: TokenUsageEntry[] = result?.tokenUsage ?? [];
 			const text2cypherResult: Text2CypherResult | undefined = result?.text2cypher;
+			if (conv !== conversation) return undefined; // chat was cleared while this was in flight
 
 			messages = [
 				...messages,
@@ -466,6 +482,7 @@
 			];
 			return content;
 		} catch (err) {
+			if (conv !== conversation) return undefined;
 			messages = [
 				...messages,
 				{
@@ -540,12 +557,12 @@
 		if (!question || loading) return;
 		input = '';
 
+		const history = buildHistory();
 		const userMsg: Message = { id: uid(), role: 'user', content: question, timestamp: new Date() };
 		messages = [...messages, userMsg];
 		loading = true;
 
 		try {
-			const history = buildHistory();
 			if (ragMode === 'compare') {
 				// Two requests in a row against the same question/history — vector first, then
 				// pure graph — so both answers land as separate, individually-tagged messages.
@@ -637,7 +654,7 @@
 			<div class="flex items-center gap-2">
 				{#if messages.length > 0}
 					<button
-						onclick={() => (messages = [])}
+						onclick={clearChat}
 						class="text-xs text-zinc-500 hover:text-zinc-800 px-2 py-1 rounded hover:bg-zinc-100 transition-colors"
 					>
 						Clear
@@ -774,6 +791,20 @@
 						<span class="text-zinc-600">text-to-Cypher</span>
 						{#if text2cypher && ragMode === 'vector'}
 							<span class="text-amber-600 text-[10px]">not used in vector mode</span>
+						{/if}
+					</label>
+					<label
+						class="flex items-center gap-2 cursor-pointer select-none"
+						title="Chat history — send the earlier turns of this dialog with each question. Turn off to ask every question on its own (benchmarks), so earlier answers can't bias later ones."
+					>
+						<input
+							type="checkbox"
+							bind:checked={useHistory}
+							class="rounded border-zinc-300 text-zinc-800 focus:ring-zinc-400"
+						/>
+						<span class="text-zinc-600">chat history</span>
+						{#if !useHistory}
+							<span class="text-amber-600 text-[10px]">each question stands alone</span>
 						{/if}
 					</label>
 				</div>
