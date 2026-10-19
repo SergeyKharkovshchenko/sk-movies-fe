@@ -9,6 +9,7 @@
 	import { nolanSampleText } from '$lib/data/nolanSample';
 	import { insuranceSampleText } from '$lib/data/insuranceSample';
 	import { insuranceCsvSamples } from '$lib/data/insuranceCsvSamples';
+	import { foodCsvSamples } from '$lib/data/foodCsvSamples';
 
 	const SAMPLE_TEXTS: Record<
 		string,
@@ -51,11 +52,20 @@
 
 	// CSV table sets selectable in the CSV-import panel (Step 1) -- parallel to SAMPLE_TEXTS but
 	// for the deterministic /knowledge/import-csv path instead of the LLM suggest/process path.
-	const CSV_SAMPLE_SETS: Record<string, { menuLabel: string; title: string; files: Record<string, string> }> = {
+	// `label`, when set, also fills the Knowledge Base Label so the set's probe questions in the
+	// chat (keyed by label) line up with what gets imported.
+	const CSV_SAMPLE_SETS: Record<string, { menuLabel: string; title: string; files: Record<string, string>; label?: string }> = {
 		insurance: {
 			menuLabel: 'Insurance Claims CSV Tables',
 			title: 'Load the P&C insurance CSV tables (policies, claims, parties, amounts, …) for direct Neo4j import',
 			files: insuranceCsvSamples
+		},
+		food2: {
+			menuLabel: 'Food: Dishes + Ingredient Taxonomy (Graph vs Vector)',
+			title:
+				'Load dishes.csv (20 dishes, cuisine, price, ingredients) and taxonomy.csv (ingredient/category hierarchy) into "food-2", built to benchmark graph/taxonomy RAG against vector RAG',
+			files: foodCsvSamples,
+			label: 'food-2'
 		}
 	};
 
@@ -189,6 +199,7 @@
 		const set = CSV_SAMPLE_SETS[key];
 		if (!set) return;
 		csvFiles = Object.entries(set.files).map(([name, content]) => ({ name, content }));
+		if (set.label) label = set.label;
 		csvImportResult = null;
 		csvImportError = '';
 	}
