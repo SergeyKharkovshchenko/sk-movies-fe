@@ -124,6 +124,7 @@
 	const PROBE_QUESTIONS_BY_LABEL: Record<string, { q: string; why: string }[]> = {
 		food: FOOD_PROBE_QUESTIONS,
 		'food-2': FOOD_PROBE_QUESTIONS,
+		'food 2': FOOD_PROBE_QUESTIONS,
 		napoleon: [
 			{
 				q: 'Which commanders were enemies of Napoleon at Waterloo, and what forces did they lead?',
