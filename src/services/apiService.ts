@@ -33,6 +33,7 @@ async function napoleonChat(payload: {
 	strict?: boolean;
 	temperature?: number;
 	seedPriority?: 'graph' | 'vector';
+	text2cypher?: boolean;
 }) {
 	return await handleFetch(`${apiUrl}/napoleon-chat`, FetchMethods.POST, {}, payload);
 }
