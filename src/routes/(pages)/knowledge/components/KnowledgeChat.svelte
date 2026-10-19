@@ -84,7 +84,46 @@
 		stats?: { nodes?: number; relationships?: number } | null;
 	} = $props();
 
+	// KG-vs-vector benchmark over dishes.csv + taxonomy.csv: every answer depends on the ingredient
+	// taxonomy (shrimp IS_A shellfish IS_A seafood), which the dish text itself never spells out.
+	const FOOD_PROBE_QUESTIONS: { q: string; why: string }[] = [
+		{
+			q: 'Which cuisine has the most dishes containing gluten?',
+			why: 'Expected: Italian (3). Grouping and counting over all dishes.'
+		},
+		{
+			q: 'Which dishes contain tree nuts?',
+			why: 'Expected: Baklava, Lamb Korma, Pesto alla Trapanese, Waldorf Salad. The text says almonds, cashews, walnuts and pistachios, never “tree nuts”.'
+		},
+		{
+			q: 'Which dishes are vegetarian?',
+			why: 'Expected: 11 dishes. The answer is more dishes than k chunks, and needs negation.'
+		},
+		{
+			q: 'How many dishes contain dairy?',
+			why: 'Expected: 10. Counting needs all dishes, and the text never says “dairy”.'
+		},
+		{
+			q: 'Which vegan dishes cost under €10?',
+			why: 'Expected: Falafel Wrap, Hummus, Mango Sticky Rice. Negation over animal products, plus a price filter.'
+		},
+		{
+			q: 'Which Thai dishes are safe for a shellfish allergy?',
+			why: 'Expected: Green Curry, Mango Sticky Rice. Negation (vector RAG only got this right by luck).'
+		},
+		{
+			q: 'Which dishes contain both dairy and gluten?',
+			why: 'Expected: Baklava, Caesar Salad, Cheeseburger, Margherita Pizza, Pesto alla Trapanese, Tiramisu. Intersection of two categories, 6 answers.'
+		},
+		{
+			q: 'What’s the average price of dishes containing seafood?',
+			why: 'Expected: €11.50. Aggregation; fish sauce and anchovies hide two of the four dishes.'
+		}
+	];
+
 	const PROBE_QUESTIONS_BY_LABEL: Record<string, { q: string; why: string }[]> = {
+		food: FOOD_PROBE_QUESTIONS,
+		'food-2': FOOD_PROBE_QUESTIONS,
 		napoleon: [
 			{
 				q: 'Which commanders were enemies of Napoleon at Waterloo, and what forces did they lead?',

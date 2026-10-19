@@ -1,0 +1,42 @@
+child,child_type,parent
+meat,Category,animal product
+seafood,Category,animal product
+dairy,Category,animal product
+egg product,Category,animal product
+fish,Category,seafood
+shellfish,Category,seafood
+tree nut,Category,nut
+peanut,Category,nut
+chicken,Ingredient,meat
+beef,Ingredient,meat
+pork,Ingredient,meat
+lamb,Ingredient,meat
+anchovies,Ingredient,fish
+fish sauce,Ingredient,fish
+shrimp,Ingredient,shellfish
+mozzarella,Ingredient,dairy
+parmesan,Ingredient,dairy
+mascarpone,Ingredient,dairy
+butter,Ingredient,dairy
+yogurt,Ingredient,dairy
+cream,Ingredient,dairy
+paneer,Ingredient,dairy
+ghee,Ingredient,dairy
+cheddar,Ingredient,dairy
+egg,Ingredient,egg product
+mayonnaise,Ingredient,egg product
+honey,Ingredient,animal product
+almonds,Ingredient,tree nut
+cashews,Ingredient,tree nut
+walnuts,Ingredient,tree nut
+pistachios,Ingredient,tree nut
+peanuts,Ingredient,peanut
+wheat flour,Ingredient,gluten
+spaghetti,Ingredient,gluten
+ladyfingers,Ingredient,gluten
+baguette,Ingredient,gluten
+croutons,Ingredient,gluten
+brioche bun,Ingredient,gluten
+flatbread,Ingredient,gluten
+filo pastry,Ingredient,gluten
+tahini,Ingredient,sesame

@@ -1,0 +1,21 @@
+dish,cuisine,price_eur,ingredients
+Margherita Pizza,Italian,11,wheat flour;tomato;mozzarella;basil;olive oil
+Pesto alla Trapanese,Italian,13,spaghetti;almonds;tomato;basil;parmesan;garlic
+Tiramisu,Italian,7,ladyfingers;mascarpone;egg;espresso;cocoa
+Risotto ai Funghi,Italian,15,arborio rice;porcini;butter;parmesan;white wine
+Pad Thai,Thai,12,rice noodles;shrimp;egg;peanuts;tamarind;fish sauce
+Green Curry,Thai,14,chicken;coconut milk;green chili;thai basil;fish sauce
+Mango Sticky Rice,Thai,6,sticky rice;mango;coconut milk;sugar
+Tom Yum,Thai,10,shrimp;lemongrass;lime;chili;mushrooms
+Chicken Tikka Masala,Indian,14,chicken;yogurt;cream;tomato;garam masala
+Chana Masala,Indian,10,chickpeas;tomato;onion;garam masala
+Lamb Korma,Indian,15,lamb;cashews;cream;onion
+Palak Paneer,Indian,12,spinach;paneer;garlic;ghee
+Pho Bo,Vietnamese,12,rice noodles;beef;star anise;onion
+Banh Mi,Vietnamese,9,baguette;pork;pickled carrot;cilantro;mayonnaise
+Caesar Salad,American,10,romaine;parmesan;croutons;anchovies;egg
+Cheeseburger,American,13,brioche bun;beef;cheddar;lettuce;tomato
+Waldorf Salad,American,9,apple;celery;walnuts;mayonnaise
+Baklava,Turkish,6,filo pastry;pistachios;honey;butter
+Hummus,Lebanese,7,chickpeas;tahini;lemon;garlic;olive oil
+Falafel Wrap,Lebanese,9,chickpeas;flatbread;tahini;parsley
