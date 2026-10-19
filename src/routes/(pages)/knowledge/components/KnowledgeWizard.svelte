@@ -139,7 +139,19 @@
 	let csvDragOver = $state(false);
 	let csvImporting = $state(false);
 	let csvImportError = $state('');
-	let csvImportResult = $state<Record<string, unknown> | null>(null);
+	interface CsvImportResult {
+		[key: string]: unknown;
+		mode?: string;
+		label?: string;
+		warnings?: string[];
+		taxonomy?: {
+			placed: number;
+			unplacedBefore?: number;
+			groupedTopLevels: number;
+			newCategories?: string[];
+		};
+	}
+	let csvImportResult = $state<CsvImportResult | null>(null);
 
 	async function addCsvFiles(fileList: FileList | File[]) {
 		const incoming = Array.from(fileList).filter((f) => f.name.toLowerCase().endsWith('.csv'));
@@ -187,7 +199,10 @@
 		csvImportError = '';
 		csvImportResult = null;
 		try {
-			csvImportResult = await KnowledgeAPIService.knowledgeImportCsv(label.trim(), csvFiles);
+			const res = await KnowledgeAPIService.knowledgeImportCsv(label.trim(), csvFiles, deepAnalysis);
+			// handleFetch resolves (not throws) on an HTTP 500 -- the backend reports failures as { error }.
+			if (res?.error) csvImportError = `Failed to import CSVs: ${res.error}`;
+			else csvImportResult = res;
 		} catch (err) {
 			csvImportError = `Failed to import CSVs: ${err}`;
 		} finally {
@@ -739,10 +754,22 @@
 				{/if}
 				{#if csvImportResult}
 					<div class="mt-2 text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2">
-						Imported {csvImportResult.tablesProcessed} table(s) into '{csvImportResult.label}': {csvImportResult.entityRows}
-						entity row(s), {csvImportResult.joinRows} join row(s), {csvImportResult.tagRows} tag row(s),
-						{csvImportResult.lookupRows} lookup row(s), {csvImportResult.relationshipsCreated}
-						relationship(s), {csvImportResult.rowsEmbedded} row(s) embedded.
+						{#if csvImportResult.mode === 'inferred'}
+							Imported {csvImportResult.tablesProcessed} table(s) into '{csvImportResult.label}': {csvImportResult.nodesWritten}
+							node(s), {csvImportResult.relationshipsCreated} relationship(s), {csvImportResult.inferredRelationships}
+							derived via taxonomy, {csvImportResult.sharedNodes} node(s) shared across files, {csvImportResult.rowsEmbedded}
+							row(s) embedded.
+							{#if csvImportResult.taxonomy}
+								Deep analysis placed {csvImportResult.taxonomy.placed} of {csvImportResult.taxonomy.unplacedBefore ?? 0}
+								unclassified item(s), grouped {csvImportResult.taxonomy.groupedTopLevels} top-level categories{#if csvImportResult.taxonomy.newCategories?.length}
+									, new categories: {csvImportResult.taxonomy.newCategories.join(', ')}{/if}.
+							{/if}
+						{:else}
+							Imported {csvImportResult.tablesProcessed} table(s) into '{csvImportResult.label}': {csvImportResult.entityRows}
+							entity row(s), {csvImportResult.joinRows} join row(s), {csvImportResult.tagRows} tag row(s),
+							{csvImportResult.lookupRows} lookup row(s), {csvImportResult.relationshipsCreated}
+							relationship(s), {csvImportResult.rowsEmbedded} row(s) embedded.
+						{/if}
 						{#if Array.isArray(csvImportResult.warnings) && csvImportResult.warnings.length > 0}
 							<ul class="mt-1 ml-4 list-disc text-amber-700">
 								{#each csvImportResult.warnings as w, i (i)}
