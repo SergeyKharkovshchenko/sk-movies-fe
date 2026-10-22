@@ -16,20 +16,22 @@
 		points = [],
 		kind = 'column',
 		title,
-		format = (v: number) => String(v)
+		format = (v: number) => String(v),
+		plotHeight = 64
 	}: {
 		points?: DailyPoint[];
 		kind?: 'column' | 'line';
 		title: string;
 		format?: (v: number) => string;
+		plotHeight?: number;
 	} = $props();
 
-	const PLOT_H = 64;
+	const PLOT_H = $derived(plotHeight);
 	const TOP = 12;
 	const AXIS_H = 16;
 	const LEFT = 32;
 	const RIGHT = $derived(kind === 'line' ? 34 : 8); // line charts need room for the end label
-	const HEIGHT = TOP + PLOT_H + AXIS_H;
+	const HEIGHT = $derived(TOP + PLOT_H + AXIS_H);
 
 	let width = $state(320);
 	let active = $state<number | null>(null);
@@ -45,12 +47,12 @@
 		if (values.length === 0) return [0, 1];
 		const lo = kind === 'column' ? 0 : Math.min(...values);
 		const hi = Math.max(...values);
-		return niceTicks(lo, hi === lo ? lo + 1 : hi, 3);
+		return niceTicks(lo, hi === lo ? lo + 1 : hi, PLOT_H >= 120 ? 5 : 3); // taller plot, more ticks
 	});
 	const yMin = $derived(ticks[0]);
 	const yMax = $derived(ticks[ticks.length - 1]);
 	const yAt = (v: number) => TOP + PLOT_H - ((v - yMin) / (yMax - yMin || 1)) * PLOT_H;
-	const baseline = TOP + PLOT_H;
+	const baseline = $derived(TOP + PLOT_H);
 
 	function niceTicks(lo: number, hi: number, count: number): number[] {
 		const raw = (hi - lo) / count;
