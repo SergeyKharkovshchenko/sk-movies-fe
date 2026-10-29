@@ -1,0 +1,66 @@
+name: Build image & deploy to OKE
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      # BASE_PATH='' serves the app from the root of its own host
+      # (the gh-pages build keeps the /sk-movies-fe base path).
+      - run: npm run build
+        env:
+          BASE_PATH: ''
+          VITE_API_URL: ${{ vars.VITE_API_URL }}
+          VITE_SENTRY_DSN: ${{ vars.VITE_SENTRY_DSN }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+
+      - name: Lowercase image name
+        run: echo "IMAGE=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_ENV"
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ${{ env.IMAGE }}:latest
+            ${{ env.IMAGE }}:${{ github.sha }}
+
+      - name: Update GitOps repository
+        env:
+          GIT_TOKEN: ${{ secrets.GITOPS_PAT }}
+        run: |
+          git clone https://x-access-token:${GIT_TOKEN}@github.com/sergeykharkovshchenko/grade-api-gitops.git gitops
+          cd gitops
+          sed -i "s|image: ghcr.io/.*/sk-movies-fe:.*|image: ${IMAGE}:${GITHUB_SHA}|" sk-movies-fe/deployment.yaml
+          grep "image:" sk-movies-fe/deployment.yaml
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git commit -am "sk-movies-fe: deploy ${GITHUB_SHA}" || { echo "No changes"; exit 0; }
+          git pull --rebase
+          git push
