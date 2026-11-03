@@ -55,7 +55,7 @@ jobs:
         env:
           GIT_TOKEN: ${{ secrets.GITOPS_PAT }}
         run: |
-          git clone https://x-access-token:${GIT_TOKEN}@github.com/sergeykharkovshchenko/grade-api-gitops.git gitops
+          git clone https://x-access-token:${GIT_TOKEN}@github.com/sergeykharkovshchenko/oke-gitops.git gitops
           cd gitops
           sed -i "s|image: ghcr.io/.*/sk-movies-fe:.*|image: ${IMAGE}:${GITHUB_SHA}|" sk-movies-fe/deployment.yaml
           grep "image:" sk-movies-fe/deployment.yaml
