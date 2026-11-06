@@ -14,6 +14,14 @@ async function runPagespeed(url: string, strategy: 'mobile' | 'desktop') {
 	return await handleFetch(`${apiUrl}/performance/pagespeed?${params}`, FetchMethods.GET);
 }
 
+async function getMetric(panel: string, range: string) {
+	const params = new URLSearchParams({ range });
+	return await handleFetch(
+		`${apiUrl}/performance/metrics/${encodeURIComponent(panel)}?${params}`,
+		FetchMethods.GET
+	);
+}
+
 async function earthquakeRange() {
 	return await handleFetch(`${apiUrl}/earthquakes/range`, FetchMethods.GET);
 }
@@ -592,7 +600,8 @@ export const StructuresAPIService = {
 };
 
 export const PerformanceAPIService = {
-	runPagespeed
+	runPagespeed,
+	getMetric
 };
 
 export const EarthquakeAPIService = {
