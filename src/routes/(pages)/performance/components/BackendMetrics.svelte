@@ -4,9 +4,10 @@
 	import type { MetricResponse } from '$lib/utils/metrics';
 	import MetricChart from './MetricChart.svelte';
 	import MetricStat from './MetricStat.svelte';
+	import TraceList from './TraceList.svelte';
 
-	// Traces cannot be drawn from the metrics API, and Grafana Cloud forbids framing its pages
-	// (frame-ancestors 'none'), so each trace view is a link that opens the public dashboard.
+	// Grafana Cloud forbids framing its pages (frame-ancestors 'none'), so everything here is drawn
+	// from the backend's own API. Each trace panel also links to the public dashboard for digging deeper.
 	const GRAFANA_BASE =
 		import.meta.env.VITE_GRAFANA_PUBLIC_URL ?? 'https://heftyspringbok690.grafana.net';
 
@@ -38,7 +39,15 @@
 		colorGroup: string;
 	}
 
-	interface TracePanel extends Explained {
+	interface TraceChartPanel extends Explained {
+		metric: string;
+		height: number;
+		colorGroup: string;
+		dashboardId: string;
+	}
+
+	interface TraceListPanel extends Explained {
+		kind: 'recent' | 'slow';
 		dashboardId: string;
 	}
 
@@ -159,8 +168,11 @@
 		}
 	];
 
-	const TRACES: TracePanel[] = [
+	const TRACE_CHARTS: TraceChartPanel[] = [
 		{
+			metric: 'span_rate',
+			height: 240,
+			colorGroup: 'spans',
 			dashboardId: '1c18fed49f2e40139e2dd2ec35bc908d',
 			title: 'Span rate (server)',
 			description: 'How many server-side spans (one per incoming request) are recorded per second.',
@@ -168,22 +180,30 @@
 				'"3 spans/s" is roughly 3 requests/s. Compare it with the request rate above to confirm tracing covers all traffic.'
 		},
 		{
+			metric: 'span_p95',
+			height: 240,
+			colorGroup: 'spans',
 			dashboardId: '8b579a35bedc401280f69ebe027d5852',
 			title: 'Span duration p95 (server)',
 			description:
 				'The p95 duration of server spans, the same idea as endpoint latency but measured from traces.',
 			example:
-				'"1.2 s" means the slowest 5% of requests take over a second. Open the slow traces to see which step is responsible.'
-		},
+				'"1.2 s" means the slowest 5% of requests take over a second. Open the slow traces below to see which step is responsible.'
+		}
+	];
+
+	const TRACE_LISTS: TraceListPanel[] = [
 		{
+			kind: 'recent',
 			dashboardId: 'caded55f0daa41c59e1449591c431c62',
 			title: 'Recent traces',
 			description:
-				'The latest requests. Open one to see a waterfall of its spans and how long each took.',
+				'The latest requests (uptime probes left out). Click a row to open a waterfall of its spans and how long each took.',
 			example:
 				'GET /comments/user/ur1293485 took 240 ms: controller 5 ms, Neo4j query 230 ms. The database call is the bottleneck.'
 		},
 		{
+			kind: 'slow',
 			dashboardId: 'eeccff32f3254ac1bae7d360d4efbb81',
 			title: 'Slow traces (> 500 ms)',
 			description: 'Only requests slower than 500 ms, so problems are easy to spot.',
@@ -194,7 +214,8 @@
 
 	const METRICS = [
 		...STATS.map((p) => p.metric),
-		...CHART_SECTIONS.flatMap((s) => s.panels.map((p) => p.metric))
+		...CHART_SECTIONS.flatMap((s) => s.panels.map((p) => p.metric)),
+		...TRACE_CHARTS.map((p) => p.metric)
 	];
 
 	let range = $state<string>('1h');
@@ -202,11 +223,15 @@
 	let errors = $state<Record<string, string>>({});
 	let loading = $state(false);
 	let updatedAt = $state<Date | null>(null);
+	let refreshKey = $state(0); // lets the trace lists refetch on the Refresh button
 	let requestId = 0; // a late answer for an old range must not overwrite the current one
 
 	async function loadOne(metric: string, id: number) {
 		try {
-			const res = await PerformanceAPIService.getMetric(metric, range);
+			// Span charts come from the traces API, everything else from the metrics API.
+			const res = metric.startsWith('span_')
+				? await PerformanceAPIService.getTraceSeries(metric, range)
+				: await PerformanceAPIService.getMetric(metric, range);
 			if (id !== requestId) return;
 			if (!res || res.error || !Array.isArray(res.series)) {
 				errors[metric] = res?.error ?? 'Backend not reachable';
@@ -229,6 +254,11 @@
 		}
 	}
 
+	function refresh() {
+		refreshKey++;
+		load();
+	}
+
 	// Refetch on range change. The previous data stays on screen (dimmed) until the new data lands.
 	$effect(() => {
 		void range;
@@ -239,6 +269,17 @@
 		return `${GRAFANA_BASE}/public-dashboards/${id}?theme=light`;
 	}
 </script>
+
+{#snippet grafanaLink(dashboardId: string)}
+	<a
+		href={traceUrl(dashboardId)}
+		target="_blank"
+		rel="noopener noreferrer"
+		class="shrink-0 whitespace-nowrap text-xs text-zinc-500 underline-offset-2 hover:text-zinc-800 hover:underline"
+	>
+		Open in Grafana <span aria-hidden="true">↗</span>
+	</a>
+{/snippet}
 
 <div class="viz-root flex flex-col gap-6">
 	<div class="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
@@ -268,7 +309,7 @@
 				{/each}
 			</div>
 			<button
-				onclick={load}
+				onclick={refresh}
 				disabled={loading}
 				class="rounded-md border border-zinc-300 px-3 py-2 text-xs text-zinc-600 transition-colors hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-40"
 			>
@@ -342,28 +383,47 @@
 	<section class="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
 		<h3 class="mb-1 text-sm font-semibold text-zinc-800">Traces</h3>
 		<p class="mb-4 text-xs text-zinc-500">
-			Each incoming request is recorded as a trace made of spans (controller, database call,
-			external API). These views open in Grafana in a new tab.
+			Each incoming request is recorded as a trace made of spans (the request itself and the
+			database calls inside it). Use these panels to find where time is spent.
 		</p>
 		<div class="grid grid-cols-1 gap-4 xl:grid-cols-2">
-			{#each TRACES as panel (panel.dashboardId)}
-				<article class="flex flex-col justify-between rounded-lg border border-zinc-200 px-4 py-3">
-					<div>
-						<h4 class="text-sm font-medium text-zinc-800">{panel.title}</h4>
+			{#each TRACE_CHARTS as panel (panel.metric)}
+				<article class="flex min-w-0 flex-col overflow-hidden rounded-lg border border-zinc-200">
+					<div class="px-4 pb-1 pt-3">
+						<div class="flex items-start justify-between gap-3">
+							<h4 class="text-sm font-medium text-zinc-800">{panel.title}</h4>
+							{@render grafanaLink(panel.dashboardId)}
+						</div>
 						<p class="mt-1 text-xs text-zinc-600">{panel.description}</p>
 						<p class="mt-1 text-xs text-zinc-500">
 							<span class="font-medium text-zinc-600">Example:</span>
 							{panel.example}
 						</p>
 					</div>
-					<a
-						href={traceUrl(panel.dashboardId)}
-						target="_blank"
-						rel="noopener noreferrer"
-						class="mt-3 inline-flex w-fit items-center gap-1 rounded-md border border-zinc-300 px-3 py-1.5 text-xs text-zinc-700 transition-colors hover:bg-zinc-50"
-					>
-						Open in Grafana <span aria-hidden="true">↗</span>
-					</a>
+					<MetricChart
+						data={results[panel.metric] ?? null}
+						{loading}
+						error={errors[panel.metric]}
+						height={panel.height}
+						colorGroup={panel.colorGroup}
+					/>
+				</article>
+			{/each}
+
+			{#each TRACE_LISTS as panel (panel.kind)}
+				<article class="flex min-w-0 flex-col overflow-hidden rounded-lg border border-zinc-200">
+					<div class="px-4 pb-1 pt-3">
+						<div class="flex items-start justify-between gap-3">
+							<h4 class="text-sm font-medium text-zinc-800">{panel.title}</h4>
+							{@render grafanaLink(panel.dashboardId)}
+						</div>
+						<p class="mt-1 text-xs text-zinc-600">{panel.description}</p>
+						<p class="mt-1 text-xs text-zinc-500">
+							<span class="font-medium text-zinc-600">Example:</span>
+							{panel.example}
+						</p>
+					</div>
+					<TraceList kind={panel.kind} {range} {refreshKey} />
 				</article>
 			{/each}
 		</div>

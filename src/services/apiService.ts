@@ -22,6 +22,29 @@ async function getMetric(panel: string, range: string) {
 	);
 }
 
+async function getTraceList(kind: string, range: string) {
+	const params = new URLSearchParams({ range });
+	return await handleFetch(
+		`${apiUrl}/performance/traces/list/${encodeURIComponent(kind)}?${params}`,
+		FetchMethods.GET
+	);
+}
+
+async function getTraceSeries(panel: string, range: string) {
+	const params = new URLSearchParams({ range });
+	return await handleFetch(
+		`${apiUrl}/performance/traces/series/${encodeURIComponent(panel)}?${params}`,
+		FetchMethods.GET
+	);
+}
+
+async function getTrace(traceId: string) {
+	return await handleFetch(
+		`${apiUrl}/performance/traces/id/${encodeURIComponent(traceId)}`,
+		FetchMethods.GET
+	);
+}
+
 async function earthquakeRange() {
 	return await handleFetch(`${apiUrl}/earthquakes/range`, FetchMethods.GET);
 }
@@ -605,7 +628,10 @@ export const StructuresAPIService = {
 
 export const PerformanceAPIService = {
 	runPagespeed,
-	getMetric
+	getMetric,
+	getTraceList,
+	getTraceSeries,
+	getTrace
 };
 
 export const EarthquakeAPIService = {
