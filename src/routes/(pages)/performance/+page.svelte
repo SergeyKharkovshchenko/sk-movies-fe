@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { PerformanceAPIService } from '$services/apiService';
-	import GrafanaPanels from './components/GrafanaPanels.svelte';
+	import BackendMetrics from './components/BackendMetrics.svelte';
 
 	// Fixed deliberately -- this page benchmarks our own deployed app, not an arbitrary site.
 	const TARGET_URL = 'https://sk-movies-fe.vercel.app/';
@@ -213,5 +213,5 @@
 		</div>
 	{/if}
 
-	<GrafanaPanels />
+	<BackendMetrics />
 </div>

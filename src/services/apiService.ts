@@ -14,6 +14,14 @@ async function runPagespeed(url: string, strategy: 'mobile' | 'desktop') {
 	return await handleFetch(`${apiUrl}/performance/pagespeed?${params}`, FetchMethods.GET);
 }
 
+async function getMetric(panel: string, range: string) {
+	const params = new URLSearchParams({ range });
+	return await handleFetch(
+		`${apiUrl}/performance/metrics/${encodeURIComponent(panel)}?${params}`,
+		FetchMethods.GET
+	);
+}
+
 async function earthquakeRange() {
 	return await handleFetch(`${apiUrl}/earthquakes/range`, FetchMethods.GET);
 }
@@ -79,11 +87,16 @@ async function knowledgeImportCsv(
 	files: { name: string; content: string }[],
 	deepAnalysis = false
 ) {
-	return await handleFetch(`${apiUrl}/knowledge/import-csv`, FetchMethods.POST, {}, {
-		label,
-		files,
-		deepAnalysis
-	});
+	return await handleFetch(
+		`${apiUrl}/knowledge/import-csv`,
+		FetchMethods.POST,
+		{},
+		{
+			label,
+			files,
+			deepAnalysis
+		}
+	);
 }
 
 async function knowledgeGraph(label: string) {
@@ -563,7 +576,6 @@ export const moviesAPIService = {
 	getPosterSimilarity
 };
 
-
 export const KnowledgeAPIService = {
 	suggestSections,
 	suggestGraph,
@@ -592,7 +604,8 @@ export const StructuresAPIService = {
 };
 
 export const PerformanceAPIService = {
-	runPagespeed
+	runPagespeed,
+	getMetric
 };
 
 export const EarthquakeAPIService = {
