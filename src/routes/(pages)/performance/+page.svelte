@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { PerformanceAPIService } from '$services/apiService';
+	import GrafanaPanels from './components/GrafanaPanels.svelte';
 
 	// Fixed deliberately -- this page benchmarks our own deployed app, not an arbitrary site.
 	const TARGET_URL = 'https://sk-movies-fe.vercel.app/';
@@ -100,8 +101,8 @@
 		<h1 class="text-base font-semibold text-zinc-800 mb-1">Performance</h1>
 		<p class="text-xs text-zinc-500 mb-5">
 			Runs Google PageSpeed Insights (Lighthouse) against
-			<code class="bg-zinc-100 px-1 rounded">{TARGET_URL}</code> and checks the result against a
-			performance budget.
+			<code class="bg-zinc-100 px-1 rounded">{TARGET_URL}</code> and checks the result against a performance
+			budget.
 		</p>
 
 		<div class="flex items-end gap-3 flex-wrap">
@@ -176,8 +177,8 @@
 			<div class="bg-white rounded-xl border border-zinc-200 shadow-sm p-6">
 				<h2 class="text-sm font-semibold text-zinc-800 mb-1">Performance budget</h2>
 				<p class="text-xs text-zinc-500 mb-4">
-					Evaluated against <code class="bg-zinc-100 px-1 rounded">budget.json</code> (sizes in KB,
-					timings in ms except Cumulative Layout Shift).
+					Evaluated against <code class="bg-zinc-100 px-1 rounded">budget.json</code> (sizes in KB, timings
+					in ms except Cumulative Layout Shift).
 				</p>
 				<div class="overflow-hidden rounded-lg border border-zinc-200 divide-y divide-zinc-100">
 					{#each result.budget as row, i (i)}
@@ -211,4 +212,6 @@
 			</div>
 		</div>
 	{/if}
+
+	<GrafanaPanels />
 </div>
