@@ -1,0 +1,2 @@
+import{b as n}from"../chunks/BLO_7uv9.js";import{x as t}from"../chunks/CxNF2yPf.js";(function(){try{var e=typeof window<"u"?window:typeof global<"u"?global:typeof globalThis<"u"?globalThis:typeof self<"u"?self:{};e.SENTRY_RELEASE={id:"2f905105f87162e3b8d8280ae0967a3cd62bcd4f"};var d=new e.Error().stack;d&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[d]="a9357816-4b11-4a6f-9831-b5b5052efac2",e._sentryDebugIdIdentifier="sentry-dbid-a9357816-4b11-4a6f-9831-b5b5052efac2")}catch{}})();export{t as load_css,n as start};
+//# sourceMappingURL=start.DoQfrOpX.js.map
