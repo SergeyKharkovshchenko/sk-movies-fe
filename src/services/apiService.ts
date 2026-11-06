@@ -87,11 +87,16 @@ async function knowledgeImportCsv(
 	files: { name: string; content: string }[],
 	deepAnalysis = false
 ) {
-	return await handleFetch(`${apiUrl}/knowledge/import-csv`, FetchMethods.POST, {}, {
-		label,
-		files,
-		deepAnalysis
-	});
+	return await handleFetch(
+		`${apiUrl}/knowledge/import-csv`,
+		FetchMethods.POST,
+		{},
+		{
+			label,
+			files,
+			deepAnalysis
+		}
+	);
 }
 
 async function knowledgeGraph(label: string) {
@@ -570,7 +575,6 @@ export const moviesAPIService = {
 	embedPoster,
 	getPosterSimilarity
 };
-
 
 export const KnowledgeAPIService = {
 	suggestSections,
