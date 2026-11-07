@@ -244,8 +244,8 @@
 		],
 		'insurance-claims': [
 			{
-				q: 'What is the total loss -- loss payment plus loss reserve plus expense payment plus expense reserve -- for claim 12312701, and how does it compare to claim 12312702?',
-				why: 'Aggregation across 4 separately-stated amounts per claim: 12312701 = $1,000 + $1,100 + $1,200 + $1,300 = $4,600; 12312702 = $2,100 + $2,200 + $2,300 + $2,400 = $9,000. Vector has to retrieve and correctly sum all 4 line items per claim from one chunk; graph walks each Claim -[:HAS_AMOUNT]-> amount-type edges directly.'
+				q: 'What is the total loss -- loss payment plus loss reserve plus expense payment plus expense reserve -- for claim 12312701?',
+				why: 'Aggregation across 4 separately-stated amounts: 12312701 = $1,000 + $1,100 + $1,200 + $1,300 = $4,600. Vector has to retrieve and correctly sum all 4 line items from one chunk; graph walks the Claim -[:HAS_AMOUNT]-> amount-type edges directly.'
 			},
 			{
 				q: 'What is the total premium Mary has paid on policy 31003000336 across all five of its coverage years?',
