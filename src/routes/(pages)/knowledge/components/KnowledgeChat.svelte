@@ -146,7 +146,12 @@
 		maxHops: number;
 		text2cypher: boolean;
 	}
-	const FOOD_RECOMMENDED: RetrievalSettings = { topK: 10, neighborLimit: 30, maxHops: 2, text2cypher: true };
+	const FOOD_RECOMMENDED: RetrievalSettings = {
+		topK: 10,
+		neighborLimit: 30,
+		maxHops: 2,
+		text2cypher: true
+	};
 	const RECOMMENDED_SETTINGS_BY_LABEL: Record<string, RetrievalSettings> = {
 		food: FOOD_RECOMMENDED,
 		'food-2': FOOD_RECOMMENDED,
@@ -243,7 +248,7 @@
 				why: 'Aggregation across 4 separately-stated amounts per claim: 12312701 = $1,000 + $1,100 + $1,200 + $1,300 = $4,600; 12312702 = $2,100 + $2,200 + $2,300 + $2,400 = $9,000. Vector has to retrieve and correctly sum all 4 line items per claim from one chunk; graph walks each Claim -[:HAS_AMOUNT]-> amount-type edges directly.'
 			},
 			{
-				q: "What is the total premium Mary has paid on policy 31003000336 across all five of its coverage years?",
+				q: 'What is the total premium Mary has paid on policy 31003000336 across all five of its coverage years?',
 				why: 'Aggregation across 5 scattered year-by-year premiums ($15k + $16k + $17k + $18k + $20k = $86,000), one per coverage-year line. A single vector chunk is unlikely to contain all five years together; graph walks Policy -[:HAS_COVERAGE_YEAR]-> each year node and sums.'
 			},
 			{
@@ -288,22 +293,32 @@
 	let label = $state(initialLabel);
 	let readyLabels = $state<string[]>([]);
 	let ragMode = $state<'combined' | 'vector' | 'graph' | 'compare'>('combined');
-	let seedPriority = $state<'graph' | 'vector'>('graph');
-	let strict = $state(false);
-	let temperature = $state(0.2);
+	// Retrieval settings are kept per side so Vector and Graph can be tuned to comparable
+	// conditions: the Vector column feeds 'vector' requests, the Graph column feeds 'graph' and
+	// 'combined' requests (combined needs the graph parameters). Compare uses one column per call.
+	let vec = $state({ topK: 5, temperature: 0.2, strict: false });
+	let gr = $state({
+		topK: 5,
+		neighborLimit: 100,
+		maxHops: 2,
+		temperature: 0.2,
+		strict: false,
+		// Text-to-Cypher: the LLM writes one read-only query for counting/ranking/negation
+		// questions, and its exact result leads the answer's context (graph/combined only).
+		text2cypher: false,
+		seedPriority: 'graph' as 'graph' | 'vector'
+	});
 	// Strict mode's whole point is deterministic, context-only output (including the backend's
 	// exact "Not in knowledge base." fallback) -- a non-zero temperature works against that, so
 	// force it to 0 whenever strict is on. The backend enforces this too regardless of what this
 	// UI sends; mirroring it here just keeps the displayed value honest.
 	$effect(() => {
-		if (strict) temperature = 0;
+		if (vec.strict) vec.temperature = 0;
 	});
-	let topK = $state(5);
-	let neighborLimit = $state(100);
-	let maxHops = $state(2);
-	// Text-to-Cypher: the LLM writes one read-only query for counting/ranking/negation questions,
-	// and its exact result leads the answer's context (graph/combined modes only).
-	let text2cypher = $state(false);
+	$effect(() => {
+		if (gr.strict) gr.temperature = 0;
+	});
+	let activeTopK = $derived(ragMode === 'vector' ? vec.topK : gr.topK);
 	// Send earlier turns as history. Off makes every question stand alone -- what a benchmark run
 	// wants, since an earlier answer (e.g. "Not in knowledge base.") otherwise biases the next one.
 	let useHistory = $state(true);
@@ -314,6 +329,9 @@
 	let input = $state('');
 	let loading = $state(false);
 	let showSettings = $state(false);
+	const numCls =
+		'w-14 border border-zinc-300 rounded px-1.5 py-0.5 text-xs font-mono bg-white focus:outline-none focus:ring-1 focus:ring-zinc-400';
+	const checkCls = 'rounded border-zinc-300 text-zinc-800 focus:ring-zinc-400';
 	let copiedId = $state<string | null>(null);
 	let messagesEl: HTMLElement;
 
@@ -368,15 +386,19 @@
 	let recommendedSettings = $derived(RECOMMENDED_SETTINGS_BY_LABEL[label]);
 	let usingRecommended = $derived(
 		!!recommendedSettings &&
-			topK === recommendedSettings.topK &&
-			neighborLimit === recommendedSettings.neighborLimit &&
-			maxHops === recommendedSettings.maxHops &&
-			text2cypher === recommendedSettings.text2cypher
+			vec.topK === recommendedSettings.topK &&
+			gr.topK === recommendedSettings.topK &&
+			gr.neighborLimit === recommendedSettings.neighborLimit &&
+			gr.maxHops === recommendedSettings.maxHops &&
+			gr.text2cypher === recommendedSettings.text2cypher
 	);
 
 	function applyRecommendedSettings() {
 		if (!recommendedSettings) return;
-		({ topK, neighborLimit, maxHops, text2cypher } = recommendedSettings);
+		vec.topK = gr.topK = recommendedSettings.topK;
+		gr.neighborLimit = recommendedSettings.neighborLimit;
+		gr.maxHops = recommendedSettings.maxHops;
+		gr.text2cypher = recommendedSettings.text2cypher;
 	}
 
 	onMount(() => {
@@ -425,6 +447,10 @@
 	): Promise<string | undefined> {
 		const assistantId = uid();
 		const conv = conversation;
+		const side = mode === 'vector' ? vec : gr;
+		const { topK, strict, temperature } = side;
+		const { neighborLimit, maxHops, seedPriority } = gr;
+		const text2cypher = mode === 'vector' ? false : gr.text2cypher;
 		try {
 			const result = await KnowledgeAPIService.napoleonChat({
 				question,
@@ -648,7 +674,7 @@
 					class="text-[11px] font-mono text-zinc-400 hover:text-zinc-600 transition-colors"
 					title="Click to adjust retrieval settings"
 				>
-					topK={topK} · neighbors={neighborLimit}
+					topK={activeTopK} · neighbors={gr.neighborLimit}
 				</button>
 			</div>
 			<div class="flex items-center gap-2">
@@ -698,154 +724,211 @@
 						>&#123; question, label, history, topK, neighborLimit, maxHops, ragMode &#125;</code
 					>. History includes all prior messages in this session.
 				</p>
-				<div class="flex items-center gap-5 flex-wrap">
-					<label class="flex items-center gap-2">
+				<div class="overflow-x-auto">
+					<div
+						class="grid min-w-[44rem] grid-cols-[7.5rem_minmax(11rem,1fr)_minmax(11rem,1fr)_minmax(14rem,1.6fr)] items-start gap-x-4 gap-y-2.5"
+					>
+						<span></span>
+						<span class="border-b border-zinc-200 pb-1 font-medium text-zinc-700">Vector RAG</span>
+						<span class="border-b border-zinc-200 pb-1 font-medium text-zinc-700">Graph RAG</span>
+						<span class="border-b border-zinc-200 pb-1 font-medium text-zinc-700"
+							>Comparable? / why they differ</span
+						>
+
 						<span
-							class="text-zinc-600 shrink-0"
+							class="text-zinc-600"
 							title="How many seed entries pgvector returns for this query, ranked by similarity to the question — higher finds more candidates but can pull in weaker matches"
 							>topK</span
 						>
-						<input
-							type="number"
-							bind:value={topK}
-							min="1"
-							class="w-14 border border-zinc-300 rounded px-1.5 py-0.5 text-xs font-mono bg-white focus:outline-none focus:ring-1 focus:ring-zinc-400"
-						/>
-						<span class="text-zinc-400">(default 5)</span>
-					</label>
-					<label class="flex items-center gap-2">
-						<span
-							class="text-zinc-600 shrink-0"
-							title="Max graph neighbors to expand per seed node in Neo4j">neighborLimit</span
+						<label class="flex items-center gap-2">
+							<input type="number" bind:value={vec.topK} min="1" class={numCls} />
+							<span class="text-zinc-400">(default 5)</span>
+						</label>
+						<label class="flex items-center gap-2">
+							<input type="number" bind:value={gr.topK} min="1" class={numCls} />
+							<span class="text-zinc-400">(default 5)</span>
+						</label>
+						<span class="text-[11px] leading-snug text-zinc-400"
+							>Similar, not identical: vector passes the top-K chunks to the LLM; graph uses them
+							only as seeds and then expands, so the same K gives graph more context. Keep equal as
+							a starting point.</span
 						>
-						<input
-							type="number"
-							bind:value={neighborLimit}
-							min="1"
-							max="100"
-							class="w-14 border border-zinc-300 rounded px-1.5 py-0.5 text-xs font-mono bg-white focus:outline-none focus:ring-1 focus:ring-zinc-400"
-						/>
-						<span class="text-zinc-400">(default 100)</span>
-					</label>
-					<label class="flex items-center gap-2">
+
+						<span class="text-zinc-600" title="Max graph neighbors to expand per seed node in Neo4j"
+							>neighborLimit</span
+						>
+						<span class="text-zinc-300" title="Vector search has no graph to expand">n/a</span>
+						<label class="flex items-center gap-2">
+							<input type="number" bind:value={gr.neighborLimit} min="1" max="100" class={numCls} />
+							<span class="text-zinc-400">(default 100)</span>
+						</label>
+						<span class="text-[11px] leading-snug text-zinc-400"
+							>No vector analogue: topK is vector's whole budget. Graph context is up to topK ×
+							neighborLimit triplets, so 5 × 100 is far more than 5 chunks. Lower it (e.g. 10) for a
+							similar context size.</span
+						>
+
 						<span
-							class="text-zinc-600 shrink-0"
+							class="text-zinc-600"
 							title="How many relationship hops to walk out from each seed node in Neo4j (graph/combined modes) — 1 stops at direct neighbors, each extra hop also expands neighbors-of-neighbors. Capped at 5: unlike topK, each extra hop re-queries once per node the previous hop found, so cost grows fast on a dense graph"
 							>maxHops</span
 						>
-						<input
-							type="number"
-							bind:value={maxHops}
-							min="1"
-							max="5"
-							class="w-14 border border-zinc-300 rounded px-1.5 py-0.5 text-xs font-mono bg-white focus:outline-none focus:ring-1 focus:ring-zinc-400"
-						/>
-						<span class="text-zinc-400">(default 2, max 5)</span>
-					</label>
-					<label class="flex items-center gap-2">
+						<span class="text-zinc-300" title="Vector search is a single similarity lookup"
+							>n/a</span
+						>
+						<label class="flex items-center gap-2">
+							<input type="number" bind:value={gr.maxHops} min="1" max="5" class={numCls} />
+							<span class="text-zinc-400">(default 2, max 5)</span>
+						</label>
+						<span class="text-[11px] leading-snug text-zinc-400"
+							>Vector has no traversal. 1 hop is closest to "only what sits right next to the
+							match"; more hops reach facts no single chunk contains, which is the point of graph
+							RAG.</span
+						>
+
 						<span
-							class="text-zinc-600 shrink-0"
+							class="text-zinc-600"
 							title="LLM sampling temperature — lower = more deterministic">temp</span
 						>
-						<input
-							type="number"
-							bind:value={temperature}
-							min="0"
-							max="2"
-							step="0.1"
-							disabled={strict}
-							title={strict
-								? 'Forced to 0 by strict mode'
-								: 'LLM sampling temperature — lower = more deterministic'}
-							class="w-14 border border-zinc-300 rounded px-1.5 py-0.5 text-xs font-mono bg-white focus:outline-none focus:ring-1 focus:ring-zinc-400 disabled:opacity-50 disabled:cursor-not-allowed"
-						/>
-						{#if strict}
-							<span class="text-amber-600 text-[10px]">forced to 0 by strict</span>
-						{:else}
-							<span class="text-zinc-400">(default 0.2)</span>
-						{/if}
-					</label>
-					<label
-						class="flex items-center gap-2 cursor-pointer select-none"
-						title="Strict mode — hard-blocks pre-training knowledge. System prompt: 'Answer ONLY using the knowledge graph context. If not present, respond: that information is not in the knowledge base.'"
-					>
-						<input
-							type="checkbox"
-							bind:checked={strict}
-							class="rounded border-zinc-300 text-zinc-800 focus:ring-zinc-400"
-						/>
-						<span class="text-zinc-600">strict</span>
-						{#if strict}
-							<span class="text-amber-600 text-[10px]">knowledge-only</span>
-						{/if}
-					</label>
-					<label
-						class="flex items-center gap-2 cursor-pointer select-none"
-						title="Text-to-Cypher — the LLM writes one read-only Cypher query for the question (counts, rankings, averages, negation) and its exact result leads the answer's context. Graph and combined modes only."
-					>
-						<input
-							type="checkbox"
-							bind:checked={text2cypher}
-							class="rounded border-zinc-300 text-zinc-800 focus:ring-zinc-400"
-						/>
-						<span class="text-zinc-600">text-to-Cypher</span>
-						{#if text2cypher && ragMode === 'vector'}
-							<span class="text-amber-600 text-[10px]">not used in vector mode</span>
-						{/if}
-					</label>
-					<label
-						class="flex items-center gap-2 cursor-pointer select-none"
-						title="Chat history — send the earlier turns of this dialog with each question. Turn off to ask every question on its own (benchmarks), so earlier answers can't bias later ones."
-					>
-						<input
-							type="checkbox"
-							bind:checked={useHistory}
-							class="rounded border-zinc-300 text-zinc-800 focus:ring-zinc-400"
-						/>
-						<span class="text-zinc-600">chat history</span>
-						{#if !useHistory}
-							<span class="text-amber-600 text-[10px]">each question stands alone</span>
-						{/if}
-					</label>
+						<label class="flex items-center gap-2">
+							<input
+								type="number"
+								bind:value={vec.temperature}
+								min="0"
+								max="2"
+								step="0.1"
+								disabled={vec.strict}
+								title={vec.strict ? 'Forced to 0 by strict mode' : 'LLM sampling temperature'}
+								class="{numCls} disabled:cursor-not-allowed disabled:opacity-50"
+							/>
+							{#if vec.strict}
+								<span class="text-[10px] text-amber-600">forced to 0 by strict</span>
+							{:else}
+								<span class="text-zinc-400">(default 0.2)</span>
+							{/if}
+						</label>
+						<label class="flex items-center gap-2">
+							<input
+								type="number"
+								bind:value={gr.temperature}
+								min="0"
+								max="2"
+								step="0.1"
+								disabled={gr.strict}
+								title={gr.strict ? 'Forced to 0 by strict mode' : 'LLM sampling temperature'}
+								class="{numCls} disabled:cursor-not-allowed disabled:opacity-50"
+							/>
+							{#if gr.strict}
+								<span class="text-[10px] text-amber-600">forced to 0 by strict</span>
+							{:else}
+								<span class="text-zinc-400">(default 0.2)</span>
+							{/if}
+						</label>
+						<span class="text-[11px] leading-snug text-zinc-400"
+							>Same meaning on both sides. Keep equal.</span
+						>
+
+						<span
+							class="text-zinc-600"
+							title="Strict mode — hard-blocks pre-training knowledge. System prompt: 'Answer ONLY using the knowledge graph context. If not present, respond: that information is not in the knowledge base.'"
+							>strict</span
+						>
+						<label class="flex cursor-pointer select-none items-center gap-2">
+							<input type="checkbox" bind:checked={vec.strict} class={checkCls} />
+							{#if vec.strict}<span class="text-[10px] text-amber-600">knowledge-only</span>{/if}
+						</label>
+						<label class="flex cursor-pointer select-none items-center gap-2">
+							<input type="checkbox" bind:checked={gr.strict} class={checkCls} />
+							{#if gr.strict}<span class="text-[10px] text-amber-600">knowledge-only</span>{/if}
+						</label>
+						<span class="text-[11px] leading-snug text-zinc-400"
+							>Same meaning on both sides. Keep equal for a fair comparison.</span
+						>
+
+						<span
+							class="text-zinc-600"
+							title="Text-to-Cypher — the LLM writes one read-only Cypher query for the question (counts, rankings, averages, negation) and its exact result leads the answer's context. Graph and combined modes only."
+							>text-to-Cypher</span
+						>
+						<span class="text-zinc-300" title="Needs a graph database">n/a</span>
+						<label class="flex cursor-pointer select-none items-center gap-2">
+							<input type="checkbox" bind:checked={gr.text2cypher} class={checkCls} />
+							{#if gr.text2cypher && ragMode === 'vector'}
+								<span class="text-[10px] text-amber-600">not used in vector mode</span>
+							{/if}
+						</label>
+						<span class="text-[11px] leading-snug text-zinc-400"
+							>Graph-only: exact counting and negation that similarity search cannot do. Leave off
+							to compare plain retrieval against plain retrieval.</span
+						>
+
+						<span class="text-zinc-600">Seed priority</span>
+						<span class="text-zinc-300" title="Vector search only has one ranking">n/a</span>
+						<div
+							class="flex w-fit overflow-hidden rounded-md border border-zinc-300 bg-white text-[11px]"
+						>
+							{#each [{ value: 'graph', label: 'Graph first', title: 'Neo4j keyword matches first, vector second — best for explicit entity names ("First French Empire", "Duke of Wellington")' }, { value: 'vector', label: 'Vector first', title: 'pgvector cosine matches first, graph second — best for semantic/conceptual questions ("who led the French forces?")' }] as const as opt (opt.value)}
+								<button
+									onclick={() => (gr.seedPriority = opt.value)}
+									class="border-r border-zinc-300 px-2.5 py-1 transition-colors last:border-r-0"
+									class:bg-zinc-800={gr.seedPriority === opt.value}
+									class:text-white={gr.seedPriority === opt.value}
+									class:text-zinc-500={gr.seedPriority !== opt.value}
+									class:hover:bg-zinc-50={gr.seedPriority !== opt.value}
+									title={opt.title}
+								>
+									{opt.label}
+								</button>
+							{/each}
+						</div>
+						<span class="text-[11px] leading-snug text-zinc-400">
+							{#if gr.seedPriority === 'graph'}Neo4j first: best for explicit entity names.{:else}pgvector
+								first: best for semantic queries.{/if}
+							"Vector first" makes graph seeds come from the same similarity search vector RAG uses, the
+							closest match to equal starting conditions.
+						</span>
+
+						<span
+							class="text-zinc-600"
+							title="Chat history — send the earlier turns of this dialog with each question. Turn off to ask every question on its own (benchmarks), so earlier answers can't bias later ones."
+							>chat history</span
+						>
+						<label class="col-span-2 flex cursor-pointer select-none items-center gap-2">
+							<input type="checkbox" bind:checked={useHistory} class={checkCls} />
+							<span class="text-zinc-400">applies to both</span>
+							{#if !useHistory}
+								<span class="text-[10px] text-amber-600">each question stands alone</span>
+							{/if}
+						</label>
+						<span class="text-[11px] leading-snug text-zinc-400"
+							>Shared, so both sides see identical conversations.</span
+						>
+					</div>
 				</div>
+				<p class="text-[10px] text-zinc-400">
+					Vector requests use the Vector column; Graph requests use the Graph column. Combined needs
+					the graph parameters, so it uses the Graph column. Compare sends one of each.
+				</p>
 				{#if recommendedSettings}
 					<div class="flex items-center gap-3 flex-wrap">
 						<button
 							onclick={applyRecommendedSettings}
 							disabled={usingRecommended}
 							class="px-2.5 py-1 rounded-md border border-zinc-300 bg-white text-[11px] text-zinc-700 hover:bg-zinc-50 disabled:opacity-50 disabled:cursor-default transition-colors"
-							title="topK={recommendedSettings.topK}, neighbors={recommendedSettings.neighborLimit}, hops={recommendedSettings.maxHops}, text-to-Cypher {recommendedSettings.text2cypher ? 'on' : 'off'}"
+							title="topK={recommendedSettings.topK}, neighbors={recommendedSettings.neighborLimit}, hops={recommendedSettings.maxHops}, text-to-Cypher {recommendedSettings.text2cypher
+								? 'on'
+								: 'off'}"
 						>
 							{usingRecommended ? 'Using recommended settings' : 'Use recommended settings'}
 						</button>
 						<span class="text-zinc-400 text-[10px]">
-							for '{label}': topK {recommendedSettings.topK} · neighbors {recommendedSettings.neighborLimit} ·
-							hops {recommendedSettings.maxHops} · text-to-Cypher {recommendedSettings.text2cypher ? 'on' : 'off'}
+							for '{label}': topK {recommendedSettings.topK} · neighbors {recommendedSettings.neighborLimit}
+							· hops {recommendedSettings.maxHops} · text-to-Cypher {recommendedSettings.text2cypher
+								? 'on'
+								: 'off'}
 						</span>
 					</div>
 				{/if}
-				<div class="flex items-center gap-3 flex-wrap">
-					<span class="text-zinc-600 shrink-0">Seed priority</span>
-					<div class="flex rounded-md border border-zinc-300 bg-white text-[11px] overflow-hidden">
-						{#each [{ value: 'graph', label: 'Graph first', title: 'Neo4j keyword matches first, vector second — best for explicit entity names ("First French Empire", "Duke of Wellington")' }, { value: 'vector', label: 'Vector first', title: 'pgvector cosine matches first, graph second — best for semantic/conceptual questions ("who led the French forces?")' }] as const as opt (opt.value)}
-							<button
-								onclick={() => (seedPriority = opt.value)}
-								class="px-2.5 py-1 transition-colors border-r border-zinc-300 last:border-r-0"
-								class:bg-zinc-800={seedPriority === opt.value}
-								class:text-white={seedPriority === opt.value}
-								class:text-zinc-500={seedPriority !== opt.value}
-								class:hover:bg-zinc-50={seedPriority !== opt.value}
-								title={opt.title}
-							>
-								{opt.label}
-							</button>
-						{/each}
-					</div>
-					<span class="text-zinc-400 text-[10px]">
-						{#if seedPriority === 'graph'}Neo4j first — use for explicit entity names{:else}pgvector
-							first — use for semantic queries{/if}
-					</span>
-				</div>
 
 				<!-- Probe questions -->
 				<div class="space-y-1 pt-1 border-t border-zinc-200">
@@ -979,7 +1062,9 @@
 									{#if t2c.error}
 										text-to-Cypher failed{t2c.cypher ? '' : ` — ${t2c.error}`}
 									{:else}
-										text-to-Cypher · {t2c.rowCount ?? 0} row(s){t2c.cached ? ' · cached query' : ''}{(t2c.attempts ?? 1) > 1 ? ' · after retry' : ''}
+										text-to-Cypher · {t2c.rowCount ?? 0} row(s){t2c.cached
+											? ' · cached query'
+											: ''}{(t2c.attempts ?? 1) > 1 ? ' · after retry' : ''}
 									{/if}
 								</summary>
 								{#if t2c.cypher}
@@ -995,7 +1080,9 @@
 											<thead>
 												<tr>
 													{#each t2c.columns ?? Object.keys(t2c.rows[0]) as col (col)}
-														<th class="text-left font-medium pr-3 pb-0.5 border-b border-zinc-200">{col}</th>
+														<th class="text-left font-medium pr-3 pb-0.5 border-b border-zinc-200"
+															>{col}</th
+														>
 													{/each}
 												</tr>
 											</thead>
@@ -1133,7 +1220,7 @@
 						{#if isAssistant && msg.tokenUsage && msg.tokenUsage.length > 0}
 							{@const usage = msg.tokenUsage}
 							{@const totalTokens = usage.reduce((sum, u) => sum + u.totalTokens, 0)}
-							<details class="max-w-[85%] mt-1.5 text-[11px]">
+							<details open class="max-w-[85%] mt-1.5 text-[11px]">
 								<summary
 									class="cursor-pointer text-zinc-400 hover:text-zinc-600 select-none list-none flex items-center gap-1"
 								>
@@ -1145,7 +1232,7 @@
 											d="M13 10V3L4 14h7v7l9-11h-7z"
 										/>
 									</svg>
-									{usage.length} LLM call{usage.length === 1 ? '' : 's'} · {totalTokens} tokens
+									{totalTokens} tokens total{usage.length > 1 ? ` in ${usage.length} steps` : ''}
 								</summary>
 								<div
 									class="mt-1 rounded-lg border border-zinc-200 bg-white overflow-hidden divide-y divide-zinc-100"
@@ -1154,9 +1241,8 @@
 										<div class="p-2 flex items-center justify-between gap-2">
 											<span class="text-zinc-600">{u.step}</span>
 											<span class="font-mono text-zinc-400">
-												{u.promptTokens} prompt + {u.completionTokens} completion = <span
-													class="text-zinc-600 font-medium">{u.totalTokens}</span
-												>
+												{u.promptTokens} prompt + {u.completionTokens} completion =
+												<span class="text-zinc-600 font-medium">{u.totalTokens}</span>
 											</span>
 										</div>
 									{/each}
@@ -1197,13 +1283,13 @@
 									<span class="text-zinc-300">·</span>
 								{/if}
 								{#if ri}
-									<span title="topK used for this request">topK={ri.topK ?? topK}</span>
+									<span title="topK used for this request">topK={ri.topK ?? activeTopK}</span>
 									<span class="text-zinc-300">·</span>
 									<span title="neighborLimit used for this request"
-										>neighbors={ri.neighborLimit ?? neighborLimit}</span
+										>neighbors={ri.neighborLimit ?? gr.neighborLimit}</span
 									>
 									<span class="text-zinc-300">·</span>
-									<span title="maxHops used for this request">hops={ri.maxHops ?? maxHops}</span>
+									<span title="maxHops used for this request">hops={ri.maxHops ?? gr.maxHops}</span>
 									<span class="text-zinc-300">·</span>
 									<span title="LLM temperature used for this request"
 										>temp={ri.temperature ?? msg.temperature}</span
@@ -1224,8 +1310,9 @@
 								{/if}
 								{#if ri?.text2cypher}
 									<span class="text-zinc-300">·</span>
-									<span class="text-indigo-600 font-medium" title="Text-to-Cypher ran for this request"
-										>text-to-Cypher</span
+									<span
+										class="text-indigo-600 font-medium"
+										title="Text-to-Cypher ran for this request">text-to-Cypher</span
 									>
 								{/if}
 							</div>
