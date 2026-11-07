@@ -296,7 +296,7 @@
 	// Retrieval settings are kept per side so Vector and Graph can be tuned to comparable
 	// conditions: the Vector column feeds 'vector' requests, the Graph column feeds 'graph' and
 	// 'combined' requests (combined needs the graph parameters). Compare uses one column per call.
-	let vec = $state({ topK: 5, temperature: 0, strict: true });
+	let vec = $state({ topK: 100, temperature: 0, strict: true });
 	let gr = $state({
 		topK: 5,
 		neighborLimit: 100,
@@ -744,7 +744,7 @@
 						>
 						<label class="flex items-center gap-2">
 							<input type="number" bind:value={vec.topK} min="1" class={numCls} />
-							<span class="text-zinc-400">(default 5)</span>
+							<span class="text-zinc-400">(default 100)</span>
 						</label>
 						<label class="flex items-center gap-2">
 							<input type="number" bind:value={gr.topK} min="1" class={numCls} />
