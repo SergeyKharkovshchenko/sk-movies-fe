@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
+	barStyle,
+	formatTraceName,
 	formatBytes,
 	formatDuration,
 	formatMs,
@@ -136,5 +138,32 @@ describe('colorSlots', () => {
 		colorSlots('t-full', labels);
 		const reg = colorSlots('t-full', ['l0', 'l1', 'extra']);
 		expect([reg.get('l0'), reg.get('l1')]).not.toContain(reg.get('extra'));
+	});
+});
+
+describe('trace helpers', () => {
+	it('formats root span names', () => {
+		expect(formatTraceName('http get /getAllMovies')).toBe('GET /getAllMovies');
+		expect(formatTraceName('http options /performance/metrics/{panel}')).toBe(
+			'OPTIONS /performance/metrics/{panel}'
+		);
+		expect(formatTraceName('neo4j.query')).toBe('neo4j.query');
+	});
+
+	it('places a bar as percentages of the trace', () => {
+		expect(barStyle(250, 500, 1000)).toEqual({ left: 25, width: 50 });
+		expect(barStyle(0, 1000, 1000)).toEqual({ left: 0, width: 100 });
+	});
+
+	it('keeps tiny spans visible and inside the row', () => {
+		const tiny = barStyle(500, 0.001, 1000);
+		expect(tiny.width).toBeGreaterThanOrEqual(0.8);
+		const late = barStyle(999, 50, 1000);
+		expect(late.left + late.width).toBeLessThanOrEqual(100);
+		expect(barStyle(5, 5, 0)).toEqual({ left: 0, width: 100 });
+	});
+
+	it('formats spans per second', () => {
+		expect(formatValue('spans/s', 0.05)).toBe('0.05 spans/s');
 	});
 });

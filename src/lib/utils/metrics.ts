@@ -8,6 +8,39 @@ export interface MetricSeries {
 	points: Point[];
 }
 
+export interface TraceSummary {
+	traceId: string;
+	/** Raw root span name, e.g. "http get /getAllMovies"; see formatTraceName. */
+	name: string;
+	startMs: number;
+	durationMs: number;
+}
+
+export interface TraceList {
+	kind: string;
+	range: string;
+	from: number;
+	to: number;
+	traces: TraceSummary[];
+}
+
+export interface TraceSpan {
+	spanId: string;
+	parentId: string | null;
+	name: string;
+	depth: number;
+	offsetMs: number;
+	durationMs: number;
+	error: boolean;
+	attributes: Record<string, string>;
+}
+
+export interface TraceDetail {
+	traceId: string;
+	durationMs: number;
+	spans: TraceSpan[];
+}
+
 export interface MetricResponse {
 	panel: string;
 	unit: string;
@@ -71,6 +104,8 @@ export function formatValue(unit: string, v: number): string {
 			return `${trim(v, Math.abs(v) < 10 ? 1 : 0)}%`;
 		case 'req/s':
 			return `${formatNumber(v)} req/s`;
+		case 'spans/s':
+			return `${formatNumber(v)} spans/s`;
 		case 'requests':
 		case 'connections':
 		case 'threads':
@@ -82,7 +117,7 @@ export function formatValue(unit: string, v: number): string {
 
 /** Shorter form for axis ticks (no unit suffix on rates, which the card title already carries). */
 export function formatTick(unit: string, v: number): string {
-	if (unit === 'req/s') return formatNumber(v);
+	if (unit === 'req/s' || unit === 'spans/s') return formatNumber(v);
 	return formatValue(unit, v);
 }
 
@@ -175,6 +210,38 @@ export function formatTime(epochSeconds: number, range: string, long = false): s
 	const d = new Date(epochSeconds * 1000);
 	const time = d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
 	if (range === '7d' || long) {
+		return `${d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })} ${time}`;
+	}
+	return time;
+}
+
+/** "http get /x/{id}" -> "GET /x/{id}"; anything else is returned unchanged. */
+export function formatTraceName(name: string): string {
+	const m = /^http (\w+) (.+)$/i.exec(name);
+	return m ? `${m[1].toUpperCase()} ${m[2]}` : name;
+}
+
+/**
+ * Position of a span's bar inside a waterfall row, as percentages of the whole trace. A span that is
+ * too short to see still gets a minimum width so it is not lost, and nothing runs past the right edge.
+ */
+export function barStyle(offsetMs: number, durationMs: number, totalMs: number) {
+	if (!(totalMs > 0)) return { left: 0, width: 100 };
+	const MIN_WIDTH = 0.8;
+	const width = Math.min(100, Math.max(MIN_WIDTH, (durationMs / totalMs) * 100));
+	const left = Math.min(100 - width, Math.max(0, (offsetMs / totalMs) * 100));
+	return { left, width };
+}
+
+/** Wall-clock time of a trace start; ranges over a day include the date. */
+export function formatClock(epochMs: number, range: string): string {
+	const d = new Date(epochMs);
+	const time = d.toLocaleTimeString('en-GB', {
+		hour: '2-digit',
+		minute: '2-digit',
+		second: '2-digit'
+	});
+	if (range === '7d') {
 		return `${d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })} ${time}`;
 	}
 	return time;
