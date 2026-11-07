@@ -292,17 +292,17 @@
 
 	let label = $state(initialLabel);
 	let readyLabels = $state<string[]>([]);
-	let ragMode = $state<'combined' | 'vector' | 'graph' | 'compare'>('combined');
+	let ragMode = $state<'combined' | 'vector' | 'graph' | 'compare'>('compare');
 	// Retrieval settings are kept per side so Vector and Graph can be tuned to comparable
 	// conditions: the Vector column feeds 'vector' requests, the Graph column feeds 'graph' and
 	// 'combined' requests (combined needs the graph parameters). Compare uses one column per call.
-	let vec = $state({ topK: 5, temperature: 0.2, strict: false });
+	let vec = $state({ topK: 5, temperature: 0, strict: true });
 	let gr = $state({
 		topK: 5,
 		neighborLimit: 100,
 		maxHops: 2,
-		temperature: 0.2,
-		strict: false,
+		temperature: 0,
+		strict: true,
 		// Text-to-Cypher: the LLM writes one read-only query for counting/ranking/negation
 		// questions, and its exact result leads the answer's context (graph/combined only).
 		text2cypher: false,
@@ -714,7 +714,9 @@
 
 		<!-- Settings -->
 		{#if showSettings}
-			<div class="border-b border-zinc-200 bg-zinc-50 px-4 py-3 text-xs text-zinc-500 space-y-3">
+			<div
+				class="border-b border-zinc-200 bg-zinc-50 px-4 py-3 text-xs text-zinc-500 space-y-3 max-h-[55vh] overflow-y-auto"
+			>
 				<p class="leading-relaxed">
 					Each question is sent to <code class="font-mono bg-zinc-100 px-1 rounded"
 						>POST /napoleon-chat</code
