@@ -244,7 +244,7 @@
 		],
 		'insurance-claims': [
 			{
-				q: 'What is the total loss -- loss payment plus loss reserve plus expense payment plus expense reserve -- for claim 12312701?',
+				q: 'What is the sum of the four payments for claim 12312701?',
 				why: 'Aggregation across 4 separately-stated amounts: 12312701 = $1,000 + $1,100 + $1,200 + $1,300 = $4,600. Vector has to retrieve and correctly sum all 4 line items from one chunk; graph walks the Claim -[:HAS_AMOUNT]-> amount-type edges directly.'
 			},
 			{
