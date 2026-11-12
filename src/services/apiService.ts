@@ -129,6 +129,13 @@ async function knowledgeGraph(label: string) {
 	);
 }
 
+async function knowledgeNode(label: string, name: string) {
+	return await handleFetch(
+		`${apiUrl}/knowledge/graph/${encodeURIComponent(label)}/node?name=${encodeURIComponent(name)}`,
+		FetchMethods.GET
+	);
+}
+
 async function knowledgeHierarchy(label: string) {
 	return await handleFetch(
 		`${apiUrl}/knowledge/graph/${encodeURIComponent(label)}/hierarchy`,
@@ -609,6 +616,7 @@ export const KnowledgeAPIService = {
 	knowledgeClearCache,
 	knowledgeGraph,
 	knowledgeHierarchy,
+	knowledgeNode,
 	knowledgeImportCsv,
 	compareAnalyze
 };
