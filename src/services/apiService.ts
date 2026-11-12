@@ -1,6 +1,8 @@
 const apiUrl = import.meta.env.VITE_API_URL;
 
 import { FetchMethods, handleFetch } from '$lib/utils/fetch';
+import { fetchAuthToken } from '$lib/utils/token';
+import { createSseParser, type SseMessage } from '$lib/utils/ontology';
 import { mockTemplates, mockTemplate, mockStructures } from '$lib/assets/mockData';
 // import { mockCategories } from 'store/mocked/mockCategories';
 import type { UploadDTO } from '$lib/interfaces/google-client/ListFilesDTO';
@@ -134,6 +136,55 @@ async function knowledgeHierarchy(label: string) {
 		`${apiUrl}/knowledge/graph/${encodeURIComponent(label)}/hierarchy`,
 		FetchMethods.GET
 	);
+}
+
+function ontologyUrl(label: string, tail = '') {
+	return `${apiUrl}/knowledge/ontology/${encodeURIComponent(label)}${tail}`;
+}
+
+async function ontologyOverview(label: string) {
+	return await handleFetch(ontologyUrl(label), FetchMethods.GET);
+}
+
+async function ontologySave(label: string, stage: string, payload: Record<string, unknown>) {
+	return await handleFetch(ontologyUrl(label, `/${stage}`), FetchMethods.PUT, {}, payload);
+}
+
+async function ontologyPropose(label: string, stage: string) {
+	return await handleFetch(ontologyUrl(label, `/${stage}/propose`), FetchMethods.POST);
+}
+
+async function ontologyApprove(label: string, stage: string) {
+	return await handleFetch(ontologyUrl(label, `/${stage}/approve`), FetchMethods.POST);
+}
+
+async function ontologyReset(label: string) {
+	return await handleFetch(ontologyUrl(label), FetchMethods.DELETE);
+}
+
+/** Builds the graph from the approved stages; calls onMessage for every server-sent event. */
+async function ontologyPopulate(
+	label: string,
+	replace: boolean,
+	onMessage: (message: SseMessage) => void
+) {
+	const token = await fetchAuthToken();
+	const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+	if (token) headers['Authorization'] = `Bearer ${token}`;
+	const res = await fetch(ontologyUrl(label, '/populate'), {
+		method: 'POST',
+		headers,
+		body: JSON.stringify({ replace })
+	});
+	if (!res.ok || !res.body) throw new Error(`HTTP ${res.status}`);
+	const reader = res.body.getReader();
+	const decoder = new TextDecoder();
+	const parse = createSseParser();
+	while (true) {
+		const { done, value } = await reader.read();
+		if (done) break;
+		parse(decoder.decode(value, { stream: true })).forEach(onMessage);
+	}
 }
 
 async function getProductHierarchy() {
@@ -610,6 +661,12 @@ export const KnowledgeAPIService = {
 	knowledgeGraph,
 	knowledgeHierarchy,
 	knowledgeImportCsv,
+	ontologyOverview,
+	ontologySave,
+	ontologyPropose,
+	ontologyApprove,
+	ontologyReset,
+	ontologyPopulate,
 	compareAnalyze
 };
 
