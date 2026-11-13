@@ -68,6 +68,15 @@
 		}
 	];
 
+	// Pick a sample from the top bar: set the label, open its drafts, then fill the source stage.
+	async function pickSample(id: string) {
+		const sample = SAMPLES.find((x) => x.id === id);
+		if (!sample) return;
+		label = sample.label;
+		await load('source');
+		loadSample(id);
+	}
+
 	function loadSample(id: string) {
 		const sample = SAMPLES.find((x) => x.id === id);
 		if (!sample) return;
@@ -115,6 +124,10 @@
 	const entry = (key: StageKey) => entries.find((e) => e.stage === key);
 	const status = (key: StageKey) => entry(key)?.status ?? 'EMPTY';
 	const info = $derived(stageInfo(active));
+	const activeIndex = $derived(STAGES.findIndex((s) => s.key === active));
+	const prevStage = $derived(STAGES[activeIndex - 1]);
+	const nextStage = $derived(STAGES[activeIndex + 1]);
+	const nextUnlocked = $derived(nextStage ? isUnlocked(entries, nextStage.key) : false);
 	const vocabularyTerms = $derived(termNames(entry('vocabulary')?.payload ?? {}));
 	const typeNames = $derived([...new Set(terms.map((t) => t.type).filter(Boolean))]);
 	const ontologyClasses = $derived(
@@ -124,9 +137,9 @@
 	);
 
 	function load(next?: StageKey) {
-		if (!label.trim()) return;
+		if (!label.trim()) return Promise.resolve();
 		busy = 'load';
-		KnowledgeAPIService.ontologyOverview(label.trim())
+		return KnowledgeAPIService.ontologyOverview(label.trim())
 			.then((res) => {
 				entries = (res?.stages ?? []) as StageEntry[];
 				loaded = true;
@@ -356,31 +369,81 @@
 				>Discard drafts</button
 			>
 		{/if}
+		<select
+			class="rounded border border-zinc-300 bg-white px-1.5 py-1 text-zinc-600"
+			title="Open a ready-made example: sets the label and fills the source stage"
+			onchange={(e) => {
+				pickSample(e.currentTarget.value);
+				e.currentTarget.value = '';
+			}}
+		>
+			<option value="">Load sample ↓</option>
+			{#each SAMPLES as sample (sample.id)}
+				<option value={sample.id}>{sample.name}</option>
+			{/each}
+		</select>
 	</div>
 
-	{#if loaded}
-		<!-- Stepper -->
-		<ol class="flex flex-wrap gap-1.5" aria-label="Pipeline stages">
-			{#each STAGES as s, i (s.key)}
-				{@const st = STATUS_STYLE[status(s.key)]}
-				{@const unlocked = isUnlocked(entries, s.key)}
-				<li>
-					<button
-						onclick={() => open(s.key)}
-						disabled={!unlocked}
-						aria-current={active === s.key ? 'step' : undefined}
-						class="flex items-center gap-2 rounded-lg border px-2.5 py-1.5 transition-colors disabled:cursor-not-allowed disabled:opacity-40"
-						class:border-zinc-800={active === s.key}
-						class:border-zinc-200={active !== s.key}
-						class:bg-white={true}
+	<!-- Flow: always visible, like the Quick import steps -->
+	<ol class="flex items-start overflow-x-auto pb-1" aria-label="Pipeline stages">
+		{#each STAGES as s, i (s.key)}
+			{@const st = loaded ? status(s.key) : 'EMPTY'}
+			{@const done = st === 'APPROVED'}
+			{@const current = loaded && active === s.key}
+			{@const unlocked = loaded && isUnlocked(entries, s.key)}
+			<li class="flex items-start">
+				<button
+					onclick={() => unlocked && open(s.key)}
+					disabled={!unlocked}
+					aria-current={current ? 'step' : undefined}
+					aria-label="{i + 1}. {s.label}: {STATUS_STYLE[st].label}"
+					class="flex w-24 flex-col items-center gap-1 disabled:cursor-default"
+				>
+					<span
+						class="flex h-8 w-8 items-center justify-center rounded-full border-2 text-xs font-semibold transition-all"
+						class:bg-emerald-500={done && !current}
+						class:border-emerald-500={done}
+						class:text-white={done || current}
+						class:bg-zinc-800={current}
+						class:border-zinc-800={current}
+						class:bg-white={!done && !current}
+						class:border-amber-400={st === 'STALE' && !current}
+						class:border-zinc-300={!done && !current && st !== 'STALE'}
+						class:text-zinc-400={!done && !current}
 					>
-						<span class="font-semibold text-zinc-700">{i + 1}. {s.label}</span>
-						<span class="rounded px-1.5 py-0.5 text-[10px] {st.cls}">{st.label}</span>
-					</button>
-				</li>
-			{/each}
-		</ol>
+						{#if done && !current}✓{:else}{i + 1}{/if}
+					</span>
+					<span
+						class="text-center text-[10px] font-medium leading-tight"
+						class:text-emerald-600={done && !current}
+						class:text-zinc-800={current}
+						class:text-zinc-400={!done && !current}>{s.label}</span
+					>
+					{#if loaded}
+						<span class="rounded px-1.5 py-0.5 text-[9px] {STATUS_STYLE[st].cls}"
+							>{STATUS_STYLE[st].label}</span
+						>
+					{/if}
+				</button>
+				{#if i < STAGES.length - 1}
+					<span
+						class="mx-0.5 mt-4 h-0.5 w-6 shrink-0 rounded-full transition-colors"
+						class:bg-emerald-400={done}
+						class:bg-zinc-200={!done}
+					></span>
+				{/if}
+			</li>
+		{/each}
+	</ol>
 
+	{#if !loaded}
+		<p class="text-zinc-400">
+			Type a label and press Open, or load a sample. You will walk through these steps in order,
+			editing and approving each one before the next unlocks.
+		</p>
+	{/if}
+
+	{#if loaded}
 		<div class="rounded-lg border border-zinc-200 bg-zinc-50 p-3 space-y-1">
 			<h2 class="text-sm font-semibold text-zinc-800">{info.title}</h2>
 			<p class="text-zinc-600">{info.help}</p>
@@ -671,6 +734,30 @@
 					>{status(active) === 'APPROVED' && !dirty ? 'Approved' : 'Approve and continue'}</button
 				>
 				{#if message}<span class="text-zinc-500">{message}</span>{/if}
+			</div>
+		{/if}
+		{#if prevStage || nextStage}
+			<div class="flex items-center justify-between border-t border-zinc-200 pt-3">
+				{#if prevStage}
+					<button
+						onclick={() => open(prevStage.key)}
+						class="rounded-md border border-zinc-300 bg-white px-3 py-1.5 text-zinc-700 hover:bg-zinc-50"
+						>← {prevStage.label}</button
+					>
+				{:else}<span></span>{/if}
+				{#if nextStage}
+					<button
+						onclick={() => open(nextStage.key)}
+						disabled={!nextUnlocked || dirty}
+						title={dirty
+							? 'Save or approve your edits first'
+							: nextUnlocked
+								? ''
+								: 'Approve this stage to unlock the next one'}
+						class="rounded-md bg-zinc-800 px-3 py-1.5 text-white hover:bg-zinc-700 disabled:opacity-40"
+						>Next: {nextStage.label} →</button
+					>
+				{/if}
 			</div>
 		{/if}
 	{/if}
