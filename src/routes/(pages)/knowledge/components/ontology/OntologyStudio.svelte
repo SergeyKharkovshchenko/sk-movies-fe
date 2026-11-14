@@ -15,7 +15,10 @@
 		deepClone,
 		isUnlocked,
 		stageInfo,
+		taxonomyTree,
 		termNames,
+		typeSuggestions,
+		typesWithoutGroupTerm,
 		withoutBlankRows,
 		type Attribute,
 		type ClassDef,
@@ -24,6 +27,7 @@
 		type RelationDef,
 		type StageEntry,
 		type StageKey,
+		type TreeNode,
 		type Term
 	} from '$lib/utils/ontology';
 
@@ -129,6 +133,26 @@
 	const nextStage = $derived(STAGES[activeIndex + 1]);
 	const nextUnlocked = $derived(nextStage ? isUnlocked(entries, nextStage.key) : false);
 	const vocabularyTerms = $derived(termNames(entry('vocabulary')?.payload ?? {}));
+	// Term types of the approved vocabulary: what a metadata attribute can be attached to.
+	const vocabularyTypes = $derived([
+		...new Set(
+			((entry('vocabulary')?.payload?.terms as Term[] | undefined) ?? [])
+				.map((t) => t.type)
+				.filter(Boolean)
+		)
+	]);
+	let droppedPairs = $state<string[]>([]);
+	const vocabularyRows = $derived(
+		((entry('vocabulary')?.payload?.terms as Term[] | undefined) ?? []).filter((t) => t.term)
+	);
+	const tree = $derived(taxonomyTree(pairs));
+	const suggestedByType = $derived(typeSuggestions(vocabularyRows, pairs));
+	const missingGroupTerms = $derived(typesWithoutGroupTerm(vocabularyRows));
+
+	function groupByType() {
+		pairs = [...pairs, ...suggestedByType];
+		mark();
+	}
 	const typeNames = $derived([...new Set(terms.map((t) => t.type).filter(Boolean))]);
 	const ontologyClasses = $derived(
 		active === 'ontology'
@@ -164,6 +188,7 @@
 		sourceKind = Array.isArray(p.files) && p.files.length > 0 && !p.text ? 'csv' : 'text';
 		sourceText = (p.text as string) ?? '';
 		sourceFiles = (p.files as { name: string; content: string }[]) ?? [];
+		droppedPairs = key === 'taxonomy' && Array.isArray(p.dropped) ? p.dropped.map(String) : [];
 		const { terms: _t, ...rest } = p;
 		vocabularyExtras = key === 'vocabulary' ? rest : {};
 	}
@@ -183,7 +208,10 @@
 					relationAttributes: withoutBlankRows(relationAttributes, ['name'])
 				};
 			case 'taxonomy':
-				return { pairs: withoutBlankRows(pairs, ['parent', 'child']) };
+				return {
+					...(droppedPairs.length ? { dropped: droppedPairs } : {}),
+					pairs: withoutBlankRows(pairs, ['parent', 'child'])
+				};
 			case 'ontology':
 				return {
 					classes: withoutBlankRows(classes, ['name']),
@@ -344,6 +372,17 @@
 
 	const mark = () => (dirty = true);
 </script>
+
+{#snippet treeNode(n: TreeNode)}
+	<li>
+		<span class="font-medium text-zinc-800">{n.name}</span>
+		{#if n.children.length > 0}
+			<ul class="ml-3 space-y-0.5 border-l border-zinc-200 pl-2">
+				{#each n.children as c (c.name)}{@render treeNode(c)}{/each}
+			</ul>
+		{/if}
+	</li>
+{/snippet}
 
 <div class="space-y-4 text-xs">
 	<div class="flex flex-wrap items-center gap-2">
@@ -553,12 +592,27 @@
 				bind:rows={entityAttributes}
 				blank={blankAttribute}
 				addLabel="Add attribute"
-				caption="Attributes of terms"
+				caption="Attributes of terms: pick the term types each one can be added to (none picked = all types)"
 				onchange={mark}
 				columns={[
-					{ key: 'name', label: 'Name', width: '40%' },
-					{ key: 'datatype', label: 'Type', kind: 'select', options: DATATYPES, width: '25%' },
-					{ key: 'required', label: 'Required', kind: 'checkbox' }
+					{ key: 'name', label: 'Name', width: '16%' },
+					{ key: 'datatype', label: 'Type', kind: 'select', options: DATATYPES, width: '9%' },
+					{
+						key: 'appliesTo',
+						label: 'Applies to',
+						kind: 'chips',
+						options: vocabularyTypes,
+						width: '22%'
+					},
+					{ key: 'description', label: 'Meaning', kind: 'textarea', width: '18%' },
+					{
+						key: 'example',
+						label: 'Example from the source',
+						kind: 'textarea',
+						placeholder: 'AI suggestions quote the sentence here',
+						locked: (r) => Boolean(r.example)
+					},
+					{ key: 'required', label: 'Required', kind: 'checkbox', width: '6%' }
 				]}
 			/>
 			<EditableTable
@@ -574,17 +628,77 @@
 				]}
 			/>
 		{:else if active === 'taxonomy'}
-			<EditableTable
-				bind:rows={pairs}
-				blank={blankPair}
-				addLabel="Add pair"
-				onchange={mark}
-				columns={[
-					{ key: 'child', label: 'Is a kind of… (child)', options: vocabularyTerms, width: '28%' },
-					{ key: 'parent', label: '…this parent', options: vocabularyTerms, width: '28%' },
-					{ key: 'evidence', label: 'Evidence from the source', kind: 'textarea' }
-				]}
-			/>
+			<div class="flex flex-wrap items-center gap-2">
+				<button
+					type="button"
+					onclick={groupByType}
+					disabled={suggestedByType.length === 0}
+					title="Put terms under the vocabulary term that is named like their type"
+					class="rounded-md border border-zinc-300 bg-white px-2.5 py-1 text-zinc-700 hover:bg-zinc-50 disabled:opacity-40"
+					>Group by type{suggestedByType.length ? ` (${suggestedByType.length})` : ''}</button
+				>
+				<span class="text-zinc-400"
+					>AI suggestion: "Propose from earlier stages" below. It keeps only pairs the source states
+					in one sentence.</span
+				>
+			</div>
+			{#if missingGroupTerms.length > 0}
+				<p class="text-zinc-400">
+					To group by type, add a term named like the type in the Vocabulary stage:
+					{missingGroupTerms.join(', ')}.
+				</p>
+			{/if}
+			<div class="grid gap-3 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+				<EditableTable
+					bind:rows={pairs}
+					blank={blankPair}
+					addLabel="Add pair"
+					onchange={mark}
+					columns={[
+						{
+							key: 'child',
+							label: 'Is a kind of… (child)',
+							options: vocabularyTerms,
+							width: '28%'
+						},
+						{ key: 'parent', label: '…this parent', options: vocabularyTerms, width: '28%' },
+						{ key: 'evidence', label: 'Evidence from the source', kind: 'textarea' }
+					]}
+				/>
+				<div class="space-y-2 rounded-md border border-zinc-200 bg-white p-2">
+					<h3 class="font-semibold text-zinc-700">Tree</h3>
+					{#if tree.roots.length === 0}
+						<p class="text-zinc-400">No pairs yet.</p>
+					{:else}
+						<ul class="space-y-0.5">
+							{#each tree.roots as root (root.name)}
+								{@render treeNode(root)}
+							{/each}
+						</ul>
+					{/if}
+					{#if tree.issues.length > 0}
+						<ul class="space-y-0.5 text-red-600" role="alert">
+							{#each tree.issues as issue (issue)}<li>{issue}</li>{/each}
+						</ul>
+					{/if}
+				</div>
+			</div>
+			{#if droppedPairs.length > 0}
+				<details class="text-zinc-500">
+					<summary class="cursor-pointer">
+						{droppedPairs.length} suggested pair{droppedPairs.length === 1 ? '' : 's'} left out because
+						the source does not state them
+					</summary>
+					<ul class="mt-1 list-disc pl-5">
+						{#each droppedPairs as d, i (i)}<li>{d}</li>{/each}
+					</ul>
+				</details>
+			{:else if pairs.length === 0}
+				<p class="text-zinc-400">
+					The AI found no "is a / kind of / part of" statement in the source, so nothing is
+					suggested. Add pairs yourself, or use "Group by type".
+				</p>
+			{/if}
 		{:else if active === 'ontology'}
 			<EditableTable
 				bind:rows={classes}

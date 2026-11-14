@@ -6,7 +6,10 @@ import {
 	deepClone,
 	isUnlocked,
 	parseTags,
+	taxonomyTree,
 	termNames,
+	typeSuggestions,
+	typesWithoutGroupTerm,
 	withoutBlankRows,
 	type StageEntry,
 	type StageKey,
@@ -103,5 +106,43 @@ describe('createSseParser', () => {
 		expect(parse('event: error\r\ndata: boom\r\n\r\n')).toEqual([
 			{ event: 'error', data: { message: 'boom' } }
 		]);
+	});
+});
+
+describe('taxonomyTree', () => {
+	it('builds roots and children and flags several parents and cycles', () => {
+		const ok = taxonomyTree([
+			{ parent: 'dairy', child: 'mascarpone' },
+			{ parent: 'food', child: 'dairy' }
+		]);
+		expect(ok.issues).toEqual([]);
+		expect(ok.roots).toEqual([
+			{
+				name: 'food',
+				children: [{ name: 'dairy', children: [{ name: 'mascarpone', children: [] }] }]
+			}
+		]);
+
+		const two = taxonomyTree([
+			{ parent: 'dairy', child: 'x' },
+			{ parent: 'snack', child: 'x' }
+		]);
+		expect(two.issues[0]).toContain('2 parents');
+
+		const cyc = taxonomyTree([
+			{ parent: 'a', child: 'b' },
+			{ parent: 'b', child: 'a' }
+		]);
+		expect(cyc.issues.some((i) => i.includes('cycle'))).toBe(true);
+	});
+});
+
+describe('typeSuggestions', () => {
+	const t = (term: string, type: string) => ({ term, type, aliases: [], definition: '' });
+	it('groups terms under a term named like their type, skipping those already placed', () => {
+		const terms = [t('Hotel', 'Category'), t('Hotel Atlas', 'Hotel'), t('Hotel River', 'Hotel')];
+		const got = typeSuggestions(terms, [{ parent: 'Hotel', child: 'Hotel River' }]);
+		expect(got.map((p) => `${p.child}<${p.parent}`)).toEqual(['Hotel Atlas<Hotel']);
+		expect(typesWithoutGroupTerm([t('A', 'Station'), t('B', 'Station')])).toEqual(['Station']);
 	});
 });
