@@ -45,6 +45,11 @@ export interface Attribute {
 	name: string;
 	datatype: 'string' | 'number' | 'date' | 'boolean';
 	required: boolean;
+	/** Term types that carry it; empty means every type. */
+	appliesTo?: string[];
+	description?: string;
+	/** A sentence from the source that states a value (set by the AI suggestion). */
+	example?: string;
 }
 
 export const DATATYPES: Attribute['datatype'][] = ['string', 'number', 'date', 'boolean'];
@@ -166,7 +171,14 @@ export function blankRelation(): RelationDef {
 	return { name: '', domain: '', range: '', description: '' };
 }
 export function blankAttribute(): Attribute {
-	return { name: '', datatype: 'string', required: false };
+	return {
+		name: '',
+		datatype: 'string',
+		required: false,
+		appliesTo: [],
+		description: '',
+		example: ''
+	};
 }
 
 /** Rows with nothing filled in are dropped before saving so a stray "add row" is harmless. */
@@ -224,11 +236,92 @@ export interface RejectedTriple {
 export interface Column<Row> {
 	key: string;
 	label: string;
-	kind?: 'text' | 'tags' | 'select' | 'checkbox' | 'textarea';
+	kind?: 'text' | 'tags' | 'chips' | 'select' | 'checkbox' | 'textarea';
 	/** Suggested values (select options, or datalist for text). */
 	options?: string[];
 	width?: string;
 	/** Locks the cell for rows where this returns true. */
 	locked?: (row: Row) => boolean;
 	placeholder?: string;
+}
+
+export interface TreeNode {
+	name: string;
+	children: TreeNode[];
+}
+
+/** The is-a pairs as a tree, plus what would stop the stage being approved (several parents, cycles). */
+export function taxonomyTree(pairs: Pair[]): { roots: TreeNode[]; issues: string[] } {
+	const key = (s: string) => s.trim().toLowerCase();
+	const valid = pairs.filter((p) => p.parent.trim() && p.child.trim());
+	const children = new Map<string, string[]>();
+	const display = new Map<string, string>();
+	const parents = new Map<string, Set<string>>();
+	for (const p of valid) {
+		display.set(key(p.parent), p.parent.trim());
+		display.set(key(p.child), p.child.trim());
+		const kids = children.get(key(p.parent)) ?? [];
+		if (!kids.includes(key(p.child))) kids.push(key(p.child));
+		children.set(key(p.parent), kids);
+		const set = parents.get(key(p.child)) ?? new Set<string>();
+		set.add(key(p.parent));
+		parents.set(key(p.child), set);
+	}
+	const issues: string[] = [];
+	for (const [child, set] of parents) {
+		if (child && set.has(child)) issues.push(`"${display.get(child)}" is its own parent.`);
+		if (set.size > 1) {
+			issues.push(
+				`"${display.get(child)}" has ${set.size} parents (${[...set].map((k) => display.get(k)).join(', ')}); keep one.`
+			);
+		}
+	}
+	const seen = new Set<string>();
+	const build = (name: string, path: string[]): TreeNode => {
+		seen.add(name);
+		const kids = (children.get(name) ?? []).filter((k) => !path.includes(k) && k !== name);
+		return {
+			name: display.get(name) ?? name,
+			children: kids.map((k) => build(k, [...path, name]))
+		};
+	};
+	const rootKeys = [...children.keys()].filter((k) => !parents.has(k)).sort();
+	const roots = rootKeys.map((k) => build(k, []));
+	for (const k of [...children.keys(), ...parents.keys()]) {
+		if (!seen.has(k)) {
+			issues.push(`"${display.get(k)}" is part of a cycle.`);
+			break;
+		}
+	}
+	return { roots, issues };
+}
+
+/**
+ * "Group by type": when the vocabulary has a term named like one of its types (a term "Hotel" of
+ * type Category, next to Hotel Atlas of type Hotel), the other terms of that type can sit under it.
+ * Only terms without a parent yet are suggested.
+ */
+export function typeSuggestions(terms: Term[], pairs: Pair[]): Pair[] {
+	const key = (s: string) => s.trim().toLowerCase();
+	const hasParent = new Set(pairs.map((p) => key(p.child)));
+	const byName = new Map(terms.map((t) => [key(t.term), t]));
+	const out: Pair[] = [];
+	for (const t of terms) {
+		const type = key(t.type);
+		const parent = byName.get(type);
+		if (!parent || key(parent.term) === key(t.term) || hasParent.has(key(t.term))) continue;
+		out.push({ parent: parent.term, child: t.term, evidence: `Type of "${t.term}" is ${t.type}.` });
+	}
+	return out;
+}
+
+/** Types that have several terms but no term of that name to group them under. */
+export function typesWithoutGroupTerm(terms: Term[]): string[] {
+	const key = (s: string) => s.trim().toLowerCase();
+	const names = new Set(terms.map((t) => key(t.term)));
+	const count = new Map<string, number>();
+	for (const t of terms) count.set(t.type, (count.get(t.type) ?? 0) + 1);
+	return [...count]
+		.filter(([type, n]) => type && n >= 2 && !names.has(key(type)))
+		.map(([type]) => type);
 }

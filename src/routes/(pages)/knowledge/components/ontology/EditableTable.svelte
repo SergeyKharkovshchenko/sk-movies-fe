@@ -69,7 +69,36 @@
 						{#each columns as col (col.key)}
 							{@const locked = col.locked?.(row) ?? false}
 							<td class="px-1.5 py-1">
-								{#if col.kind === 'tags'}
+								{#if col.kind === 'chips'}
+									{@const chosen = Array.isArray(cell(row, col.key))
+										? (cell(row, col.key) as string[])
+										: []}
+									<div class="flex flex-wrap gap-1" role="group" aria-label={col.label}>
+										{#each col.options ?? [] as opt (opt)}
+											<button
+												type="button"
+												disabled={locked}
+												aria-pressed={chosen.includes(opt)}
+												class="rounded-full border px-2 py-0.5 text-[11px] disabled:opacity-50 {chosen.includes(
+													opt
+												)
+													? 'border-zinc-800 bg-zinc-800 text-white'
+													: 'border-zinc-300 bg-white text-zinc-600 hover:bg-zinc-50'}"
+												onclick={() =>
+													setCell(
+														row,
+														col.key,
+														chosen.includes(opt)
+															? chosen.filter((x) => x !== opt)
+															: [...chosen, opt]
+													)}>{opt}</button
+											>
+										{/each}
+										{#if chosen.length === 0}
+											<span class="py-0.5 text-[11px] text-zinc-400">all types</span>
+										{/if}
+									</div>
+								{:else if col.kind === 'tags'}
 									<input
 										class={inputCls}
 										value={text(row, col.key)}
