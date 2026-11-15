@@ -325,3 +325,38 @@ export function typesWithoutGroupTerm(terms: Term[]): string[] {
 		.filter(([type, n]) => type && n >= 2 && !names.has(key(type)))
 		.map(([type]) => type);
 }
+
+export interface MissingTerm {
+	name: string;
+	/** parent: a category the taxonomy groups under; child: a member of one. */
+	role: 'parent' | 'child';
+	/** Suggested type: parents become Category, children take their parent's name as the type. */
+	type: string;
+}
+
+/** Names a taxonomy uses that the vocabulary (terms and aliases) does not have, with a suggested type. */
+export function missingTaxonomyTerms(pairs: Pair[], terms: Term[]): MissingTerm[] {
+	const key = (s: string) => s.trim().toLowerCase();
+	const known = new Set<string>();
+	for (const t of terms) {
+		known.add(key(t.term));
+		t.aliases?.forEach((a) => known.add(key(a)));
+	}
+	const types = new Map(terms.map((t) => [key(t.type), t.type]));
+	const capital = (s: string) => s.trim().charAt(0).toUpperCase() + s.trim().slice(1);
+	const out = new Map<string, MissingTerm>();
+	for (const p of pairs) {
+		const parent = p.parent.trim();
+		const child = p.child.trim();
+		if (!parent || !child) continue;
+		if (!known.has(key(parent)) && !out.has(key(parent))) {
+			out.set(key(parent), { name: parent, role: 'parent', type: 'Category' });
+		}
+		if (!known.has(key(child)) && !out.has(key(child))) {
+			const type = types.get(key(parent)) ?? capital(parent);
+			out.set(key(child), { name: child, role: 'child', type });
+		}
+	}
+	// a name that is only ever a parent stays a category even if it was first seen as a child
+	return [...out.values()];
+}

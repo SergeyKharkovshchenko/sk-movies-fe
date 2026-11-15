@@ -15,6 +15,7 @@
 		deepClone,
 		isUnlocked,
 		stageInfo,
+		missingTaxonomyTerms,
 		taxonomyTree,
 		termNames,
 		typeSuggestions,
@@ -27,6 +28,7 @@
 		type RelationDef,
 		type StageEntry,
 		type StageKey,
+		type MissingTerm,
 		type TreeNode,
 		type Term
 	} from '$lib/utils/ontology';
@@ -148,6 +150,49 @@
 	const tree = $derived(taxonomyTree(pairs));
 	const suggestedByType = $derived(typeSuggestions(vocabularyRows, pairs));
 	const missingGroupTerms = $derived(typesWithoutGroupTerm(vocabularyRows));
+	const missingTerms = $derived(missingTaxonomyTerms(pairs, vocabularyRows));
+
+	// Adds the names the taxonomy uses to the vocabulary, approves it again, and keeps the pairs
+	// being edited. Later stages are marked out of date by the server, as for any vocabulary edit.
+	async function addMissingTerms() {
+		const add: MissingTerm[] = missingTerms;
+		if (add.length === 0) return;
+		busy = 'vocabulary';
+		message = '';
+		try {
+			const base = deepClone(entry('vocabulary')?.payload ?? {}) as Record<string, any>;
+			const rows = (base.terms as Term[]) ?? [];
+			base.terms = [
+				...rows,
+				...add.map((m) => ({
+					term: m.name,
+					type: m.type,
+					aliases: [],
+					definition: '',
+					origin: 'taxonomy'
+				}))
+			];
+			const saved = await KnowledgeAPIService.ontologySave(label.trim(), 'vocabulary', base);
+			if (!saved?.stage) {
+				errors = [saved?.error ?? 'Could not update the vocabulary.'];
+				return;
+			}
+			const approved = await KnowledgeAPIService.ontologyApprove(label.trim(), 'vocabulary');
+			if (!approved?.approved) {
+				errors = approved?.errors ?? [approved?.error ?? 'The vocabulary could not be approved.'];
+				return;
+			}
+			await KnowledgeAPIService.ontologySave(label.trim(), 'taxonomy', payload());
+			const overview = await KnowledgeAPIService.ontologyOverview(label.trim());
+			entries = (overview?.stages ?? entries) as StageEntry[];
+			open('taxonomy');
+			message = `Added ${add.length} term${add.length === 1 ? '' : 's'} to the vocabulary and approved it again. Metadata is out of date: review and approve it when you get there.`;
+		} catch (e) {
+			errors = [`${e}`];
+		} finally {
+			busy = '';
+		}
+	}
 
 	function groupByType() {
 		pairs = [...pairs, ...suggestedByType];
@@ -650,6 +695,35 @@
 					in one sentence.</span
 				>
 			</div>
+			{#if missingTerms.length > 0}
+				<div class="space-y-1.5 rounded-md border border-amber-200 bg-amber-50 p-2.5">
+					<p class="font-medium text-amber-900">
+						{missingTerms.length} name{missingTerms.length === 1 ? '' : 's'} used here
+						{missingTerms.length === 1 ? 'is' : 'are'} not in the vocabulary yet
+					</p>
+					<ul class="flex flex-wrap gap-1.5">
+						{#each missingTerms as m (m.name)}
+							<li class="rounded-full border border-amber-300 bg-white px-2 py-0.5 text-amber-900">
+								{m.name}
+								<span class="text-amber-600">· {m.role === 'parent' ? 'category' : m.type}</span>
+							</li>
+						{/each}
+					</ul>
+					<button
+						type="button"
+						onclick={addMissingTerms}
+						disabled={!!busy}
+						class="rounded-md bg-amber-700 px-3 py-1 text-white hover:bg-amber-600 disabled:opacity-40"
+						>{busy === 'vocabulary'
+							? 'Adding…'
+							: `Add ${missingTerms.length} to the vocabulary`}</button
+					>
+					<p class="text-amber-800">
+						Adds them with the suggested types, approves the vocabulary again, and keeps your pairs.
+						Rename or retype them later in the Vocabulary stage if needed.
+					</p>
+				</div>
+			{/if}
 			{#if missingGroupTerms.length > 0}
 				<p class="text-zinc-400">
 					To group by type, add a term named like the type in the Vocabulary stage:

@@ -6,6 +6,7 @@ import {
 	deepClone,
 	isUnlocked,
 	parseTags,
+	missingTaxonomyTerms,
 	taxonomyTree,
 	termNames,
 	typeSuggestions,
@@ -144,5 +145,29 @@ describe('typeSuggestions', () => {
 		const got = typeSuggestions(terms, [{ parent: 'Hotel', child: 'Hotel River' }]);
 		expect(got.map((p) => `${p.child}<${p.parent}`)).toEqual(['Hotel Atlas<Hotel']);
 		expect(typesWithoutGroupTerm([t('A', 'Station'), t('B', 'Station')])).toEqual(['Station']);
+	});
+});
+
+describe('missingTaxonomyTerms', () => {
+	const t = (term: string, type: string, aliases: string[] = []) => ({
+		term,
+		type,
+		aliases,
+		definition: ''
+	});
+	it('lists unknown parents as categories and unknown children typed by their parent', () => {
+		const got = missingTaxonomyTerms(
+			[
+				{ parent: 'hotel', child: 'Hotel Atlas' },
+				{ parent: 'cafe', child: 'cafe in Deutsches Museum' },
+				{ parent: 'cafe', child: 'Green Leaf' }
+			],
+			[t('Hotel Atlas', 'Hotel'), t('Green Leaf', 'Restaurant', ['green leaf cafe'])]
+		);
+		expect(got).toEqual([
+			{ name: 'hotel', role: 'parent', type: 'Category' },
+			{ name: 'cafe', role: 'parent', type: 'Category' },
+			{ name: 'cafe in Deutsches Museum', role: 'child', type: 'Cafe' }
+		]);
 	});
 });
