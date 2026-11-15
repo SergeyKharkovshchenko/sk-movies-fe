@@ -1,2 +1,0 @@
-import{b as n}from"../chunks/C0bQD4-Y.js";import{x as t}from"../chunks/COCUBL_7.js";(function(){try{var e=typeof window<"u"?window:typeof global<"u"?global:typeof globalThis<"u"?globalThis:typeof self<"u"?self:{};e.SENTRY_RELEASE={id:"ad9d40acb8a039312421c747bdf509c277fc15e7"};var d=new e.Error().stack;d&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[d]="a9357816-4b11-4a6f-9831-b5b5052efac2",e._sentryDebugIdIdentifier="sentry-dbid-a9357816-4b11-4a6f-9831-b5b5052efac2")}catch{}})();export{t as load_css,n as start};
-//# sourceMappingURL=start.BW8kvS1l.js.map
