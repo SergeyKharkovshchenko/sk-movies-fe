@@ -581,6 +581,14 @@
 				imported row.
 			</p>
 		{:else if active === 'metadata'}
+			t <ol class="list-decimal space-y-0.5 pl-5 text-zinc-600">
+				<li>
+					Press <b>✨ Suggest with AI</b> below: it proposes attributes the source states a value for,
+					each with a quoted sentence.
+				</li>
+				<li>Edit any cell, tick the term types an attribute applies to, or remove a row with ✕.</li>
+				<li>Use <b>+ Add attribute</b> for your own, then <b>Approve and continue</b>.</li>
+			</ol>
 			{#if Array.isArray(entry('metadata')?.payload.provenance)}
 				<p class="text-zinc-600">
 					Always recorded: <span class="font-mono"
@@ -638,7 +646,7 @@
 					>Group by type{suggestedByType.length ? ` (${suggestedByType.length})` : ''}</button
 				>
 				<span class="text-zinc-400"
-					>AI suggestion: "Propose from earlier stages" below. It keeps only pairs the source states
+					>AI suggestion: the "Suggest with AI" button below. It keeps only pairs the source states
 					in one sentence.</span
 				>
 			</div>
@@ -832,7 +840,7 @@
 						onclick={propose}
 						disabled={!!busy}
 						class="rounded-md border border-zinc-300 bg-white px-3 py-1.5 text-zinc-700 hover:bg-zinc-50 disabled:opacity-40"
-						>{busy === 'propose' ? 'Working…' : 'Propose from earlier stages'}</button
+						>{busy === 'propose' ? 'Working…' : '✨ Suggest with AI'}</button
 					>
 				{/if}
 				<button
