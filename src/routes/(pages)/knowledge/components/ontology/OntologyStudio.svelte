@@ -543,21 +543,6 @@
 		<!-- Stage editors -->
 		{#if active === 'source'}
 			<div class="space-y-3">
-				<label class="flex items-center gap-2">
-					<span class="text-zinc-600">Load a sample</span>
-					<select
-						class="rounded border border-zinc-300 bg-white px-1.5 py-1"
-						onchange={(e) => {
-							loadSample(e.currentTarget.value);
-							e.currentTarget.value = '';
-						}}
-					>
-						<option value="">Choose…</option>
-						{#each SAMPLES as sample (sample.id)}
-							<option value={sample.id}>{sample.name}</option>
-						{/each}
-					</select>
-				</label>
 				<div class="flex gap-4">
 					<label class="flex items-center gap-1.5"
 						><input type="radio" bind:group={sourceKind} value="text" onchange={mark} /> Text</label
