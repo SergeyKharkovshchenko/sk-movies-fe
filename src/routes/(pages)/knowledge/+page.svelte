@@ -3,8 +3,10 @@
 	import KnowledgeAdmin from './components/KnowledgeAdmin.svelte';
 	import KnowledgeGraphView from './components/KnowledgeGraphView.svelte';
 	import OntologyStudio from './components/ontology/OntologyStudio.svelte';
+	import KnowledgeChatSection from './components/KnowledgeChatSection.svelte';
 
 	let mode = $state<'ontology' | 'quick'>('ontology');
+	let studioLabel = $state('');
 </script>
 
 <div class="flex flex-col gap-6 m-6">
@@ -32,11 +34,12 @@
 			</div>
 		</div>
 		{#if mode === 'ontology'}
-			<OntologyStudio />
+			<OntologyStudio bind:label={studioLabel} />
 		{:else}
 			<KnowledgeWizard />
 		{/if}
 	</div>
 	<KnowledgeGraphView />
 	<KnowledgeAdmin />
+	<KnowledgeChatSection label={studioLabel} />
 </div>

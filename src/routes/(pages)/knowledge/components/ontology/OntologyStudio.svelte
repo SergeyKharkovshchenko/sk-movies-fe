@@ -2,7 +2,6 @@
 	import { KnowledgeAPIService } from '$services/apiService';
 	import EditableTable from './EditableTable.svelte';
 	import Modal from '$lib/components/Modal.svelte';
-	import KnowledgeChat from '../KnowledgeChat.svelte';
 	import {
 		STAGES,
 		STATUS_STYLE,
@@ -99,13 +98,11 @@
 		dirty = true;
 	}
 
-	let label = $state('');
+	// Shared with the page so the chat section opens on the same knowledge base.
+	let { label = $bindable('') }: { label?: string } = $props();
 	let entries = $state<StageEntry[]>([]);
 	let active = $state<StageKey>('source');
 	let loaded = $state(false);
-	// The chat is a seventh step, not a server stage: open once the graph has been built.
-	let showChat = $state(false);
-	let chatStats = $state<{ nodes?: number; relationships?: number } | null>(null);
 	let busy = $state('');
 	let message = $state('');
 	let errors = $state<string[]>([]);
@@ -137,7 +134,6 @@
 	const entry = (key: StageKey) => entries.find((e) => e.stage === key);
 	const status = (key: StageKey) => entry(key)?.status ?? 'EMPTY';
 	const info = $derived(stageInfo(active));
-	const chatUnlocked = $derived(loaded && status('population') === 'APPROVED');
 	const activeIndex = $derived(STAGES.findIndex((s) => s.key === active));
 	const prevStage = $derived(STAGES[activeIndex - 1]);
 	const nextStage = $derived(STAGES[activeIndex + 1]);
@@ -248,7 +244,6 @@
 	}
 
 	function open(key: StageKey) {
-		showChat = false;
 		active = key;
 		errors = [];
 		message = '';
@@ -469,7 +464,6 @@
 				} else if (event === 'error') {
 					buildSummary = `Failed: ${data.message}`;
 				} else if (event === 'complete') {
-					chatStats = { nodes: Number(data.nodes ?? 0), relationships: 0 };
 					buildSummary = `Done: ${data.nodes} nodes, ${data.accepted} links stored, ${data.rejected} for review.`;
 					if (Array.isArray(data.rejectedList)) rejected = data.rejectedList as RejectedTriple[];
 				}
@@ -543,7 +537,7 @@
 		{#each STAGES as s, i (s.key)}
 			{@const st = loaded ? status(s.key) : 'EMPTY'}
 			{@const done = st === 'APPROVED'}
-			{@const current = loaded && !showChat && active === s.key}
+			{@const current = loaded && active === s.key}
 			{@const unlocked = loaded && isUnlocked(entries, s.key)}
 			<li class="flex items-start">
 				<button
@@ -579,7 +573,7 @@
 						>
 					{/if}
 				</button>
-				{#if true}
+				{#if i < STAGES.length - 1}
 					<span
 						class="mx-0.5 mt-4 h-0.5 w-6 shrink-0 rounded-full transition-colors"
 						class:bg-emerald-400={done}
@@ -588,33 +582,6 @@
 				{/if}
 			</li>
 		{/each}
-		<li class="flex items-start">
-			<button
-				onclick={() => chatUnlocked && (showChat = true)}
-				disabled={!chatUnlocked}
-				aria-current={showChat ? 'step' : undefined}
-				aria-label="7. Chat"
-				class="flex w-24 flex-col items-center gap-1 disabled:cursor-default"
-			>
-				<span
-					class="flex h-8 w-8 items-center justify-center rounded-full border-2 text-xs font-semibold transition-all"
-					class:bg-zinc-800={showChat}
-					class:border-zinc-800={showChat}
-					class:text-white={showChat}
-					class:bg-white={!showChat}
-					class:border-indigo-500={chatUnlocked && !showChat}
-					class:text-indigo-600={chatUnlocked && !showChat}
-					class:border-zinc-300={!chatUnlocked}
-					class:text-zinc-400={!chatUnlocked}>7</span
-				>
-				<span
-					class="text-center text-[10px] font-medium leading-tight"
-					class:text-zinc-800={showChat}
-					class:text-indigo-600={chatUnlocked && !showChat}
-					class:text-zinc-400={!chatUnlocked}>Chat</span
-				>
-			</button>
-		</li>
 	</ol>
 
 	{#if !loaded}
@@ -624,11 +591,7 @@
 		</p>
 	{/if}
 
-	{#if loaded && showChat}
-		<div class="h-[calc(100vh-22rem)]">
-			<KnowledgeChat initialLabel={label.trim()} stats={chatStats} />
-		</div>
-	{:else if loaded}
+	{#if loaded}
 		<div class="rounded-lg border border-zinc-200 bg-zinc-50 p-3 space-y-1">
 			<h2 class="text-sm font-semibold text-zinc-800">{info.title}</h2>
 			<p class="text-zinc-600">{info.help}</p>
@@ -955,13 +918,6 @@
 					</ul>
 				{/if}
 				{#if buildSummary}<p class="font-medium text-zinc-800">{buildSummary}</p>{/if}
-				{#if status('population') === 'APPROVED' && !building}
-					<button
-						onclick={() => (showChat = true)}
-						class="rounded-md bg-emerald-700 px-3 py-1.5 text-white hover:bg-emerald-600"
-						>Chat with this knowledge base →</button
-					>
-				{/if}
 
 				{#if rejected.length > 0}
 					<div class="space-y-1">
