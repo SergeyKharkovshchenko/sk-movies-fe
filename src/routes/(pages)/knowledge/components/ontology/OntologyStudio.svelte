@@ -118,6 +118,8 @@
 	let sourceFiles = $state<{ name: string; content: string }[]>([]);
 	// By-products of the text analysis, carried along untouched with the vocabulary.
 	let vocabularyExtras = $state<Record<string, unknown>>({});
+	// Attributes the AI proposed for this source, offered in the Name field even after a row is removed.
+	let attributeSuggestions = $state<Attribute[]>([]);
 
 	// Build stage
 	let replace = $state(false);
@@ -194,6 +196,27 @@
 		}
 	}
 
+	const attributeNameOptions = $derived(
+		attributeSuggestions
+			.map((a) => a.name)
+			.filter((n) => !entityAttributes.some((r) => r.name.trim().toLowerCase() === n.toLowerCase()))
+	);
+
+	// Picking a suggested name in the Name field fills the rest of that row (only cells still empty).
+	function fillFromSuggestion() {
+		for (const row of entityAttributes) {
+			const hit = attributeSuggestions.find(
+				(s) => s.name.toLowerCase() === row.name.trim().toLowerCase()
+			);
+			if (!hit || row.example || row.description) continue;
+			row.name = hit.name;
+			row.datatype = hit.datatype;
+			row.appliesTo = [...(hit.appliesTo ?? [])];
+			row.description = hit.description ?? '';
+			row.example = hit.example ?? '';
+		}
+	}
+
 	function groupByType() {
 		pairs = [...pairs, ...suggestedByType];
 		mark();
@@ -236,6 +259,8 @@
 		droppedPairs = key === 'taxonomy' && Array.isArray(p.dropped) ? p.dropped.map(String) : [];
 		const { terms: _t, ...rest } = p;
 		vocabularyExtras = key === 'vocabulary' ? rest : {};
+		attributeSuggestions =
+			key === 'metadata' && Array.isArray(p.suggestions) ? (p.suggestions as Attribute[]) : [];
 	}
 
 	function payload(): Record<string, unknown> {
@@ -250,6 +275,7 @@
 				return {
 					provenance: (entry('metadata')?.payload.provenance as string[]) ?? [],
 					entityAttributes: withoutBlankRows(entityAttributes, ['name']),
+					suggestions: attributeSuggestions,
 					relationAttributes: withoutBlankRows(relationAttributes, ['name'])
 				};
 			case 'taxonomy':
@@ -631,9 +657,18 @@
 				blank={blankAttribute}
 				addLabel="Add attribute"
 				caption="Attributes of terms: pick the term types each one can be added to (none picked = all types)"
-				onchange={mark}
+				onchange={() => {
+					fillFromSuggestion();
+					mark();
+				}}
 				columns={[
-					{ key: 'name', label: 'Name', width: '16%' },
+					{
+						key: 'name',
+						label: 'Name',
+						width: '16%',
+						options: attributeNameOptions,
+						placeholder: 'pick a suggestion or type'
+					},
 					{ key: 'datatype', label: 'Type', kind: 'select', options: DATATYPES, width: '9%' },
 					{
 						key: 'appliesTo',
