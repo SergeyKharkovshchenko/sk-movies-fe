@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { KnowledgeAPIService } from '$services/apiService';
 	import EditableTable from './EditableTable.svelte';
+	import Modal from '$lib/components/Modal.svelte';
 	import KnowledgeChat from '../KnowledgeChat.svelte';
 	import {
 		STAGES,
@@ -346,12 +347,41 @@
 		}
 	}
 
+	// In-app replacement for window.confirm: resolves true when the user confirms.
+	let dialog = $state<{ title: string; message: string; confirm: string; danger: boolean } | null>(
+		null
+	);
+	let dialogOpen = $state(false);
+	let dialogResolve: ((ok: boolean) => void) | null = null;
+
+	function ask(title: string, message: string, confirm = 'Replace', danger = false) {
+		dialog = { title, message, confirm, danger };
+		dialogOpen = true;
+		return new Promise<boolean>((resolve) => (dialogResolve = resolve));
+	}
+
+	function answer(ok: boolean) {
+		dialogOpen = false;
+		dialogResolve?.(ok);
+		dialogResolve = null;
+	}
+
 	async function propose() {
-		if (dirty && !confirm('Replace your unsaved edits with a new proposal?')) return;
+		if (
+			dirty &&
+			!(await ask(
+				'Replace your unsaved edits?',
+				'The AI proposal will overwrite what you changed on this stage and have not saved yet.'
+			))
+		)
+			return;
 		if (
 			status(active) !== 'EMPTY' &&
 			!dirty &&
-			!confirm('This stage already has content. Replace it with a new proposal?')
+			!(await ask(
+				'Replace this stage?',
+				'This stage already has content. A new AI proposal will replace it. You can still edit the result before approving.'
+			))
 		)
 			return;
 		busy = 'propose';
@@ -376,7 +406,14 @@
 	}
 
 	async function reset() {
-		if (!confirm(`Delete every draft stage of "${label}"? The published graph is not touched.`))
+		if (
+			!(await ask(
+				'Discard all drafts?',
+				`Every draft stage of "" will be deleted. The published graph is not touched.`,
+				'Discard',
+				true
+			))
+		)
 			return;
 		await KnowledgeAPIService.ontologyReset(label.trim());
 		load('source');
@@ -1023,3 +1060,22 @@
 		{/if}
 	{/if}
 </div>
+
+<Modal bind:open={dialogOpen} title={dialog?.title ?? ''} width="sm" onclose={() => answer(false)}>
+	<p>{dialog?.message}</p>
+	<svelte:fragment slot="footer">
+		<button
+			type="button"
+			onclick={() => answer(false)}
+			class="rounded-md border border-zinc-300 bg-white px-3 py-1.5 text-zinc-700 hover:bg-zinc-50"
+			>Cancel</button
+		>
+		<button
+			type="button"
+			onclick={() => answer(true)}
+			class="rounded-md px-3 py-1.5 text-white {dialog?.danger
+				? 'bg-red-600 hover:bg-red-500'
+				: 'bg-zinc-800 hover:bg-zinc-700'}">{dialog?.confirm ?? 'OK'}</button
+		>
+	</svelte:fragment>
+</Modal>
