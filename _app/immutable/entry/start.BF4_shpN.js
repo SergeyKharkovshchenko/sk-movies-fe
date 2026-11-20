@@ -1,2 +1,0 @@
-import{b as n}from"../chunks/B2yIo6EO.js";import{x as t}from"../chunks/Bbta0uSn.js";(function(){try{var e=typeof window<"u"?window:typeof global<"u"?global:typeof globalThis<"u"?globalThis:typeof self<"u"?self:{};e.SENTRY_RELEASE={id:"31e3bebecb5b17f973a8745c400a78d1c074c0e7"};var b=new e.Error().stack;b&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[b]="c4e9bab0-c9fa-4664-b229-26c449cf5953",e._sentryDebugIdIdentifier="sentry-dbid-c4e9bab0-c9fa-4664-b229-26c449cf5953")}catch{}})();export{t as load_css,n as start};
-//# sourceMappingURL=start.BF4_shpN.js.map
